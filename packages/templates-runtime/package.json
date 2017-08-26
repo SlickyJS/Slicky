@@ -1,0 +1,31 @@
+{
+	"name": "@slicky/templates-runtime",
+	"description": "Meta package for slicky/templates",
+	"version": "0.0.1",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:SlickyJS/TemplatesRuntime.git"
+	},
+	"author": {
+		"name": "David Kudera",
+		"email": "kudera.d@gmail.com"
+	},
+	"main": "./lib/index.js",
+	"types": "./lib/index.d.ts",
+	"dependencies": {
+		"@slicky/utils": "github:SlickyJS/Utils#master",
+		"@slicky/realm": "github:SlickyJS/Realm#master",
+		"@slicky/change-detection": "^1.0.0"
+	},
+	"devDependencies": {
+		"@types/chai": "^4.0.3",
+		"@types/mocha": "^2.2.41",
+		"@types/node": "^8.0.22",
+		"chai": "^4.1.1",
+		"mocha": "^3.5.0"
+	},
+	"scripts": {
+		"test": "cd tests && mocha -r ts-node/register index.ts"
+	}
+}

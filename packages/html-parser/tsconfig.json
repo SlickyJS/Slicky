@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"target": "es5",
+		"removeComments": true,
+		"declaration": true,
+		"rootDir": ".",
+		"outDir": "./lib",
+		"declarationDir": "./lib"
+	},
+	"include": [
+		"./src/**/*.ts"
+	]
+}

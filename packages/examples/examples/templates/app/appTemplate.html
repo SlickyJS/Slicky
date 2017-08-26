@@ -1,0 +1,8 @@
+<template id="block" inject="firstName, secondName">
+	<div>
+		{{ greeting }} {{ firstName }} {{ secondName }}!
+	</div>
+</template>
+
+<include selector="#block" [first-name]="'David'" second-name="K."></include>
+<include selector="#block" [first-name]="'John'" second-name="D."></include>

@@ -1,0 +1,29 @@
+{
+	"name": "@slicky/change-detection",
+	"description": "Simple change detection",
+	"version": "1.0.0",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:SlickyJS/ChangeDetection.git"
+	},
+	"author": {
+		"name": "David Kudera",
+		"email": "kudera.d@gmail.com"
+	},
+	"main": "./lib/index.js",
+	"types": "./lib/index.d.ts",
+	"dependencies": {
+		"@slicky/utils": "SlickyJS/Utils#master"
+	},
+	"devDependencies": {
+		"@types/chai": "^4.0.3",
+		"@types/mocha": "^2.2.41",
+		"@types/node": "^8.0.21",
+		"chai": "^4.1.1",
+		"mocha": "^3.5.0"
+	},
+	"scripts": {
+		"test": "cd tests && mocha -r ts-node/register index.ts"
+	}
+}

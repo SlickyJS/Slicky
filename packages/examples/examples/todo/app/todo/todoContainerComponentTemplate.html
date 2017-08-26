@@ -1,0 +1,19 @@
+<div class="uk-card uk-card-secondary uk-card-hover uk-card-body">
+	<h3 class="uk-card-title">Todos <small *s:if="todos.size">({{ todos.count((todo) => todo.done) }}/{{ todos.size }})</small></h3>
+
+	<ul *s:if="todos.size" class="uk-list uk-list-divider">
+		<li todo *s:for="todo of todos.sort(todoSort)" *s:for-track-by="todoTrackByFn" [todo]="todo" (removed)="removeTodo($value)" (updating)="updateTodo($value)" (toggled)="void 0"></li>
+	</ul>
+
+	<form class="uk-grid-collapse" uk-grid>
+		<div class="uk-width-5-6">
+			<div class="uk-inline" style="width: 100%;">
+				<a *s:if="currentTodo.text.length" (click.prevent)="saveTodo()" class="uk-form-icon uk-form-icon-flip" href="#" uk-icon="icon: {{ updating ? 'check' : 'plus' }}"></a>
+				<input (input)="currentTodo.text = $this.value" [value]="currentTodo.text" placeholder="Add new todo (pick some nice color too 😉 👉)" class="uk-input" type="text" />
+			</div>
+		</div>
+		<div class="uk-width-1-6">
+			<input (input)="currentTodo.setColor($this.value)" [value]="currentTodo.color" type="color" class="uk-input" />
+		</div>
+	</form>
+</div>

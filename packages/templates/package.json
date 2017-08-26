@@ -1,0 +1,35 @@
+{
+	"name": "@slicky/templates",
+	"description": "Templates engine",
+	"version": "0.0.1",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:SlickyJS/Templates.git"
+	},
+	"author": {
+		"name": "David Kudera",
+		"email": "kudera.d@gmail.com"
+	},
+	"main": "./lib/index.js",
+	"types": "./lib/index.d.ts",
+	"dependencies": {
+		"@slicky/html-parser": "^1.0.0",
+		"@slicky/query-selector": "github:SlickyJS/QuerySelector#refactoring",
+		"@slicky/tiny-js": "^1.0.1",
+		"@slicky/tokenizer": "github:SlickyJS/Tokenizer#refactoring",
+		"@slicky/utils": "github:SlickyJS/Utils#master",
+		"@slicky/event-emitter": "github:SlickyJS/EventEmitter#master",
+		"parse5": "^3.0.2"
+	},
+	"devDependencies": {
+		"@types/chai": "^4.0.3",
+		"@types/mocha": "^2.2.41",
+		"@types/node": "^8.0.21",
+		"chai": "^4.1.1",
+		"mocha": "^3.5.0"
+	},
+	"scripts": {
+		"test": "cd tests && mocha -r ts-node/register index.ts"
+	}
+}

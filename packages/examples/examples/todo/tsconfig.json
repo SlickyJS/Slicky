@@ -1,0 +1,7 @@
+{
+	"extends": "../../tsconfig.json",
+	"slickyCompilerOptions": {
+		"directives": "./app/directives.ts",
+		"outDir": "./aot"
+	}
+}
