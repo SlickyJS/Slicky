@@ -52,7 +52,6 @@ utils_1.forEach(directives, function (directive) {
     }
     compiler.compile(metadata);
 });
-var templates = [];
 var templateFactories = [];
 var templateMappings = [];
 utils_1.forEach(compiler.getTemplates(), function (template, hash) {
@@ -76,4 +75,4 @@ var factory = ("import {Template} from '@slicky/templates-runtime';\n\n\n" +
     "}\n\n\n" +
     "export const APP_TEMPLATES_FACTORY = _factory;\n");
 fs_1.writeFileSync(path.join(outDir, 'app-templates-factory.ts'), factory, { encoding: 'utf8' });
-console.log(colors.green("Successfully generated " + templates.length + " templates into " + path.relative(process.cwd(), outDir)));
+console.log(colors.green("Successfully generated " + templateFactories.length + " templates into " + path.relative(process.cwd(), outDir)));

@@ -40,6 +40,7 @@
 		"gulp": "gulp",
 		"clean": "gulp clean",
 		"compile": "gulp compile",
+		"compile-todo-aot": "packages/compiler-cli/lib/bin/scc.js compile packages/examples/examples/todo/tsconfig.json",
 		"watch": "gulp watch"
 	},
 	"dependencies": {

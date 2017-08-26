@@ -77,7 +77,6 @@ forEach(directives, (directive: ClassType<any>) => {
 	compiler.compile(metadata);
 });
 
-let templates = [];
 let templateFactories = [];
 let templateMappings = [];
 forEach(compiler.getTemplates(), (template: string, hash: number) => {
@@ -111,4 +110,4 @@ let factory = (
 
 writeFileSync(path.join(outDir, 'app-templates-factory.ts'), factory, {encoding: 'utf8'});
 
-console.log(colors.green(`Successfully generated ${templates.length} templates into ${path.relative(process.cwd(), outDir)}`));
+console.log(colors.green(`Successfully generated ${templateFactories.length} templates into ${path.relative(process.cwd(), outDir)}`));
