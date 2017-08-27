@@ -18,6 +18,7 @@
 		"packages/*"
 	],
 	"devDependencies": {
+		"@slicky/compiler-cli": "^0.0.1",
 		"@slicky/utils": "github:SlickyJS/Utils#master",
 		"@types/gulp": "^4.0.4",
 		"@types/merge2": "^1.1.1",
@@ -40,7 +41,6 @@
 		"gulp": "gulp",
 		"clean": "gulp clean",
 		"compile": "gulp compile",
-		"compile-todo-aot": "packages/compiler-cli/lib/bin/scc.js compile packages/examples/examples/todo/tsconfig.json",
 		"watch": "gulp watch"
 	}
 }

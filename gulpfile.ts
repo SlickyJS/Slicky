@@ -1,4 +1,5 @@
 import {forEach} from '@slicky/utils';
+import {Compiler} from '@slicky/compiler-cli';
 import * as path from 'path';
 import * as merge from 'merge2';
 import * as webpack from 'webpack';
@@ -36,6 +37,9 @@ const config: Config = {
 		{name: 'application', root: path.join(__dirname, 'packages', 'application')},
 		{name: 'platformBrowser', root: path.join(__dirname, 'packages', 'platform-browser')},
 		{name: 'platformServer', root: path.join(__dirname, 'packages', 'platform-server')},
+	],
+	aot: [
+		{name: 'todo', root: path.join(__dirname, 'packages', 'examples', 'examples', 'todo')},
 	],
 	examples: [
 		{name: 'directive', root: path.join(__dirname, 'packages', 'examples', 'examples', 'directive')},
@@ -100,6 +104,18 @@ forEach(config.packages, (pckg: ConfigProject) => {
 });
 
 
+let compileAotTasks = [];
+forEach(config.aot, (project: ConfigProject) => {
+	compileAotTasks.push(`compile:aot:${project.name}`);
+
+	gulp.task(`compile:aot:${project.name}`, (done) => {
+		(new Compiler).compileAndWrite(path.join(project.root, 'tsconfig.json'), () => {
+			done();
+		});
+	});
+});
+
+
 let compileExampleTasks = [];
 let cleanExampleTasks = [];
 forEach(config.examples, (project: ConfigProject) => {
@@ -122,7 +138,7 @@ forEach(config.examples, (project: ConfigProject) => {
 		});
 	});
 
-	gulp.task(`compile:examples:${project.name}:styles`, function () {
+	gulp.task(`compile:examples:${project.name}:styles`, () => {
 		return gulp.src(path.join(project.root, 'styles', 'index.scss'))
 			.pipe(sass().on('error', sass.logError))
 			.pipe(concat('style.css'))
@@ -138,7 +154,10 @@ forEach(config.examples, (project: ConfigProject) => {
 });
 
 
+compileTasks.push('compile:aot');
 compileTasks.push('compile:examples');
+
+gulp.task('compile:aot', gulp.series(...compileAotTasks, (done) => done()));
 gulp.task('compile:examples', gulp.series(...compileExampleTasks, (done) => done()));
 gulp.task('compile', gulp.series(...compileTasks, (done) => done()));
 
