@@ -4,5 +4,5 @@ export declare class TemplatesProvider {
     private platform;
     private applicationTemplate;
     constructor(platform: IPlatform, applicationTemplate: ApplicationTemplate);
-    createFrom(hash: number, parent: BaseTemplate): Template;
+    createFrom(hash: number, el: HTMLElement, parent: BaseTemplate): Template;
 }

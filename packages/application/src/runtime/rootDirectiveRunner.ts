@@ -3,6 +3,7 @@ import {forEach, isFunction, exists} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {Container} from '@slicky/di';
 import {ApplicationTemplate, Template} from '@slicky/templates-runtime';
+import {ElementRef} from '@slicky/core';
 import {DirectivesProvider} from './directivesProvider';
 import {TemplatesProvider} from './templatesProvider';
 
@@ -50,7 +51,14 @@ export class RootDirectiveRunner
 
 	private runDirective(directiveType: ClassType<any>, metadata: DirectiveDefinition, el: HTMLElement): void
 	{
-		let directive = this.container.create(directiveType);
+		let directive = this.container.create(directiveType, [
+			{
+				service: ElementRef,
+				options: {
+					useFactory: () => ElementRef.getForElement(el),
+				},
+			},
+		]);
 
 		forEach(metadata.inputs, (input: DirectiveDefinitionInput) => {
 			directive[input.property] = el.getAttribute(input.name);

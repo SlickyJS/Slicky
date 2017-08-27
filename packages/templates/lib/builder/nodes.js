@@ -110,10 +110,10 @@ var TemplateSetupWatch = (function (_super) {
     TemplateSetupWatch.prototype.render = function () {
         return ("tmpl.getProvider(\"watcher\").watch(\n" +
             "\tfunction() {\n" +
-            ("\t\t" + this.watch + ";\n") +
+            (utils_1.indent(this.watch, 2) + ";\n") +
             "\t},\n" +
             "\tfunction(value) {\n" +
-            ("\t\t" + this.update + ";\n") +
+            (utils_1.indent(this.update, 2) + ";\n") +
             "\t}\n" +
             ");");
     };

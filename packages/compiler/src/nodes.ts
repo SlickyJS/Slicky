@@ -1,27 +1,39 @@
 import {TemplateSetup} from '@slicky/templates';
 import {indent} from '@slicky/utils';
+import {DirectiveDefinitionType} from '@slicky/core';
 
 
-export class TemplateSetupComponent extends TemplateSetup
+export class TemplateSetupDirective extends TemplateSetup
 {
 
 
 	public hash: number;
 
+	public type: DirectiveDefinitionType;
 
-	constructor(hash: number)
+
+	constructor(hash: number, type: DirectiveDefinitionType)
 	{
 		super();
 
 		this.hash = hash;
+		this.type = type;
 	}
 
 
 	public render(): string
 	{
+		let init = this.type === DirectiveDefinitionType.Directive ?
+			`var directive = root.getProvider("directivesProvider").create(${this.hash}, parent, root.getProvider("container"));` :
+			(
+				`var tmpl = root.getProvider("templatesProvider").createFrom(${this.hash}, parent, tmpl);\n` +
+				`var directive = tmpl.getProvider("component");`
+			)
+		;
+
 		return (
 			`(function(tmpl) {\n` +
-			`	var tmpl = root.getProvider("templatesProvider").createFrom(${this.hash}, tmpl);\n` +
+			`${indent(init)}\n` +
 			`${indent(this.renderSetup())}\n` +
 			`})(tmpl);`
 		);
@@ -63,7 +75,7 @@ export class TemplateSetupDirectiveOutput extends TemplateSetup
 	public render(): string
 	{
 		return (
-			`tmpl.getProvider("component").${this.output}.subscribe(function($value) {\n` +
+			`directive.${this.output}.subscribe(function($value) {\n` +
 			`	root.run(function() {\n` +
 			`		${this.call};\n` +
 			`	});\n` +
@@ -80,21 +92,37 @@ export class TemplateSetupDirectiveOnInit extends TemplateSetup
 
 	public render(): string
 	{
-		return `tmpl.getProvider("component").onInit();`;
+		return `directive.onInit();`;
 	}
 
 }
 
 
-export class TemplateSetupDirectiveOnDestroy extends TemplateSetup
+export class TemplateSetupTemplateOnDestroy extends TemplateSetup
 {
+
+
+	public code: string;
+
+	public callParent: boolean;		// todo: remove
+
+
+	constructor(code: string, callParent: boolean = false)
+	{
+		super();
+
+		this.code = code;
+		this.callParent = callParent;
+	}
 
 
 	public render(): string
 	{
+		let callee = this.callParent ? '.parent' : '';
+
 		return (
-			`tmpl.parent.onDestroy(function() {\n` +
-			`	tmpl.getProvider("component").onDestroy();\n` +
+			`tmpl${callee}.onDestroy(function() {\n` +
+			`${indent(this.code)}\n` +
 			`});`
 		);
 	}
@@ -120,6 +148,68 @@ export class TemplateSetupComponentHostElement extends TemplateSetup
 	public render(): string
 	{
 		return `root.getProvider("component").${this.property} = parent;`;
+	}
+
+}
+
+
+export class TemplateSetupDirectivePropertyWrite extends TemplateSetup
+{
+
+
+	public property: string;
+
+	public value: string;
+
+	public rootComponent: boolean;
+
+
+	constructor(property: string, value: string, rootComponent: boolean = false)
+	{
+		super();
+
+		this.property = property;
+		this.value = value;
+		this.rootComponent = rootComponent;
+	}
+
+
+	public render(): string
+	{
+		let target = this.rootComponent ? 'root.getProvider("component")' : 'directive';
+
+		return `${target}.${this.property} = ${this.value};`;
+	}
+
+}
+
+
+export class TemplateSetupDirectiveMethodCall extends TemplateSetup
+{
+
+
+	public method: string;
+
+	public args: string;
+
+	public rootComponent: boolean;
+
+
+	constructor(method: string, args: string, rootComponent: boolean = false)
+	{
+		super();
+
+		this.method = method;
+		this.args = args;
+		this.rootComponent = rootComponent;
+	}
+
+
+	public render(): string
+	{
+		let target = this.rootComponent ? 'root.getProvider("component")' : 'directive';
+
+		return `${target}.${this.method}(${this.args});`;
 	}
 
 }

@@ -5,15 +5,15 @@ var TemplatesProvider = (function () {
         this.platform = platform;
         this.applicationTemplate = applicationTemplate;
     }
-    TemplatesProvider.prototype.createFrom = function (hash, parent) {
+    TemplatesProvider.prototype.createFrom = function (hash, el, parent) {
         var container = parent.getProvider('container').fork();
         var directivesProvider = parent.getProvider('directivesProvider');
         var templateType = this.platform.getTemplateTypeByHash(hash);
-        var componentType = directivesProvider.getDirectiveTypeByHash(hash);
         var template = new templateType(this.applicationTemplate, parent);
+        var component = directivesProvider.create(hash, el, container);
         template.disableProvidersFromParent();
         template.disableParametersFromParent();
-        template.addProvider('component', container.create(componentType));
+        template.addProvider('component', component);
         template.addProvider('container', container);
         template.addProvider('templatesProvider', this);
         template.addProvider('directivesProvider', directivesProvider);

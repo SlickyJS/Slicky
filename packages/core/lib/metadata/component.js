@@ -13,20 +13,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var reflection_1 = require("@slicky/reflection");
 var utils_1 = require("@slicky/utils");
 var directive_1 = require("./directive");
-var changeDetection_1 = require("../changeDetection");
 var ComponentAnnotationDefinition = (function (_super) {
     __extends(ComponentAnnotationDefinition, _super);
     function ComponentAnnotationDefinition(options) {
         var _this = _super.call(this, options) || this;
-        _this.changeDetection = changeDetection_1.ChangeDetectionStrategy.Default;
         _this.directives = [];
         _this.filters = [];
         _this.template = options.template;
         if (utils_1.exists(options.controllerAs)) {
             _this.controllerAs = options.controllerAs;
-        }
-        if (utils_1.exists(options.changeDetection)) {
-            _this.changeDetection = options.changeDetection;
         }
         if (utils_1.exists(options.directives)) {
             _this.directives = options.directives;

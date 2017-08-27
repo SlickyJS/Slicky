@@ -9,17 +9,17 @@ window['$'] = window['jQuery'] = jquery;
 
 UIkit.use(UIkitIcons);
 
-import {PlatformServer} from '@slicky/platform-server';
-//import {PlatformBrowser} from '@slicky/platform-browser';
+//import {PlatformServer} from '@slicky/platform-server';
+import {PlatformBrowser} from '@slicky/platform-browser';
 import {Container} from '@slicky/di';
 import {Application} from '@slicky/application';
 import {ApplicationTemplate} from '@slicky/templates-runtime';
 import {APP_DIRECTIVES} from './directives';
-import {APP_TEMPLATES_FACTORY} from '../aot/app-templates-factory';
+//import {APP_TEMPLATES_FACTORY} from '../aot/app-templates-factory';
 
 
-let platform = new PlatformServer(APP_TEMPLATES_FACTORY);
-//let platform = new PlatformBrowser;
+//let platform = new PlatformServer(APP_TEMPLATES_FACTORY);
+let platform = new PlatformBrowser;
 let container = new Container;
 let template = new ApplicationTemplate;
 

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@slicky/core");
 var utils_1 = require("@slicky/utils");
+var core_2 = require("@slicky/core");
 var directivesProvider_1 = require("./directivesProvider");
 var templatesProvider_1 = require("./templatesProvider");
 var RootDirectiveRunner = (function () {
@@ -21,7 +22,14 @@ var RootDirectiveRunner = (function () {
         utils_1.forEach(els, function (el) { return _this.runDirective(directiveType, metadata, el); });
     };
     RootDirectiveRunner.prototype.runDirective = function (directiveType, metadata, el) {
-        var directive = this.container.create(directiveType);
+        var directive = this.container.create(directiveType, [
+            {
+                service: core_2.ElementRef,
+                options: {
+                    useFactory: function () { return core_2.ElementRef.getForElement(el); },
+                },
+            },
+        ]);
         utils_1.forEach(metadata.inputs, function (input) {
             directive[input.property] = el.getAttribute(input.name);
         });

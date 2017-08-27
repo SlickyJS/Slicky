@@ -39,7 +39,12 @@ export class DocumentWalker implements IDocumentWalker
 
 	public getAttribute(node: _.ASTHTMLNodeElement, name: string): string
 	{
-		let attr = find(node.attributes, (attribute: _.ASTHTMLNodeAttribute) => attribute.name === name);
+		let finder = (attribute: _.ASTHTMLNodeAttribute) => attribute.name === name;
+
+		let attr =
+			find(node.attributes, finder) ||
+			find(node.properties, finder)
+		;
 
 		return exists(attr) ? attr.value : undefined;
 	}

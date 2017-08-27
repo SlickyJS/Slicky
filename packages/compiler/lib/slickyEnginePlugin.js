@@ -12,8 +12,9 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var templates_1 = require("@slicky/templates");
 var utils_1 = require("@slicky/utils");
+var c = require("@slicky/core");
 var tjs = require("@slicky/tiny-js");
-var nodes_1 = require("./nodes");
+var s = require("./nodes");
 var SlickyEnginePlugin = (function (_super) {
     __extends(SlickyEnginePlugin, _super);
     function SlickyEnginePlugin(compiler, metadata) {
@@ -29,26 +30,53 @@ var SlickyEnginePlugin = (function (_super) {
             if (!arg.matcher.matches(element, hostElement.selector)) {
                 return;
             }
-            arg.element.addSetup(new nodes_1.TemplateSetupComponentHostElement(hostElement.property));
+            arg.element.addSetup(new s.TemplateSetupComponentHostElement(hostElement.property));
         });
         utils_1.forEach(this.metadata.directives, function (directive) {
             if (!arg.matcher.matches(element, directive.metadata.selector)) {
                 return;
             }
-            _this.compiler.compile(directive.metadata);
-            arg.element.addSetup(new nodes_1.TemplateSetupComponent(directive.metadata.hash), function (setup) {
+            if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
+                _this.compiler.compile(directive.metadata);
+            }
+            arg.element.addSetup(new s.TemplateSetupDirective(directive.metadata.hash, directive.metadata.type), function (setup) {
+                var onTemplateDestroy = [];
                 utils_1.forEach(directive.metadata.inputs, function (input) {
-                    var property = utils_1.find(element.properties, function (property) {
-                        return property.name === input.name;
-                    });
-                    if (property) {
+                    var property;
+                    var isProperty = false;
+                    var propertyFinder = function (isProp) {
+                        return function (prop) {
+                            if (prop.name === input.name) {
+                                property = prop;
+                                isProperty = isProp;
+                                return true;
+                            }
+                        };
+                    };
+                    property =
+                        utils_1.find(element.properties, propertyFinder(true)) ||
+                            utils_1.find(element.attributes, propertyFinder(false));
+                    if (!utils_1.exists(property) && input.required) {
+                    }
+                    if (!utils_1.exists(property)) {
+                        return;
+                    }
+                    if (isProperty) {
                         element.properties.splice(element.properties.indexOf(property), 1);
+                        var directiveUpdate = directive.metadata.onUpdate ?
+                            "; \ndirective.onUpdate('" + property.name + "', value)" :
+                            '';
+                        _this.expressionInParent = true;
+                        setup.addSetupWatch(arg.engine.compileExpression(property.value, arg.progress, true), "directive." + input.property + " = value" + directiveUpdate);
+                        _this.expressionInParent = false;
                     }
-                    else if (input.required) {
+                    else {
+                        element.attributes.splice(element.attributes.indexOf(property), 1);
+                        setup.addSetup(new s.TemplateSetupDirectivePropertyWrite(input.property, "\"" + property.value + "\""));
+                        if (directive.metadata.onUpdate) {
+                            setup.addSetup(new s.TemplateSetupDirectiveMethodCall('onUpdate', "\"" + input.property + "\", \"" + property.value + "\""));
+                        }
                     }
-                    _this.expressionInParent = true;
-                    setup.addSetupWatch(arg.engine.compileExpression(property.value, arg.progress, true), "tmpl.getProvider(\"component\")." + input.property + " = value");
-                    _this.expressionInParent = false;
                 });
                 utils_1.forEach(directive.metadata.outputs, function (output) {
                     var event = utils_1.find(element.events, function (event) {
@@ -57,15 +85,41 @@ var SlickyEnginePlugin = (function (_super) {
                     if (event) {
                         element.events.splice(element.events.indexOf(event), 1);
                     }
-                    setup.addSetup(new nodes_1.TemplateSetupDirectiveOutput(output.property, arg.engine.compileExpression(event.value, arg.progress)));
+                    setup.addSetup(new s.TemplateSetupDirectiveOutput(output.property, arg.engine.compileExpression(event.value, arg.progress)));
+                });
+                var removeChildDirectives = [];
+                utils_1.forEach(_this.metadata.childDirectives, function (childDirective, i) {
+                    if (childDirective.directiveType === directive.directiveType && !arg.progress.inTemplate) {
+                        setup.addSetup(new s.TemplateSetupDirectivePropertyWrite(childDirective.property, 'directive', true));
+                        removeChildDirectives.push(i);
+                    }
+                });
+                utils_1.forEach(removeChildDirectives, function (i) {
+                    _this.metadata.childDirectives.splice(i, 1);
+                });
+                var removeChildrenDirectives = [];
+                utils_1.forEach(_this.metadata.childrenDirectives, function (childrenDirectives, i) {
+                    if (childrenDirectives.directiveType === directive.directiveType) {
+                        setup.addSetup(new s.TemplateSetupDirectiveMethodCall(childrenDirectives.property + ".add.emit", 'directive', true));
+                        onTemplateDestroy.push("root.getProvider(\"component\")." + childrenDirectives.property + ".remove.emit(directive);");
+                        removeChildrenDirectives.push(i);
+                    }
+                });
+                utils_1.forEach(removeChildrenDirectives, function (i) {
+                    _this.metadata.childrenDirectives.splice(i, 1);
                 });
                 if (directive.metadata.onDestroy) {
-                    setup.addSetup(new nodes_1.TemplateSetupDirectiveOnDestroy);
+                    onTemplateDestroy.push('directive.onDestroy()');
+                }
+                if (onTemplateDestroy.length) {
+                    setup.addSetup(new s.TemplateSetupTemplateOnDestroy(onTemplateDestroy.join('\n')));
                 }
                 if (directive.metadata.onInit) {
-                    setup.addSetup(new nodes_1.TemplateSetupDirectiveOnInit);
+                    setup.addSetup(new s.TemplateSetupDirectiveOnInit);
                 }
-                setup.addSetup(new nodes_1.TemplateSetupComponentRender);
+                if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
+                    setup.addSetup(new s.TemplateSetupComponentRender);
+                }
             });
         });
         return element;

@@ -1,11 +1,12 @@
-import {isFunction, forEach} from '@slicky/utils';
+import {exists} from '@slicky/utils';
+
+
+const ELEMENT_STORAGE = '__slicky_element_ref';
 
 
 export class ElementRef
 {
 
-
-	private document: Document;
 
 	public nativeElement: HTMLElement;
 
@@ -13,35 +14,16 @@ export class ElementRef
 	constructor(nativeElement: HTMLElement)
 	{
 		this.nativeElement = nativeElement;
-		this.document = nativeElement.ownerDocument;
 	}
 
 
-	public addElement(elementName: string, attributes: {[name: string]: string} = {}, fn: (parent: ElementRef) => void = null): void
+	public static getForElement(nativeElement: HTMLElement): ElementRef
 	{
-		let node = this.document.createElement(elementName);
-
-		forEach(attributes, (value: string, name: string) => {
-			node.setAttribute(name, value);
-		});
-
-		this.nativeElement.appendChild(node);
-
-		if (isFunction(fn)) {
-			fn(new ElementRef(node));
+		if (exists(nativeElement[ELEMENT_STORAGE])) {
+			return nativeElement[ELEMENT_STORAGE];
 		}
-	}
 
-
-	public addText(text: string, fn: (text: Text) => void = null): void
-	{
-		let node = this.document.createTextNode(text);
-
-		this.nativeElement.appendChild(node);
-
-		if (isFunction(fn)) {
-			fn(node);
-		}
+		return nativeElement[ELEMENT_STORAGE] = new ElementRef(nativeElement);
 	}
 
 }

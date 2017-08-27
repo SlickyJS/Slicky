@@ -165,10 +165,10 @@ export class TemplateSetupWatch extends TemplateSetup
 		return (
 			`tmpl.getProvider("watcher").watch(\n` +
 			`	function() {\n` +
-			`		${this.watch};\n` +
+			`${indent(this.watch, 2)};\n` +
 			`	},\n` +
 			`	function(value) {\n` +
-			`		${this.update};\n` +
+			`${indent(this.update, 2)};\n` +
 			`	}\n` +
 			`);`
 		);

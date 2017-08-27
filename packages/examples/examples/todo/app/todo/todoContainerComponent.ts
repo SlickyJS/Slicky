@@ -1,32 +1,76 @@
-import {Component, HostElement, OnInit} from '@slicky/core';
+import {Component, HostElement, OnInit, OnDestroy, OnUpdate, ElementRef, ChildDirective, ChildrenDirective, ChildrenDirectivesStorage} from '@slicky/core';
 import {List} from 'immutable';
 import {Todo} from './todo';
 import {TodoComponent} from './todoComponent';
+import {IconDirective} from '../helpers';
 
 
 @Component({
 	selector: 'todos',
 	template: require('./todoContainerComponentTemplate.html'),
-	directives: [TodoComponent],
+	directives: [TodoComponent, IconDirective],
 })
-export class TodoContainerComponent implements OnInit
+export class TodoContainerComponent implements OnInit, OnDestroy, OnUpdate
 {
 
 
 	@HostElement('input[type="text"]')
 	public inputText: HTMLInputElement;
 
+	@ChildDirective(IconDirective)
+	public iconDirective: IconDirective;
+
+	@ChildrenDirective(TodoComponent)
+	public todoDirectives = new ChildrenDirectivesStorage<TodoComponent>();
+
 
 	public currentTodo: Todo = new Todo('');
 
 	public todos: List<Todo> = List();
 
+	private el: ElementRef;
+
 	private updating: Todo = null;
+
+
+	constructor(el: ElementRef)
+	{
+		this.el = el;
+	}
 
 
 	public onInit(): void
 	{
 		this.inputText.focus();
+
+		console.log('TodoContainerComponent: initialized in:');
+		console.log(this.el.nativeElement);
+
+		console.log('TodoContainerComponent: see IconDirective child directive:');
+		console.log(this.iconDirective);
+
+		this.todoDirectives.add.subscribe((todo: TodoComponent) => {
+			console.log('TodoContainerComponent: added child directive:');
+			console.log(todo);
+		});
+
+		this.todoDirectives.remove.subscribe((todo: TodoComponent) => {
+			console.log('TodoContainerComponent: removed child directive:');
+			console.log(todo);
+		});
+	}
+
+
+	public onDestroy(): void
+	{
+		console.log('TodoContainerComponent: destroyed');
+	}
+
+
+	public onUpdate(input: string, value: any): void
+	{
+		console.log(`TodoContainerComponent: updated "${input}" with:`);
+		console.log(value);
 	}
 
 

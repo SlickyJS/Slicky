@@ -145,6 +145,7 @@ var Engine = (function () {
         var inject = injectAttribute ? utils_1.map(injectAttribute.value.split(','), function (param) { return param.trim(); }) : [];
         var innerProgress = progress.fork();
         innerProgress.localVariables = utils_1.merge(innerProgress.localVariables, inject);
+        innerProgress.inTemplate = true;
         return builder.addTemplate(element, function (template) {
             parent.addComment("slicky-template-" + template.id, false, function (comment) {
                 _this.plugins.onProcessTemplate({

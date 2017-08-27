@@ -12,22 +12,28 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var templates_1 = require("@slicky/templates");
 var utils_1 = require("@slicky/utils");
-var TemplateSetupComponent = (function (_super) {
-    __extends(TemplateSetupComponent, _super);
-    function TemplateSetupComponent(hash) {
+var core_1 = require("@slicky/core");
+var TemplateSetupDirective = (function (_super) {
+    __extends(TemplateSetupDirective, _super);
+    function TemplateSetupDirective(hash, type) {
         var _this = _super.call(this) || this;
         _this.hash = hash;
+        _this.type = type;
         return _this;
     }
-    TemplateSetupComponent.prototype.render = function () {
+    TemplateSetupDirective.prototype.render = function () {
+        var init = this.type === core_1.DirectiveDefinitionType.Directive ?
+            "var directive = root.getProvider(\"directivesProvider\").create(" + this.hash + ", parent, root.getProvider(\"container\"));" :
+            ("var tmpl = root.getProvider(\"templatesProvider\").createFrom(" + this.hash + ", parent, tmpl);\n" +
+                "var directive = tmpl.getProvider(\"component\");");
         return ("(function(tmpl) {\n" +
-            ("\tvar tmpl = root.getProvider(\"templatesProvider\").createFrom(" + this.hash + ", tmpl);\n") +
+            (utils_1.indent(init) + "\n") +
             (utils_1.indent(this.renderSetup()) + "\n") +
             "})(tmpl);");
     };
-    return TemplateSetupComponent;
+    return TemplateSetupDirective;
 }(templates_1.TemplateSetup));
-exports.TemplateSetupComponent = TemplateSetupComponent;
+exports.TemplateSetupDirective = TemplateSetupDirective;
 var TemplateSetupComponentRender = (function (_super) {
     __extends(TemplateSetupComponentRender, _super);
     function TemplateSetupComponentRender() {
@@ -48,7 +54,7 @@ var TemplateSetupDirectiveOutput = (function (_super) {
         return _this;
     }
     TemplateSetupDirectiveOutput.prototype.render = function () {
-        return ("tmpl.getProvider(\"component\")." + this.output + ".subscribe(function($value) {\n" +
+        return ("directive." + this.output + ".subscribe(function($value) {\n" +
             "\troot.run(function() {\n" +
             ("\t\t" + this.call + ";\n") +
             "\t});\n" +
@@ -63,24 +69,29 @@ var TemplateSetupDirectiveOnInit = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     TemplateSetupDirectiveOnInit.prototype.render = function () {
-        return "tmpl.getProvider(\"component\").onInit();";
+        return "directive.onInit();";
     };
     return TemplateSetupDirectiveOnInit;
 }(templates_1.TemplateSetup));
 exports.TemplateSetupDirectiveOnInit = TemplateSetupDirectiveOnInit;
-var TemplateSetupDirectiveOnDestroy = (function (_super) {
-    __extends(TemplateSetupDirectiveOnDestroy, _super);
-    function TemplateSetupDirectiveOnDestroy() {
-        return _super !== null && _super.apply(this, arguments) || this;
+var TemplateSetupTemplateOnDestroy = (function (_super) {
+    __extends(TemplateSetupTemplateOnDestroy, _super);
+    function TemplateSetupTemplateOnDestroy(code, callParent) {
+        if (callParent === void 0) { callParent = false; }
+        var _this = _super.call(this) || this;
+        _this.code = code;
+        _this.callParent = callParent;
+        return _this;
     }
-    TemplateSetupDirectiveOnDestroy.prototype.render = function () {
-        return ("tmpl.parent.onDestroy(function() {\n" +
-            "\ttmpl.getProvider(\"component\").onDestroy();\n" +
+    TemplateSetupTemplateOnDestroy.prototype.render = function () {
+        var callee = this.callParent ? '.parent' : '';
+        return ("tmpl" + callee + ".onDestroy(function() {\n" +
+            (utils_1.indent(this.code) + "\n") +
             "});");
     };
-    return TemplateSetupDirectiveOnDestroy;
+    return TemplateSetupTemplateOnDestroy;
 }(templates_1.TemplateSetup));
-exports.TemplateSetupDirectiveOnDestroy = TemplateSetupDirectiveOnDestroy;
+exports.TemplateSetupTemplateOnDestroy = TemplateSetupTemplateOnDestroy;
 var TemplateSetupComponentHostElement = (function (_super) {
     __extends(TemplateSetupComponentHostElement, _super);
     function TemplateSetupComponentHostElement(property) {
@@ -94,3 +105,37 @@ var TemplateSetupComponentHostElement = (function (_super) {
     return TemplateSetupComponentHostElement;
 }(templates_1.TemplateSetup));
 exports.TemplateSetupComponentHostElement = TemplateSetupComponentHostElement;
+var TemplateSetupDirectivePropertyWrite = (function (_super) {
+    __extends(TemplateSetupDirectivePropertyWrite, _super);
+    function TemplateSetupDirectivePropertyWrite(property, value, rootComponent) {
+        if (rootComponent === void 0) { rootComponent = false; }
+        var _this = _super.call(this) || this;
+        _this.property = property;
+        _this.value = value;
+        _this.rootComponent = rootComponent;
+        return _this;
+    }
+    TemplateSetupDirectivePropertyWrite.prototype.render = function () {
+        var target = this.rootComponent ? 'root.getProvider("component")' : 'directive';
+        return target + "." + this.property + " = " + this.value + ";";
+    };
+    return TemplateSetupDirectivePropertyWrite;
+}(templates_1.TemplateSetup));
+exports.TemplateSetupDirectivePropertyWrite = TemplateSetupDirectivePropertyWrite;
+var TemplateSetupDirectiveMethodCall = (function (_super) {
+    __extends(TemplateSetupDirectiveMethodCall, _super);
+    function TemplateSetupDirectiveMethodCall(method, args, rootComponent) {
+        if (rootComponent === void 0) { rootComponent = false; }
+        var _this = _super.call(this) || this;
+        _this.method = method;
+        _this.args = args;
+        _this.rootComponent = rootComponent;
+        return _this;
+    }
+    TemplateSetupDirectiveMethodCall.prototype.render = function () {
+        var target = this.rootComponent ? 'root.getProvider("component")' : 'directive';
+        return target + "." + this.method + "(" + this.args + ");";
+    };
+    return TemplateSetupDirectiveMethodCall;
+}(templates_1.TemplateSetup));
+exports.TemplateSetupDirectiveMethodCall = TemplateSetupDirectiveMethodCall;

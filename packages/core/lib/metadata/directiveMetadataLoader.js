@@ -124,7 +124,6 @@ var DirectiveMetadataLoader = (function () {
             onInit: utils_1.isFunction(directiveType.prototype.onInit),
             onDestroy: utils_1.isFunction(directiveType.prototype.onDestroy),
             onUpdate: utils_1.isFunction(directiveType.prototype.onUpdate),
-            onCheckUpdates: utils_1.isFunction(directiveType.prototype.onCheckUpdates),
             inputs: inputs,
             outputs: outputs,
             elements: elements,
@@ -137,7 +136,6 @@ var DirectiveMetadataLoader = (function () {
         if (annotation instanceof component_1.ComponentAnnotationDefinition) {
             definition.type = DirectiveDefinitionType.Component;
             definition.template = annotation.template;
-            definition.changeDetection = annotation.changeDetection;
             definition.childDirectives = childDirectives;
             definition.childrenDirectives = childrenDirectives;
             if (annotation.controllerAs) {
@@ -177,7 +175,6 @@ var DirectiveMetadataLoader = (function () {
         ];
         if (annotation instanceof component_1.ComponentAnnotationDefinition) {
             parts.push(annotation.template);
-            parts.push(annotation.changeDetection + '');
             parts.push(utils_1.map(annotation.directives, function (directive) { return utils_1.stringify(directive); }).join(''));
             parts.push(utils_1.map(annotation.filters, function (filter) { return utils_1.stringify(filter); }).join(''));
         }

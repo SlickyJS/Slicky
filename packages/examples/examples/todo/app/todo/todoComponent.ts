@@ -1,13 +1,15 @@
-import {Component, Input, Output, OnInit, OnDestroy} from '@slicky/core';
+import {Component, Input, Output, OnInit, OnDestroy, OnUpdate, ElementRef} from '@slicky/core';
 import {EventEmitter} from '@slicky/event-emitter';
 import {Todo} from './todo';
+import {IconDirective} from '../helpers';
 
 
 @Component({
 	selector: 'li[todo]',
 	template: require('./todoComponentTemplate.html'),
+	directives: [IconDirective],
 })
-export class TodoComponent implements OnInit, OnDestroy
+export class TodoComponent implements OnInit, OnDestroy, OnUpdate
 {
 
 
@@ -25,16 +27,32 @@ export class TodoComponent implements OnInit, OnDestroy
 
 	public hoveringDone: boolean = false;
 
+	private el: ElementRef;
+
+
+	constructor(el: ElementRef)
+	{
+		this.el = el;
+	}
+
 
 	public onInit(): void
 	{
-		console.log(`Initialized todo "${this.todo.text}"`);
+		console.log(`TodoComponent: initialized todo "${this.todo.text}" in:`);
+		console.log(this.el.nativeElement);
 	}
 
 
 	public onDestroy(): void
 	{
-		console.log(`Destroyed todo "${this.todo.text}"`);
+		console.log(`TodoComponent: destroyed todo "${this.todo.text}"`);
+	}
+
+
+	public onUpdate(input: string, value: any): void
+	{
+		console.log(`TodoComponent: updated "${input}" with:`);
+		console.log(value);
 	}
 
 

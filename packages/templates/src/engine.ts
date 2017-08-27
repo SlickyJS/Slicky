@@ -201,6 +201,7 @@ export class Engine
 
 		let innerProgress = progress.fork();
 		innerProgress.localVariables = merge(innerProgress.localVariables, inject);
+		innerProgress.inTemplate = true;
 
 		return builder.addTemplate(element, (template: t.TemplateMethodTemplate) => {
 			parent.addComment(`slicky-template-${template.id}`, false, (comment: t.TemplateNodeComment) => {

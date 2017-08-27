@@ -12,7 +12,6 @@ import {ChildrenDirectiveDefinition} from './childrenDirective';
 import {DirectiveAnnotationDefinition} from './directive';
 import {ComponentAnnotationDefinition} from './component';
 import {FilterDefinition} from './filter';
-import {ChangeDetectionStrategy} from '../changeDetection';
 import {FilterInterface} from '../filters';
 
 
@@ -129,7 +128,6 @@ export declare interface DirectiveDefinition {
 	onInit: boolean,
 	onDestroy: boolean,
 	onUpdate: boolean,
-	onCheckUpdates: boolean,
 	inputs: DirectiveDefinitionInputsList,
 	outputs: DirectiveDefinitionOutputsList,
 	elements: DirectiveDefinitionElementsList,
@@ -138,7 +136,6 @@ export declare interface DirectiveDefinition {
 	childDirectives?: DirectiveDefinitionChildDirectivesList,
 	childrenDirectives?: DirectiveDefinitionChildrenDirectivesList,
 	template?: string,
-	changeDetection?: ChangeDetectionStrategy,
 	directives?: DirectiveDefinitionDirectivesList,
 	filters?: DirectiveDefinitionFiltersList,
 	[name: string]: any,
@@ -272,7 +269,6 @@ export class DirectiveMetadataLoader
 			onInit: isFunction(directiveType.prototype.onInit),
 			onDestroy: isFunction(directiveType.prototype.onDestroy),
 			onUpdate: isFunction(directiveType.prototype.onUpdate),
-			onCheckUpdates: isFunction(directiveType.prototype.onCheckUpdates),
 			inputs: inputs,
 			outputs: outputs,
 			elements: elements,
@@ -287,7 +283,6 @@ export class DirectiveMetadataLoader
 		if (annotation instanceof ComponentAnnotationDefinition) {
 			definition.type = DirectiveDefinitionType.Component;
 			definition.template = annotation.template;
-			definition.changeDetection = annotation.changeDetection;
 			definition.childDirectives = childDirectives;
 			definition.childrenDirectives = childrenDirectives;
 
@@ -339,7 +334,6 @@ export class DirectiveMetadataLoader
 
 		if (annotation instanceof ComponentAnnotationDefinition) {
 			parts.push(annotation.template);
-			parts.push(annotation.changeDetection + '');
 			parts.push(map(annotation.directives, (directive: ClassType<any>) => stringify(directive)).join(''));
 			parts.push(map(annotation.filters, (filter: ClassType<FilterInterface>) => stringify(filter)).join(''));
 		}

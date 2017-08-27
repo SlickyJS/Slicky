@@ -21,7 +21,9 @@ var DocumentWalker = (function () {
         return parent.childNodes;
     };
     DocumentWalker.prototype.getAttribute = function (node, name) {
-        var attr = utils_1.find(node.attributes, function (attribute) { return attribute.name === name; });
+        var finder = function (attribute) { return attribute.name === name; };
+        var attr = utils_1.find(node.attributes, finder) ||
+            utils_1.find(node.properties, finder);
         return utils_1.exists(attr) ? attr.value : undefined;
     };
     return DocumentWalker;

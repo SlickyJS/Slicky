@@ -1,6 +1,5 @@
 import { ClassType } from '@slicky/lang';
 import { EventEmitter } from '@slicky/event-emitter';
-import { ChangeDetectionStrategy } from '../changeDetection';
 import { FilterInterface } from '../filters';
 export declare enum DirectiveDefinitionType {
     Directive = 0,
@@ -67,7 +66,6 @@ export interface DirectiveDefinition {
     onInit: boolean;
     onDestroy: boolean;
     onUpdate: boolean;
-    onCheckUpdates: boolean;
     inputs: DirectiveDefinitionInputsList;
     outputs: DirectiveDefinitionOutputsList;
     elements: DirectiveDefinitionElementsList;
@@ -76,7 +74,6 @@ export interface DirectiveDefinition {
     childDirectives?: DirectiveDefinitionChildDirectivesList;
     childrenDirectives?: DirectiveDefinitionChildrenDirectivesList;
     template?: string;
-    changeDetection?: ChangeDetectionStrategy;
     directives?: DirectiveDefinitionDirectivesList;
     filters?: DirectiveDefinitionFiltersList;
     [name: string]: any;

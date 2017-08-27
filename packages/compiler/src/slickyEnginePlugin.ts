@@ -1,10 +1,10 @@
 import {EnginePlugin, OnProcessElementArgument, OnExpressionVariableHookArgument} from '@slicky/templates';
-import {DirectiveDefinition, DirectiveDefinitionDirective, DirectiveDefinitionInput, DirectiveDefinitionOutput, DirectiveDefinitionElement} from '@slicky/core';
-import {forEach, find} from '@slicky/utils';
+import {forEach, find, exists} from '@slicky/utils';
+import * as c from '@slicky/core';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
+import * as s from './nodes';
 import {Compiler} from './compiler';
-import {TemplateSetupComponent, TemplateSetupComponentRender, TemplateSetupDirectiveOutput, TemplateSetupDirectiveOnInit, TemplateSetupDirectiveOnDestroy, TemplateSetupComponentHostElement} from './nodes';
 
 
 export class SlickyEnginePlugin extends EnginePlugin
@@ -13,12 +13,12 @@ export class SlickyEnginePlugin extends EnginePlugin
 
 	private compiler: Compiler;
 
-	private metadata: DirectiveDefinition;
+	private metadata: c.DirectiveDefinition;
 
 	private expressionInParent: boolean = false;
 
 
-	constructor(compiler: Compiler, metadata: DirectiveDefinition)
+	constructor(compiler: Compiler, metadata: c.DirectiveDefinition)
 	{
 		super();
 
@@ -29,39 +29,77 @@ export class SlickyEnginePlugin extends EnginePlugin
 
 	public onProcessElement(element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): _.ASTHTMLNodeElement
 	{
-		forEach(this.metadata.elements, (hostElement: DirectiveDefinitionElement) => {
+		forEach(this.metadata.elements, (hostElement: c.DirectiveDefinitionElement) => {
 			if (!arg.matcher.matches(element, hostElement.selector)) {
 				return;
 			}
 
-			arg.element.addSetup(new TemplateSetupComponentHostElement(hostElement.property));
+			arg.element.addSetup(new s.TemplateSetupComponentHostElement(hostElement.property));
 		});
 
-		forEach(this.metadata.directives, (directive: DirectiveDefinitionDirective) => {
+		forEach(this.metadata.directives, (directive: c.DirectiveDefinitionDirective) => {
 			if (!arg.matcher.matches(element, directive.metadata.selector)) {
 				return;
 			}
 
-			this.compiler.compile(directive.metadata);
+			if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
+				this.compiler.compile(directive.metadata);
+			}
 
-			arg.element.addSetup(new TemplateSetupComponent(directive.metadata.hash), (setup: TemplateSetupComponent) => {
-				forEach(directive.metadata.inputs, (input: DirectiveDefinitionInput) => {
-					let property: _.ASTHTMLNodeExpressionAttribute = find(element.properties, (property: _.ASTHTMLNodeExpressionAttribute) => {
-						return property.name === input.name;
-					});
+			arg.element.addSetup(new s.TemplateSetupDirective(directive.metadata.hash, directive.metadata.type), (setup: s.TemplateSetupDirective) => {
+				let onTemplateDestroy: Array<string> = [];
 
-					if (property) {
-						element.properties.splice(element.properties.indexOf(property), 1);
-					} else if (input.required) {
+				forEach(directive.metadata.inputs, (input: c.DirectiveDefinitionInput) => {
+					let property: _.ASTHTMLNodeAttribute;
+					let isProperty: boolean = false;
+
+					let propertyFinder = (isProp: boolean) => {
+						return (prop: _.ASTHTMLNodeAttribute) => {
+							if (prop.name === input.name) {
+								property = prop;
+								isProperty = isProp;
+
+								return true;
+							}
+						}
+					};
+
+					property =
+						find(element.properties, propertyFinder(true)) ||
+						find(element.attributes, propertyFinder(false))
+					;
+
+					if (!exists(property) && input.required) {
 						// todo: error
 					}
 
-					this.expressionInParent = true;
-					setup.addSetupWatch(arg.engine.compileExpression(property.value, arg.progress, true), `tmpl.getProvider("component").${input.property} = value`);
-					this.expressionInParent = false;
+					if (!exists(property)) {
+						return;
+					}
+
+					if (isProperty) {
+						element.properties.splice(element.properties.indexOf(property), 1);
+
+						let directiveUpdate = directive.metadata.onUpdate ?
+							`; \ndirective.onUpdate('${property.name}', value)` :
+							''
+						;
+
+						this.expressionInParent = true;
+						setup.addSetupWatch(arg.engine.compileExpression(property.value, arg.progress, true), `directive.${input.property} = value${directiveUpdate}`);
+						this.expressionInParent = false;
+
+					} else {
+						element.attributes.splice(element.attributes.indexOf(property), 1);
+						setup.addSetup(new s.TemplateSetupDirectivePropertyWrite(input.property, `"${property.value}"`));
+
+						if (directive.metadata.onUpdate) {
+							setup.addSetup(new s.TemplateSetupDirectiveMethodCall('onUpdate', `"${input.property}", "${property.value}"`));
+						}
+					}
 				});
 
-				forEach(directive.metadata.outputs, (output: DirectiveDefinitionOutput) => {
+				forEach(directive.metadata.outputs, (output: c.DirectiveDefinitionOutput) => {
 					let event: _.ASTHTMLNodeExpressionAttributeEvent = find(element.events, (event: _.ASTHTMLNodeExpressionAttributeEvent) => {
 						return event.name === output.name;
 					});
@@ -70,18 +108,49 @@ export class SlickyEnginePlugin extends EnginePlugin
 						element.events.splice(element.events.indexOf(event), 1);
 					}
 
-					setup.addSetup(new TemplateSetupDirectiveOutput(output.property, arg.engine.compileExpression(event.value, arg.progress)));
+					setup.addSetup(new s.TemplateSetupDirectiveOutput(output.property, arg.engine.compileExpression(event.value, arg.progress)));
+				});
+
+				let removeChildDirectives = [];
+				forEach(this.metadata.childDirectives, (childDirective: c.DirectiveDefinitionChildDirective, i: number) => {
+					if (childDirective.directiveType === directive.directiveType && !arg.progress.inTemplate) {
+						setup.addSetup(new s.TemplateSetupDirectivePropertyWrite(childDirective.property, 'directive', true));
+						removeChildDirectives.push(i);
+					}
+				});
+
+				forEach(removeChildDirectives, (i: number) => {
+					this.metadata.childDirectives.splice(i, 1);
+				});
+
+				let removeChildrenDirectives = [];
+				forEach(this.metadata.childrenDirectives, (childrenDirectives: c.DirectiveDefinitionChildrenDirective, i: number) => {
+					if (childrenDirectives.directiveType === directive.directiveType) {
+						setup.addSetup(new s.TemplateSetupDirectiveMethodCall(`${childrenDirectives.property}.add.emit`, 'directive', true));
+						onTemplateDestroy.push(`root.getProvider("component").${childrenDirectives.property}.remove.emit(directive);`);
+						removeChildrenDirectives.push(i);
+					}
+				});
+
+				forEach(removeChildrenDirectives, (i: number) => {
+					this.metadata.childrenDirectives.splice(i, 1);
 				});
 
 				if (directive.metadata.onDestroy) {
-					setup.addSetup(new TemplateSetupDirectiveOnDestroy);
+					onTemplateDestroy.push('directive.onDestroy()');
+				}
+
+				if (onTemplateDestroy.length) {
+					setup.addSetup(new s.TemplateSetupTemplateOnDestroy(onTemplateDestroy.join('\n')));
 				}
 
 				if (directive.metadata.onInit) {
-					setup.addSetup(new TemplateSetupDirectiveOnInit);
+					setup.addSetup(new s.TemplateSetupDirectiveOnInit);
 				}
 
-				setup.addSetup(new TemplateSetupComponentRender);
+				if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
+					setup.addSetup(new s.TemplateSetupComponentRender);
+				}
 			});
 		});
 

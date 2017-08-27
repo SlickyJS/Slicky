@@ -20,20 +20,19 @@ export class TemplatesProvider
 	}
 
 
-	public createFrom(hash: number, parent: BaseTemplate): Template
+	public createFrom(hash: number, el: HTMLElement, parent: BaseTemplate): Template
 	{
 		let container: Container = parent.getProvider('container').fork();
 		let directivesProvider: DirectivesProvider = parent.getProvider('directivesProvider');
 
 		let templateType = this.platform.getTemplateTypeByHash(hash);
-		let componentType = directivesProvider.getDirectiveTypeByHash(hash);
-
 		let template: Template = new templateType(this.applicationTemplate, parent);
+		let component = directivesProvider.create(hash, el, container);
 
 		template.disableProvidersFromParent();
 		template.disableParametersFromParent();
 
-		template.addProvider('component', container.create(componentType));
+		template.addProvider('component', component);
 		template.addProvider('container', container);
 		template.addProvider('templatesProvider', this);
 		template.addProvider('directivesProvider', directivesProvider);

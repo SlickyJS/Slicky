@@ -1,13 +1,13 @@
 <div>
 	<div (mouseenter)="hoveringDone = true" (mouseleave)="hoveringDone = false" [style.background-color]="todo.color" class="uk-float-left uk-margin-right uk-text-center" style="width: 30px;">
-		<a (click.prevent)="toggle()" [style.color]="todo.textColor" [style.visibility]="todo.done || hoveringDone ? 'visible' : 'hidden'" href="#" class="uk-icon-link" uk-icon="icon: check"></a>
+		<a (click.prevent)="toggle()" [style.color]="todo.textColor" [style.visibility]="todo.done || hoveringDone ? 'visible' : 'hidden'" href="#" class="uk-icon-link" icon="check"></a>
 	</div>
 
 	<s *s:if="todo.done">{{ todo.text }}</s>
 	<span *s:if="!todo.done">{{ todo.text }}</span>
 
 	<div class="uk-float-right">
-		<a *s:if="!todo.done" (click.prevent)="update()" href="#" uk-icon="icon: pencil"></a>
-		<a (click.prevent)="remove()" href="#" uk-icon="icon: close"></a>
+		<a [hidden]="todo.done" (click.prevent)="update()" href="#" icon="pencil"></a>
+		<a (click.prevent)="remove()" href="#" icon="close"></a>
 	</div>
 </div>
