@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@slicky/core");
 var utils_1 = require("@slicky/utils");
-var core_2 = require("@slicky/core");
 var directivesProvider_1 = require("./directivesProvider");
 var templatesProvider_1 = require("./templatesProvider");
 var RootDirectiveRunner = (function () {
@@ -24,9 +23,9 @@ var RootDirectiveRunner = (function () {
     RootDirectiveRunner.prototype.runDirective = function (directiveType, metadata, el) {
         var directive = this.container.create(directiveType, [
             {
-                service: core_2.ElementRef,
+                service: core_1.ElementRef,
                 options: {
-                    useFactory: function () { return core_2.ElementRef.getForElement(el); },
+                    useFactory: function () { return core_1.ElementRef.getForElement(el); },
                 },
             },
         ]);
@@ -48,12 +47,19 @@ var RootDirectiveRunner = (function () {
         }
     };
     RootDirectiveRunner.prototype.runComponentTemplate = function (metadata, component, el) {
+        var _this = this;
         var templateType = this.platform.compileComponentTemplate(metadata);
         var template = new templateType(this.template, this.template);
         template.addProvider('component', component);
         template.addProvider('container', this.container);
         template.addProvider('templatesProvider', this.templatesProvider);
         template.addProvider('directivesProvider', this.directivesProvider);
+        utils_1.forEach(metadata.filters, function (filterData) {
+            var filter = _this.container.create(filterData.filterType);
+            template.addFilter(filterData.metadata.name, function (obj, args) {
+                return filter.transform.apply(filter, [obj].concat(args));
+            });
+        });
         template.render(el);
     };
     return RootDirectiveRunner;

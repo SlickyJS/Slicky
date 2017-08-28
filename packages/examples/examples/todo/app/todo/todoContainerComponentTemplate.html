@@ -8,12 +8,12 @@
 	<form class="uk-grid-collapse" uk-grid>
 		<div class="uk-width-5-6">
 			<div class="uk-inline" style="width: 100%;">
-				<a [hidden]="!currentTodo.text.length" (click.prevent)="saveTodo()" class="uk-form-icon uk-form-icon-flip" href="#" [icon]="updating ? 'check' : 'plus'"></a>
-				<input (input)="currentTodo.text = $this.value" [value]="currentTodo.text" placeholder="Add new todo (pick some nice color too 😉 👉)" class="uk-input" type="text" />
+				<a [hidden]="!currentText.length" (click.prevent)="saveTodo()" class="uk-form-icon uk-form-icon-flip" href="#" [icon]="updating ? 'check' : 'plus'"></a>
+				<input (input)="currentText = $this.value" [value]="currentText" placeholder="Add new todo (pick some nice color too 😉 👉)" class="uk-input" type="text" />
 			</div>
 		</div>
 		<div class="uk-width-1-6">
-			<input (input)="currentTodo.setColor($this.value)" [value]="currentTodo.color" type="color" class="uk-input" />
+			<input (input)="currentColor = $this.value" [value]="currentColor" type="color" class="uk-input" />
 		</div>
 	</form>
 </div>

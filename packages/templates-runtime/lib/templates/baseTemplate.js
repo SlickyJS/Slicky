@@ -12,6 +12,8 @@ var BaseTemplate = (function () {
         this.providersFromParent = true;
         this.parameters = {};
         this.parametersFromParent = true;
+        this.filters = {};
+        this.filtersFromParent = true;
         this.onDestroyed = [];
         this.application = application;
         this.parent = parent;
@@ -78,6 +80,32 @@ var BaseTemplate = (function () {
             return this.parameters[name] = this.application.getParameter(name);
         }
         return undefined;
+    };
+    BaseTemplate.prototype.disableFiltersFromParent = function () {
+        this.filtersFromParent = false;
+    };
+    BaseTemplate.prototype.addFilter = function (name, fn) {
+        this.filters[name] = fn;
+    };
+    BaseTemplate.prototype.getFilter = function (name, need) {
+        if (need === void 0) { need = true; }
+        if (utils_1.exists(this.filters[name])) {
+            return this.filters[name];
+        }
+        if (this.filtersFromParent && this.parent !== null) {
+            return this.filters[name] = this.parent.getFilter(name, false);
+        }
+        if (this.application) {
+            return this.filters[name] = this.application.getFilter(name, false);
+        }
+        if (need) {
+            throw new Error("Filter \"" + name + "\" is not registered.");
+        }
+        return undefined;
+    };
+    BaseTemplate.prototype.callFilter = function (name, modify, args) {
+        if (args === void 0) { args = []; }
+        return this.getFilter(name)(modify, args);
     };
     return BaseTemplate;
 }());

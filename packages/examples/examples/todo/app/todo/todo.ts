@@ -4,6 +4,9 @@ import {Colors, ColorBrightnessType} from '../utils';
 let TODOS_COUNTER = 0;
 
 
+export const DEFAULT_TODO_COLOR: string = '#ffc70e';
+
+
 export class Todo
 {
 
@@ -18,15 +21,18 @@ export class Todo
 
 	public text: string;
 
-	public color: string = '#ffc70e';
+	public color: string;
 
 	public textColor: string = Todo.TEXT_LIGHT;
 
+	public createdAt: Date = new Date;
 
-	constructor(text: string)
+
+	constructor(text: string, color: string = DEFAULT_TODO_COLOR)
 	{
 		this.id = TODOS_COUNTER++;
 		this.text = text;
+		this.setColor(color);
 	}
 
 
@@ -36,28 +42,21 @@ export class Todo
 	}
 
 
-	public setColor(color: string): void
+	public update(text: string, color: string): Todo
+	{
+		let todo = new Todo(text, color);
+
+		todo.id = this.id;
+		todo.createdAt = this.createdAt;
+
+		return todo;
+	}
+
+
+	private setColor(color: string): void
 	{
 		this.color = color;
 		this.textColor = Colors.getBrightnessType(this.color) === ColorBrightnessType.Light ? Todo.TEXT_DARK : Todo.TEXT_LIGHT;
-	}
-
-
-	public update(todo: Todo): Todo
-	{
-		this.text = todo.text;
-		this.setColor(todo.color);
-
-		return this;
-	}
-
-
-	public clone(): Todo
-	{
-		let todo = new Todo(this.text);
-		todo.setColor(this.color);
-
-		return todo;
 	}
 
 }

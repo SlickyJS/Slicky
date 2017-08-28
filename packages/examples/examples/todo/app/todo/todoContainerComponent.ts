@@ -1,7 +1,7 @@
 import {Component, HostElement, OnInit, OnDestroy, OnUpdate, ElementRef, ChildDirective, ChildrenDirective, ChildrenDirectivesStorage} from '@slicky/core';
 import {List} from 'immutable';
-import {Todo} from './todo';
-import {TodoComponent} from './todoComponent';
+import {Todo, DEFAULT_TODO_COLOR} from './todo';
+import {TodoComponent, } from './todoComponent';
 import {IconDirective} from '../helpers';
 
 
@@ -24,7 +24,9 @@ export class TodoContainerComponent implements OnInit, OnDestroy, OnUpdate
 	public todoDirectives = new ChildrenDirectivesStorage<TodoComponent>();
 
 
-	public currentTodo: Todo = new Todo('');
+	public currentText: string = '';
+
+	public currentColor: string = DEFAULT_TODO_COLOR;
 
 	public todos: List<Todo> = List();
 
@@ -77,14 +79,16 @@ export class TodoContainerComponent implements OnInit, OnDestroy, OnUpdate
 	public saveTodo(): void
 	{
 		if (this.updating) {
-			this.todos = this.todos.update(this.todos.keyOf(this.updating), (todo: Todo) => todo.update(this.currentTodo));
+			this.todos = this.todos.update(this.todos.keyOf(this.updating), (todo: Todo) => todo.update(this.currentText, this.currentColor));
 			this.updating = null;
 
 		} else {
-			this.todos = this.todos.push(this.currentTodo);
+			this.todos = this.todos.push(new Todo(this.currentText, this.currentColor));
 		}
 
-		this.currentTodo = new Todo('');
+		this.currentText = '';
+		this.currentColor = DEFAULT_TODO_COLOR;
+
 		this.inputText.focus();
 	}
 
@@ -99,7 +103,9 @@ export class TodoContainerComponent implements OnInit, OnDestroy, OnUpdate
 	public updateTodo(todo: Todo): void
 	{
 		this.updating = todo;
-		this.currentTodo = this.updating.clone();
+		this.currentText = todo.text;
+		this.currentColor = todo.color;
+
 		this.inputText.focus();
 	}
 

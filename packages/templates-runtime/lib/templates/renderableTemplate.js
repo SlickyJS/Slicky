@@ -21,7 +21,6 @@ var RenderableTemplate = (function (_super) {
         var _this = _super.call(this, application, parent) || this;
         _this._refreshing = 0;
         _this.nodes = [];
-        _this.filters = {};
         _this.listeners = [];
         _this.root = root;
         _this.addProvider('watcher', new watcherProvider_1.DefaultWatcherProvider);
@@ -51,11 +50,6 @@ var RenderableTemplate = (function (_super) {
     };
     RenderableTemplate.prototype.getFirstNode = function () {
         return utils_1.exists(this.nodes[0]) ? this.nodes[0] : null;
-    };
-    RenderableTemplate.prototype.addFilter = function (name, fn) {
-        this.filters[name] = fn;
-    };
-    RenderableTemplate.prototype.callFilter = function (name) {
     };
     RenderableTemplate.prototype._appendComment = function (parent, comment, fn) {
         if (fn === void 0) { fn = null; }

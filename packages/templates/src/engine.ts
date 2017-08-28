@@ -90,8 +90,7 @@ export class Engine
 			.replace(/\u0020{2,}/g, '\u0020')
 		;
 
-		// skip rendering of one non-breaking whitespace
-		if (value === '\u0020' || value === '') {
+		if (value === '') {
 			return;
 		}
 
@@ -251,6 +250,19 @@ export class Engine
 					progress: progress,
 					engine: this,
 				});
+			},
+			filterExpressionHook: (filter: tjs.ASTFilterExpression) => {
+				return new tjs.ASTCallExpression(
+					new tjs.ASTMemberExpression(
+						new tjs.ASTIdentifier('tmpl'),
+						new tjs.ASTIdentifier('callFilter')
+					),
+					[
+						new tjs.ASTStringLiteral(filter.name.name),
+						filter.modify,
+						new tjs.ASTArrayExpression(filter.arguments),
+					]
+				);
 			},
 		});
 

@@ -1,9 +1,8 @@
-import {IPlatform, OnInit, DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionInput} from '@slicky/core';
+import {ElementRef, FilterInterface, IPlatform, OnInit, DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionInput, DirectiveDefinitionFilter} from '@slicky/core';
 import {forEach, isFunction, exists} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {Container} from '@slicky/di';
 import {ApplicationTemplate, Template} from '@slicky/templates-runtime';
-import {ElementRef} from '@slicky/core';
 import {DirectivesProvider} from './directivesProvider';
 import {TemplatesProvider} from './templatesProvider';
 
@@ -93,6 +92,14 @@ export class RootDirectiveRunner
 		template.addProvider('container', this.container);
 		template.addProvider('templatesProvider', this.templatesProvider);
 		template.addProvider('directivesProvider', this.directivesProvider);
+
+		forEach(metadata.filters, (filterData: DirectiveDefinitionFilter) => {
+			let filter = <FilterInterface>this.container.create(filterData.filterType);
+
+			template.addFilter(filterData.metadata.name, (obj: any, args: Array<any>) => {
+				return filter.transform(obj, ...args);
+			});
+		});
 
 		template.render(el);
 	}

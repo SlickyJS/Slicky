@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = require("@slicky/utils");
 var TemplatesProvider = (function () {
     function TemplatesProvider(platform, applicationTemplate) {
         this.platform = platform;
@@ -11,12 +12,20 @@ var TemplatesProvider = (function () {
         var templateType = this.platform.getTemplateTypeByHash(hash);
         var template = new templateType(this.applicationTemplate, parent);
         var component = directivesProvider.create(hash, el, container);
+        var metadata = directivesProvider.getDirectiveMetadataByHash(hash);
         template.disableProvidersFromParent();
         template.disableParametersFromParent();
+        template.disableFiltersFromParent();
         template.addProvider('component', component);
         template.addProvider('container', container);
         template.addProvider('templatesProvider', this);
         template.addProvider('directivesProvider', directivesProvider);
+        utils_1.forEach(metadata.filters, function (filterData) {
+            var filter = container.create(filterData.filterType);
+            template.addFilter(filterData.metadata.name, function (obj, args) {
+                return filter.transform.apply(filter, [obj].concat(args));
+            });
+        });
         return template;
     };
     return TemplatesProvider;

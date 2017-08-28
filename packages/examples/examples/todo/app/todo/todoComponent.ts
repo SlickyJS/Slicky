@@ -1,13 +1,13 @@
 import {Component, Input, Output, OnInit, OnDestroy, OnUpdate, ElementRef} from '@slicky/core';
 import {EventEmitter} from '@slicky/event-emitter';
 import {Todo} from './todo';
-import {IconDirective} from '../helpers';
+import {IconDirective, TimeAgoInWordsComponent} from '../helpers';
 
 
 @Component({
 	selector: 'li[todo]',
 	template: require('./todoComponentTemplate.html'),
-	directives: [IconDirective],
+	directives: [IconDirective, TimeAgoInWordsComponent],
 })
 export class TodoComponent implements OnInit, OnDestroy, OnUpdate
 {

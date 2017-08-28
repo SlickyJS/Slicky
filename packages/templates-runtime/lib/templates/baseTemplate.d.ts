@@ -1,5 +1,6 @@
 import { Realm } from '@slicky/realm';
 import { ApplicationTemplate } from './applicationTemplate';
+export declare type TemplateFilterCallback = (obj: any, args: Array<any>) => any;
 export declare abstract class BaseTemplate {
     protected parent: BaseTemplate;
     protected children: Array<BaseTemplate>;
@@ -9,6 +10,8 @@ export declare abstract class BaseTemplate {
     private providersFromParent;
     private parameters;
     private parametersFromParent;
+    private filters;
+    private filtersFromParent;
     private onDestroyed;
     constructor(application?: ApplicationTemplate, parent?: BaseTemplate);
     abstract refresh(): void;
@@ -24,4 +27,8 @@ export declare abstract class BaseTemplate {
     }): void;
     setParameter(name: string, value: any): void;
     getParameter(name: string): any;
+    disableFiltersFromParent(): void;
+    addFilter(name: string, fn: TemplateFilterCallback): void;
+    getFilter(name: string, need?: boolean): TemplateFilterCallback;
+    callFilter(name: string, modify: any, args?: Array<any>): any;
 }

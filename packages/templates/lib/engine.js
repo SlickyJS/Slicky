@@ -62,7 +62,7 @@ var Engine = (function () {
         value = value
             .replace(/[\u000d\u0009\u000a\u0020]/g, '\u0020')
             .replace(/\u0020{2,}/g, '\u0020');
-        if (value === '\u0020' || value === '') {
+        if (value === '') {
             return;
         }
         parent.addText(value, insertBefore);
@@ -182,6 +182,13 @@ var Engine = (function () {
                     progress: progress,
                     engine: _this,
                 });
+            },
+            filterExpressionHook: function (filter) {
+                return new tjs.ASTCallExpression(new tjs.ASTMemberExpression(new tjs.ASTIdentifier('tmpl'), new tjs.ASTIdentifier('callFilter')), [
+                    new tjs.ASTStringLiteral(filter.name.name),
+                    filter.modify,
+                    new tjs.ASTArrayExpression(filter.arguments),
+                ]);
             },
         });
         return parser.parse().render();

@@ -6,14 +6,17 @@ var DirectivesProvider = (function () {
         var _this = this;
         this.directives = {};
         metadataLoader.loaded.subscribe(function (directive) {
-            _this.directives[directive.metadata.hash] = directive.directiveType;
+            _this.directives[directive.metadata.hash] = directive;
         });
     }
     DirectivesProvider.prototype.getDirectiveTypeByHash = function (hash) {
-        return this.directives[hash];
+        return this.directives[hash].directiveType;
+    };
+    DirectivesProvider.prototype.getDirectiveMetadataByHash = function (hash) {
+        return this.directives[hash].metadata;
     };
     DirectivesProvider.prototype.create = function (hash, el, container) {
-        var directiveType = this.directives[hash];
+        var directiveType = this.directives[hash].directiveType;
         return container.create(directiveType, [
             {
                 service: core_1.ElementRef,

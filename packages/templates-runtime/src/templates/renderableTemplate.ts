@@ -5,9 +5,6 @@ import {ApplicationTemplate} from './applicationTemplate';
 import {Template} from './template';
 
 
-export type TemplateFilterCallback = (obj: any, ...attr: Array<any>) => any;
-
-
 declare interface TemplateListener
 {
 	element: HTMLElement;
@@ -25,8 +22,6 @@ export abstract class RenderableTemplate extends BaseTemplate
 	public nodes: Array<Node> = [];
 
 	protected root: Template;
-
-	private filters: {[name: string]: TemplateFilterCallback} = {};
 
 	private listeners: Array<TemplateListener> = [];
 
@@ -78,18 +73,6 @@ export abstract class RenderableTemplate extends BaseTemplate
 	public getFirstNode(): Node
 	{
 		return exists(this.nodes[0]) ? this.nodes[0] : null;
-	}
-
-
-	public addFilter(name: string, fn: TemplateFilterCallback): void
-	{
-		this.filters[name] = fn;
-	}
-
-
-	public callFilter(name: string): any
-	{
-		// todo
 	}
 
 

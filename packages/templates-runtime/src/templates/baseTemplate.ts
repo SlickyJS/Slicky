@@ -3,6 +3,9 @@ import {forEach, exists} from '@slicky/utils';
 import {ApplicationTemplate} from './applicationTemplate';
 
 
+export type TemplateFilterCallback = (obj: any, args: Array<any>) => any;
+
+
 export abstract class BaseTemplate
 {
 
@@ -22,6 +25,10 @@ export abstract class BaseTemplate
 	private parameters: {[name: string]: any} = {};
 
 	private parametersFromParent: boolean = true;
+
+	private filters: {[name: string]: TemplateFilterCallback} = {};
+
+	private filtersFromParent: boolean = true;
 
 	private onDestroyed: Array<() => void> = [];
 
@@ -136,6 +143,46 @@ export abstract class BaseTemplate
 		}
 
 		return undefined;
+	}
+
+
+	public disableFiltersFromParent(): void
+	{
+		this.filtersFromParent = false;
+	}
+
+
+	public addFilter(name: string, fn: TemplateFilterCallback): void
+	{
+		this.filters[name] = fn;
+	}
+
+
+	public getFilter(name: string, need: boolean = true): TemplateFilterCallback
+	{
+		if (exists(this.filters[name])) {
+			return this.filters[name];
+		}
+
+		if (this.filtersFromParent && this.parent !== null) {
+			return this.filters[name] = this.parent.getFilter(name, false);
+		}
+
+		if (this.application) {
+			return this.filters[name] = this.application.getFilter(name, false);
+		}
+
+		if (need) {
+			throw new Error(`Filter "${name}" is not registered.`);
+		}
+
+		return undefined;
+	}
+
+
+	public callFilter(name: string, modify: any, args: Array<any> = []): any
+	{
+		return this.getFilter(name)(modify, args);
 	}
 
 }
