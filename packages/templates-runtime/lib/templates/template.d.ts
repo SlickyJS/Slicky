@@ -7,5 +7,5 @@ export declare abstract class Template extends RenderableTemplate {
     static childTemplateExtend(child: any): void;
     abstract main(el: HTMLElement): void;
     render(el: HTMLElement): void;
-    _createEmbeddedTemplatesContainer(parent: RenderableTemplate, el: Node, factory: EmbeddedTemplateFactory): EmbeddedTemplatesContainer;
+    _createEmbeddedTemplatesContainer(parent: RenderableTemplate, el: Node, factory: EmbeddedTemplateFactory, setup?: (template: EmbeddedTemplatesContainer) => void): EmbeddedTemplatesContainer;
 }

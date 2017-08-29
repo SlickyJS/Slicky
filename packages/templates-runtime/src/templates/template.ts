@@ -1,4 +1,4 @@
-import {extend} from '@slicky/utils';
+import {extend, isFunction} from '@slicky/utils';
 import {BaseTemplate} from './baseTemplate';
 import {RenderableTemplate} from './renderableTemplate';
 import {ApplicationTemplate} from './applicationTemplate';
@@ -32,9 +32,15 @@ export abstract class Template extends RenderableTemplate
 	}
 
 
-	public _createEmbeddedTemplatesContainer(parent: RenderableTemplate, el: Node, factory: EmbeddedTemplateFactory): EmbeddedTemplatesContainer
+	public _createEmbeddedTemplatesContainer(parent: RenderableTemplate, el: Node, factory: EmbeddedTemplateFactory, setup: (template: EmbeddedTemplatesContainer) => void = null): EmbeddedTemplatesContainer
 	{
-		return new EmbeddedTemplatesContainer(this.application, el, factory, parent, this);
+		let container = new EmbeddedTemplatesContainer(this.application, el, factory, parent, this);
+
+		if (isFunction(setup)) {
+			setup(container);
+		}
+
+		return container;
 	}
 
 }

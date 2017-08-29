@@ -198,17 +198,17 @@ export class TemplateSetupIf extends TemplateSetup
 	public render(): string
 	{
 		return (
-			`(function(tmpl) {\n` +
-			`	var tmpl = root._createEmbeddedTemplatesContainer(tmpl, parent, function(tmpl, parent, setup) {\n` +
-			`		return root.template${this.id}(tmpl, parent, setup);\n` +
+			`root._createEmbeddedTemplatesContainer(tmpl, parent, function(tmpl, parent, setup) {\n` +
+			`	return root.template${this.id}(tmpl, parent, setup);\n` +
+			`}, function(tmpl) {\n` +
+			`	tmpl.getProvider("ifHelperFactory")(tmpl, function(helper) {\n` +
+			`		tmpl.getProvider("watcher").watch(function() {\n` +
+			`			${this.watch};\n` +
+			`		}, function(value) {\n` +
+			`			helper.check(value);\n` +
+			`		});\n` +
 			`	});\n` +
-			`	var helper = tmpl.getProvider("ifHelperFactory")(tmpl);\n` +
-			`	tmpl.getProvider("watcher").watch(function() {\n` +
-			`		${this.watch};\n` +
-			`	}, function(value) {\n` +
-			`		helper.check(value);\n` +
-			`	});\n` +
-			`})(tmpl);`
+			`});`
 		);
 	}
 
@@ -244,32 +244,22 @@ export class TemplateSetupForOf extends TemplateSetup
 
 	public render(): string
 	{
-		let argsList = [];
-
-		if (this.forIndex) {
-			argsList.push(`"${this.forIndex}"`);
-		} else if (this.trackBy) {
-			argsList.push('null');
-		}
-
-		if (this.trackBy) {
-			argsList.push(this.trackBy);
-		}
-
-		let args = argsList.length ? `, ${indent(argsList.join(', '))}` : '';
+		let forItem = `"${this.forItem}"`;
+		let forIndex = this.forIndex ? `"${this.forIndex}"` : 'null';
+		let forTrackBy = this.trackBy ? this.trackBy : 'null';
 
 		return (
-			`(function(tmpl) {\n` +
-			`	var tmpl = root._createEmbeddedTemplatesContainer(tmpl, parent, function(tmpl, parent, setup) {\n` +
-			`		return root.template${this.id}(tmpl, parent, setup);\n` +
+			`root._createEmbeddedTemplatesContainer(tmpl, parent, function(tmpl, parent, setup) {\n` +
+			`	return root.template${this.id}(tmpl, parent, setup);\n` +
+			`}, function(tmpl) {\n` +
+			`	tmpl.getProvider("forOfHelperFactory")(tmpl, ${forItem}, ${forIndex}, ${forTrackBy}, function(helper) {\n` +
+			`		tmpl.getProvider("watcher").watch(function() {\n` +
+			`			${this.forOf};\n` +
+			`		}, function(value) {\n` +
+			`			helper.check(value);\n` +
+			`		});\n` +
 			`	});\n` +
-			`	var helper = tmpl.getProvider("forOfHelperFactory")(tmpl, "${this.forItem}"${args});\n` +
-			`	tmpl.getProvider("watcher").watch(function() {\n` +
-			`		${this.forOf};\n` +
-			`	}, function(value) {\n` +
-			`		helper.check(value);\n` +
-			`	});\n` +
-			`})(tmpl);`
+			`});`
 		);
 	}
 

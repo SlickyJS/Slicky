@@ -25,8 +25,13 @@ var Template = (function (_super) {
         el.innerHTML = '';
         this.main(el);
     };
-    Template.prototype._createEmbeddedTemplatesContainer = function (parent, el, factory) {
-        return new embeddedTemplatesContainer_1.EmbeddedTemplatesContainer(this.application, el, factory, parent, this);
+    Template.prototype._createEmbeddedTemplatesContainer = function (parent, el, factory, setup) {
+        if (setup === void 0) { setup = null; }
+        var container = new embeddedTemplatesContainer_1.EmbeddedTemplatesContainer(this.application, el, factory, parent, this);
+        if (utils_1.isFunction(setup)) {
+            setup(container);
+        }
+        return container;
     };
     return Template;
 }(renderableTemplate_1.RenderableTemplate));

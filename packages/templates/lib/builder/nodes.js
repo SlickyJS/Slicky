@@ -129,17 +129,17 @@ var TemplateSetupIf = (function (_super) {
         return _this;
     }
     TemplateSetupIf.prototype.render = function () {
-        return ("(function(tmpl) {\n" +
-            "\tvar tmpl = root._createEmbeddedTemplatesContainer(tmpl, parent, function(tmpl, parent, setup) {\n" +
-            ("\t\treturn root.template" + this.id + "(tmpl, parent, setup);\n") +
+        return ("root._createEmbeddedTemplatesContainer(tmpl, parent, function(tmpl, parent, setup) {\n" +
+            ("\treturn root.template" + this.id + "(tmpl, parent, setup);\n") +
+            "}, function(tmpl) {\n" +
+            "\ttmpl.getProvider(\"ifHelperFactory\")(tmpl, function(helper) {\n" +
+            "\t\ttmpl.getProvider(\"watcher\").watch(function() {\n" +
+            ("\t\t\t" + this.watch + ";\n") +
+            "\t\t}, function(value) {\n" +
+            "\t\t\thelper.check(value);\n" +
+            "\t\t});\n" +
             "\t});\n" +
-            "\tvar helper = tmpl.getProvider(\"ifHelperFactory\")(tmpl);\n" +
-            "\ttmpl.getProvider(\"watcher\").watch(function() {\n" +
-            ("\t\t" + this.watch + ";\n") +
-            "\t}, function(value) {\n" +
-            "\t\thelper.check(value);\n" +
-            "\t});\n" +
-            "})(tmpl);");
+            "});");
     };
     return TemplateSetupIf;
 }(TemplateSetup));
@@ -158,28 +158,20 @@ var TemplateSetupForOf = (function (_super) {
         return _this;
     }
     TemplateSetupForOf.prototype.render = function () {
-        var argsList = [];
-        if (this.forIndex) {
-            argsList.push("\"" + this.forIndex + "\"");
-        }
-        else if (this.trackBy) {
-            argsList.push('null');
-        }
-        if (this.trackBy) {
-            argsList.push(this.trackBy);
-        }
-        var args = argsList.length ? ", " + utils_1.indent(argsList.join(', ')) : '';
-        return ("(function(tmpl) {\n" +
-            "\tvar tmpl = root._createEmbeddedTemplatesContainer(tmpl, parent, function(tmpl, parent, setup) {\n" +
-            ("\t\treturn root.template" + this.id + "(tmpl, parent, setup);\n") +
+        var forItem = "\"" + this.forItem + "\"";
+        var forIndex = this.forIndex ? "\"" + this.forIndex + "\"" : 'null';
+        var forTrackBy = this.trackBy ? this.trackBy : 'null';
+        return ("root._createEmbeddedTemplatesContainer(tmpl, parent, function(tmpl, parent, setup) {\n" +
+            ("\treturn root.template" + this.id + "(tmpl, parent, setup);\n") +
+            "}, function(tmpl) {\n" +
+            ("\ttmpl.getProvider(\"forOfHelperFactory\")(tmpl, " + forItem + ", " + forIndex + ", " + forTrackBy + ", function(helper) {\n") +
+            "\t\ttmpl.getProvider(\"watcher\").watch(function() {\n" +
+            ("\t\t\t" + this.forOf + ";\n") +
+            "\t\t}, function(value) {\n" +
+            "\t\t\thelper.check(value);\n" +
+            "\t\t});\n" +
             "\t});\n" +
-            ("\tvar helper = tmpl.getProvider(\"forOfHelperFactory\")(tmpl, \"" + this.forItem + "\"" + args + ");\n") +
-            "\ttmpl.getProvider(\"watcher\").watch(function() {\n" +
-            ("\t\t" + this.forOf + ";\n") +
-            "\t}, function(value) {\n" +
-            "\t\thelper.check(value);\n" +
-            "\t});\n" +
-            "})(tmpl);");
+            "});");
     };
     return TemplateSetupForOf;
 }(TemplateSetup));
