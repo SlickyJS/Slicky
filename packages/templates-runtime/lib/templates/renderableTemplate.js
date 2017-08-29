@@ -21,7 +21,9 @@ var RenderableTemplate = (function (_super) {
         var _this = _super.call(this, application, parent) || this;
         _this._refreshing = 0;
         _this.nodes = [];
+        _this.children = [];
         _this.initialized = false;
+        _this.allowRefreshFromParent = true;
         _this.listeners = [];
         _this.root = root;
         _this.addProvider('watcher', new watcherProvider_1.DefaultWatcherProvider);
@@ -34,7 +36,9 @@ var RenderableTemplate = (function (_super) {
         this._refreshing++;
         this.getProvider('watcher').check();
         utils_1.forEach(this.children, function (child) {
-            child.refresh();
+            if (child.allowRefreshFromParent) {
+                child.refresh();
+            }
         });
         this._refreshing--;
     };

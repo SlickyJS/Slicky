@@ -4,8 +4,10 @@ import { Template } from './template';
 export declare abstract class RenderableTemplate extends BaseTemplate {
     _refreshing: number;
     nodes: Array<Node>;
+    protected children: Array<RenderableTemplate>;
     protected root: Template;
     protected initialized: boolean;
+    protected allowRefreshFromParent: boolean;
     private listeners;
     constructor(application: ApplicationTemplate, parent?: BaseTemplate, root?: Template);
     refresh(): void;

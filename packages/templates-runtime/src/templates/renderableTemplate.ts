@@ -21,9 +21,13 @@ export abstract class RenderableTemplate extends BaseTemplate
 
 	public nodes: Array<Node> = [];
 
+	protected children: Array<RenderableTemplate> = [];
+
 	protected root: Template;
 
 	protected initialized: boolean = false;
+
+	protected allowRefreshFromParent: boolean = true;
 
 	private listeners: Array<TemplateListener> = [];
 
@@ -47,8 +51,10 @@ export abstract class RenderableTemplate extends BaseTemplate
 
 		this.getProvider('watcher').check();
 
-		forEach(this.children, (child: BaseTemplate) => {
-			child.refresh();
+		forEach(this.children, (child: RenderableTemplate) => {
+			if (child.allowRefreshFromParent) {
+				child.refresh();
+			}
 		});
 
 		this._refreshing--;

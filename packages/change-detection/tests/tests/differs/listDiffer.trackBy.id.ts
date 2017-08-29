@@ -10,6 +10,12 @@ let data = {
 	c: {id: 2, char: 'c'},
 };
 
+let data_copy = {
+	a: {id: 0, char: 'a'},
+	b: {id: 1, char: 'b'},
+	c: {id: 2, char: 'c'},
+};
+
 
 describe('#Differs/ListDiffer.trackBy.id', () => {
 
@@ -86,8 +92,6 @@ describe('#Differs/ListDiffer.trackBy.id', () => {
 		it('should see changes', () => {
 			let differ = new ListDiffer([], trackBy);
 
-			expect(differ.check([])).to.be.eql([]);
-
 			expect(differ.check([data.a])).to.be.eql([
 				{
 					action: DifferAction.Add,
@@ -132,6 +136,20 @@ describe('#Differs/ListDiffer.trackBy.id', () => {
 					previousItem: data.a,
 					currentIndex: undefined,
 					currentItem: undefined,
+				},
+			]);
+		});
+
+		it('should see updated item', () => {
+			let differ = new ListDiffer([data.a], trackBy);
+
+			expect(differ.check([data_copy.a])).to.be.eql([
+				{
+					action: DifferAction.Update,
+					previousIndex: 0,
+					previousItem: data.a,
+					currentIndex: 0,
+					currentItem: data_copy.a,
 				},
 			]);
 		});

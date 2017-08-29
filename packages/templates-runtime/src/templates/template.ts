@@ -12,6 +12,8 @@ export abstract class Template extends RenderableTemplate
 	constructor(application: ApplicationTemplate, parent: BaseTemplate)
 	{
 		super(application, parent);
+
+		this.allowRefreshFromParent = false;
 	}
 
 

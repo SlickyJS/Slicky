@@ -63,11 +63,18 @@ var SlickyEnginePlugin = (function (_super) {
                     }
                     if (isProperty) {
                         element.properties.splice(element.properties.indexOf(property), 1);
-                        var directiveUpdate = directive.metadata.onUpdate ?
-                            "; \ndirective.onUpdate('" + property.name + "', value)" :
-                            '';
+                        var onUpdate = [
+                            "directive." + input.property + " = value"
+                        ];
+                        if (directive.metadata.onUpdate) {
+                            onUpdate.push("directive.onUpdate('" + property.name + "', value)");
+                        }
+                        if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
+                            onUpdate.push('tmpl.refresh()');
+                        }
+                        var watchOnParent = directive.metadata.type === c.DirectiveDefinitionType.Component;
                         _this.expressionInParent = true;
-                        setup.addSetupWatch(arg.engine.compileExpression(property.value, arg.progress, true), "directive." + input.property + " = value" + directiveUpdate);
+                        setup.addSetupWatch(arg.engine.compileExpression(property.value, arg.progress, true), onUpdate.join(';\n'), watchOnParent);
                         _this.expressionInParent = false;
                     }
                     else {

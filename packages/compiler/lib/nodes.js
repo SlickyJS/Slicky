@@ -23,13 +23,11 @@ var TemplateSetupDirective = (function (_super) {
     }
     TemplateSetupDirective.prototype.render = function () {
         var init = this.type === core_1.DirectiveDefinitionType.Directive ?
-            "var directive = root.getProvider(\"directivesProvider\").create(" + this.hash + ", parent, root.getProvider(\"container\"));" :
-            ("var tmpl = root.getProvider(\"templatesProvider\").createFrom(" + this.hash + ", parent, tmpl);\n" +
-                "var directive = tmpl.getProvider(\"component\");");
-        return ("(function(tmpl) {\n" +
-            (utils_1.indent(init) + "\n") +
+            "root.getProvider(\"directivesProvider\").create(" + this.hash + ", parent, root.getProvider(\"container\"), function(directive) {" :
+            "root.getProvider(\"templatesProvider\").createFrom(" + this.hash + ", parent, tmpl, function(tmpl, directive) {";
+        return (init + "\n" +
             (utils_1.indent(this.renderSetup()) + "\n") +
-            "})(tmpl);");
+            "});");
     };
     return TemplateSetupDirective;
 }(templates_1.TemplateSetup));
@@ -69,7 +67,9 @@ var TemplateSetupDirectiveOnInit = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     TemplateSetupDirectiveOnInit.prototype.render = function () {
-        return "directive.onInit();";
+        return ("tmpl.run(function() {\n" +
+            "\tdirective.onInit();\n" +
+            "});");
     };
     return TemplateSetupDirectiveOnInit;
 }(templates_1.TemplateSetup));

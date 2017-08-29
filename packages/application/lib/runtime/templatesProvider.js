@@ -6,7 +6,8 @@ var TemplatesProvider = (function () {
         this.platform = platform;
         this.applicationTemplate = applicationTemplate;
     }
-    TemplatesProvider.prototype.createFrom = function (hash, el, parent) {
+    TemplatesProvider.prototype.createFrom = function (hash, el, parent, setup) {
+        if (setup === void 0) { setup = null; }
         var container = parent.getProvider('container').fork();
         var directivesProvider = parent.getProvider('directivesProvider');
         var templateType = this.platform.getTemplateTypeByHash(hash);
@@ -26,6 +27,9 @@ var TemplatesProvider = (function () {
                 return filter.transform.apply(filter, [obj].concat(args));
             });
         });
+        if (utils_1.isFunction(setup)) {
+            setup(template, component);
+        }
         return template;
     };
     return TemplatesProvider;

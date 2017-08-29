@@ -16,7 +16,7 @@ export interface IWatcherProvider
 	disable(): void;
 
 
-	check(): void;
+	check(): boolean;
 
 
 	watch(getter: () => any, update: (value: any) => void): void;
@@ -39,11 +39,13 @@ export class DefaultWatcherProvider implements IWatcherProvider
 	}
 
 
-	public check(): void
+	public check(): boolean
 	{
 		if (!this.enabled) {
-			return;
+			return false;
 		}
+
+		let changed = false;
 
 		forEach(this.watchers, (watcher: Watcher) => {
 			let current = watcher.getter();
@@ -51,8 +53,12 @@ export class DefaultWatcherProvider implements IWatcherProvider
 			if (current !== watcher.current) {
 				watcher.update(current);
 				watcher.current = current;
+
+				changed = true;
 			}
 		});
+
+		return changed;
 	}
 
 

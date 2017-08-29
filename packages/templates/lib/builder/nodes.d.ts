@@ -2,7 +2,7 @@ export declare abstract class TemplateNodeSetupAware {
     setup: Array<TemplateSetup>;
     addSetup(setup: TemplateSetup, fn?: (setup: TemplateSetup) => void): void;
     addSetupParameterSet(name: string, value: string): void;
-    addSetupWatch(watch: string, update: string): void;
+    addSetupWatch(watch: string, update: string, callParent?: boolean): void;
     addSetupAddEventListener(name: string, callback: string, preventDefault?: boolean): void;
     addSetupIf(id: number, watch: string): void;
     addSetupForOf(id: number, forOf: string, forItem: string, forIndex?: string, trackBy?: string): void;
@@ -28,7 +28,8 @@ export declare class TemplateSetupAddEventListener extends TemplateSetup {
 export declare class TemplateSetupWatch extends TemplateSetup {
     watch: string;
     update: string;
-    constructor(watch: string, update: string);
+    callParent: boolean;
+    constructor(watch: string, update: string, callParent?: boolean);
     render(): string;
 }
 export declare class TemplateSetupIf extends TemplateSetup {

@@ -16,7 +16,9 @@ var embeddedTemplatesContainer_1 = require("./embeddedTemplatesContainer");
 var Template = (function (_super) {
     __extends(Template, _super);
     function Template(application, parent) {
-        return _super.call(this, application, parent) || this;
+        var _this = _super.call(this, application, parent) || this;
+        _this.allowRefreshFromParent = false;
+        return _this;
     }
     Template.childTemplateExtend = function (child) {
         utils_1.extend(child, this);

@@ -1,7 +1,7 @@
 import {IPlatform, FilterInterface, DirectiveDefinitionFilter} from '@slicky/core';
 import {Container} from '@slicky/di';
 import {ApplicationTemplate, BaseTemplate, Template} from '@slicky/templates-runtime';
-import {forEach} from '@slicky/utils';
+import {forEach, isFunction} from '@slicky/utils';
 import {DirectivesProvider} from './directivesProvider';
 
 
@@ -21,7 +21,7 @@ export class TemplatesProvider
 	}
 
 
-	public createFrom(hash: number, el: HTMLElement, parent: BaseTemplate): Template
+	public createFrom(hash: number, el: HTMLElement, parent: BaseTemplate, setup: (template: Template, component: any) => void = null): Template
 	{
 		let container: Container = parent.getProvider('container').fork();
 		let directivesProvider: DirectivesProvider = parent.getProvider('directivesProvider');
@@ -47,6 +47,10 @@ export class TemplatesProvider
 				return filter.transform(obj, ...args);
 			});
 		});
+
+		if (isFunction(setup)) {
+			setup(template, component)
+		}
 
 		return template;
 	}

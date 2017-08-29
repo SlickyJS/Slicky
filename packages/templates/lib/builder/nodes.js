@@ -25,8 +25,9 @@ var TemplateNodeSetupAware = (function () {
     TemplateNodeSetupAware.prototype.addSetupParameterSet = function (name, value) {
         this.setup.push(new TemplateSetupParameterSet(name, value));
     };
-    TemplateNodeSetupAware.prototype.addSetupWatch = function (watch, update) {
-        this.setup.push(new TemplateSetupWatch(watch, update));
+    TemplateNodeSetupAware.prototype.addSetupWatch = function (watch, update, callParent) {
+        if (callParent === void 0) { callParent = false; }
+        this.setup.push(new TemplateSetupWatch(watch, update, callParent));
     };
     TemplateNodeSetupAware.prototype.addSetupAddEventListener = function (name, callback, preventDefault) {
         if (preventDefault === void 0) { preventDefault = false; }
@@ -101,14 +102,17 @@ var TemplateSetupAddEventListener = (function (_super) {
 exports.TemplateSetupAddEventListener = TemplateSetupAddEventListener;
 var TemplateSetupWatch = (function (_super) {
     __extends(TemplateSetupWatch, _super);
-    function TemplateSetupWatch(watch, update) {
+    function TemplateSetupWatch(watch, update, callParent) {
+        if (callParent === void 0) { callParent = false; }
         var _this = _super.call(this) || this;
         _this.watch = watch;
         _this.update = update;
+        _this.callParent = callParent;
         return _this;
     }
     TemplateSetupWatch.prototype.render = function () {
-        return ("tmpl.getProvider(\"watcher\").watch(\n" +
+        var callee = this.callParent ? '.parent' : '';
+        return ("tmpl" + callee + ".getProvider(\"watcher\").watch(\n" +
             "\tfunction() {\n" +
             (utils_1.indent(this.watch, 2) + ";\n") +
             "\t},\n" +

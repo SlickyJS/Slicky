@@ -24,18 +24,14 @@ export class TemplateSetupDirective extends TemplateSetup
 	public render(): string
 	{
 		let init = this.type === DirectiveDefinitionType.Directive ?
-			`var directive = root.getProvider("directivesProvider").create(${this.hash}, parent, root.getProvider("container"));` :
-			(
-				`var tmpl = root.getProvider("templatesProvider").createFrom(${this.hash}, parent, tmpl);\n` +
-				`var directive = tmpl.getProvider("component");`
-			)
+			`root.getProvider("directivesProvider").create(${this.hash}, parent, root.getProvider("container"), function(directive) {` :
+			`root.getProvider("templatesProvider").createFrom(${this.hash}, parent, tmpl, function(tmpl, directive) {`
 		;
 
 		return (
-			`(function(tmpl) {\n` +
-			`${indent(init)}\n` +
+			`${init}\n` +
 			`${indent(this.renderSetup())}\n` +
-			`})(tmpl);`
+			`});`
 		);
 	}
 
@@ -92,7 +88,11 @@ export class TemplateSetupDirectiveOnInit extends TemplateSetup
 
 	public render(): string
 	{
-		return `directive.onInit();`;
+		return (
+			`tmpl.run(function() {\n` +
+			`	directive.onInit();\n` +
+			`});`
+		);
 	}
 
 }

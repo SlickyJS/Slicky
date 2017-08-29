@@ -23,9 +23,9 @@ export abstract class TemplateNodeSetupAware
 	}
 
 
-	public addSetupWatch(watch: string, update: string): void
+	public addSetupWatch(watch: string, update: string, callParent: boolean = false): void
 	{
-		this.setup.push(new TemplateSetupWatch(watch, update));
+		this.setup.push(new TemplateSetupWatch(watch, update, callParent));
 	}
 
 
@@ -150,20 +150,25 @@ export class TemplateSetupWatch extends TemplateSetup
 
 	public update: string;
 
+	public callParent: boolean;
 
-	constructor(watch: string, update: string)
+
+	constructor(watch: string, update: string, callParent: boolean = false)
 	{
 		super();
 
 		this.watch = watch;
 		this.update = update;
+		this.callParent = callParent;
 	}
 
 
 	public render(): string
 	{
+		let callee = this.callParent ? '.parent' : '';
+
 		return (
-			`tmpl.getProvider("watcher").watch(\n` +
+			`tmpl${callee}.getProvider("watcher").watch(\n` +
 			`	function() {\n` +
 			`${indent(this.watch, 2)};\n` +
 			`	},\n` +

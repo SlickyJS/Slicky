@@ -6,5 +6,5 @@ export declare class DirectivesProvider {
     constructor(metadataLoader: DirectiveMetadataLoader);
     getDirectiveTypeByHash(hash: number): ClassType<any>;
     getDirectiveMetadataByHash(hash: number): DirectiveDefinition;
-    create(hash: number, el: HTMLElement, container: Container): any;
+    create(hash: number, el: HTMLElement, container: Container, setup?: (directive: any) => void): any;
 }

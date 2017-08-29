@@ -80,13 +80,22 @@ export class SlickyEnginePlugin extends EnginePlugin
 					if (isProperty) {
 						element.properties.splice(element.properties.indexOf(property), 1);
 
-						let directiveUpdate = directive.metadata.onUpdate ?
-							`; \ndirective.onUpdate('${property.name}', value)` :
-							''
-						;
+						let onUpdate = [
+							`directive.${input.property} = value`
+						];
+
+						if (directive.metadata.onUpdate) {
+							onUpdate.push(`directive.onUpdate('${property.name}', value)`);
+						}
+
+						if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
+							onUpdate.push('tmpl.refresh()');
+						}
+
+						let watchOnParent = directive.metadata.type === c.DirectiveDefinitionType.Component;
 
 						this.expressionInParent = true;
-						setup.addSetupWatch(arg.engine.compileExpression(property.value, arg.progress, true), `directive.${input.property} = value${directiveUpdate}`);
+						setup.addSetupWatch(arg.engine.compileExpression(property.value, arg.progress, true), onUpdate.join(';\n'), watchOnParent);
 						this.expressionInParent = false;
 
 					} else {
