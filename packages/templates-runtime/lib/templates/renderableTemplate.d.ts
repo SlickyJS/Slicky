@@ -5,9 +5,11 @@ export declare abstract class RenderableTemplate extends BaseTemplate {
     _refreshing: number;
     nodes: Array<Node>;
     protected root: Template;
+    protected initialized: boolean;
     private listeners;
     constructor(application: ApplicationTemplate, parent?: BaseTemplate, root?: Template);
     refresh(): void;
+    init(): void;
     destroy(): void;
     getFirstNode(): Node;
     protected _appendComment(parent: HTMLElement, comment: string, fn?: (comment: Comment) => void): void;

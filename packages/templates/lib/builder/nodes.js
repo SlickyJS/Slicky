@@ -139,6 +139,7 @@ var TemplateSetupIf = (function (_super) {
             "\t\t\thelper.check(value);\n" +
             "\t\t});\n" +
             "\t});\n" +
+            "\ttmpl.init();\n" +
             "});");
     };
     return TemplateSetupIf;
@@ -171,6 +172,7 @@ var TemplateSetupForOf = (function (_super) {
             "\t\t\thelper.check(value);\n" +
             "\t\t});\n" +
             "\t});\n" +
+            "\ttmpl.init();\n" +
             "});");
     };
     return TemplateSetupForOf;
@@ -260,6 +262,7 @@ var TemplateMethod = (function (_super) {
             "\tvar root = this;\n" +
             "\tvar tmpl = this;\n" +
             (utils_1.indent(this.renderChildNodes()) + "\n") +
+            "\ttmpl.init();\n" +
             "};");
     };
     return TemplateMethod;
@@ -280,6 +283,7 @@ var TemplateMethodTemplate = (function (_super) {
             "\t\tsetup(tmpl);\n" +
             "\t}\n" +
             (utils_1.indent(this.renderChildNodes()) + "\n") +
+            "\ttmpl.init();\n" +
             "\treturn tmpl;\n" +
             "};");
     };

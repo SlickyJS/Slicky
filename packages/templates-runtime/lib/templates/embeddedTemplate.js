@@ -17,6 +17,9 @@ var EmbeddedTemplate = (function (_super) {
         return _super.call(this, application, parent, root) || this;
     }
     EmbeddedTemplate.prototype.refresh = function () {
+        if (!this.initialized) {
+            return;
+        }
         if (this.parent._refreshing > 0) {
             this.reload();
         }

@@ -15,6 +15,7 @@ export declare abstract class BaseTemplate {
     private onDestroyed;
     constructor(application?: ApplicationTemplate, parent?: BaseTemplate);
     abstract refresh(): void;
+    init(): void;
     destroy(): void;
     run(fn: () => any): any;
     onDestroy(fn: () => void): void;

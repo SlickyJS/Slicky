@@ -19,6 +19,10 @@ export class EmbeddedTemplate extends RenderableTemplate
 
 	public refresh(): void
 	{
+		if (!this.initialized) {
+			return;
+		}
+
 		if (this.parent._refreshing > 0) {
 			this.reload();
 

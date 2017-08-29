@@ -208,6 +208,7 @@ export class TemplateSetupIf extends TemplateSetup
 			`			helper.check(value);\n` +
 			`		});\n` +
 			`	});\n` +
+			`	tmpl.init();\n` +
 			`});`
 		);
 	}
@@ -259,6 +260,7 @@ export class TemplateSetupForOf extends TemplateSetup
 			`			helper.check(value);\n` +
 			`		});\n` +
 			`	});\n` +
+			`	tmpl.init();\n` +
 			`});`
 		);
 	}
@@ -396,6 +398,7 @@ export class TemplateMethod extends TemplateNodeParent
 			`	var root = this;\n` +
 			`	var tmpl = this;\n` +
 			`${indent(this.renderChildNodes())}\n` +
+			`	tmpl.init();\n` +
 			`};`
 		);
 	}
@@ -428,6 +431,7 @@ export class TemplateMethodTemplate extends TemplateMethod
 			`		setup(tmpl);\n` +
 			`	}\n` +
 			`${indent(this.renderChildNodes())}\n` +
+			`	tmpl.init();\n` +
 			`	return tmpl;\n` +
 			`};`
 		);

@@ -22,6 +22,8 @@ var BaseTemplate = (function () {
             this.parent.children.push(this);
         }
     }
+    BaseTemplate.prototype.init = function () {
+    };
     BaseTemplate.prototype.destroy = function () {
         utils_1.forEach(this.children, function (child) {
             child.destroy();

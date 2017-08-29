@@ -48,6 +48,11 @@ export abstract class BaseTemplate
 	public abstract refresh(): void;
 
 
+	public init(): void
+	{
+	}
+
+
 	public destroy(): void
 	{
 		forEach(this.children, (child: BaseTemplate) => {

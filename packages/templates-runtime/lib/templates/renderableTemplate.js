@@ -21,18 +21,26 @@ var RenderableTemplate = (function (_super) {
         var _this = _super.call(this, application, parent) || this;
         _this._refreshing = 0;
         _this.nodes = [];
+        _this.initialized = false;
         _this.listeners = [];
         _this.root = root;
         _this.addProvider('watcher', new watcherProvider_1.DefaultWatcherProvider);
         return _this;
     }
     RenderableTemplate.prototype.refresh = function () {
+        if (!this.initialized) {
+            return;
+        }
         this._refreshing++;
         this.getProvider('watcher').check();
         utils_1.forEach(this.children, function (child) {
             child.refresh();
         });
         this._refreshing--;
+    };
+    RenderableTemplate.prototype.init = function () {
+        _super.prototype.init.call(this);
+        this.initialized = true;
     };
     RenderableTemplate.prototype.destroy = function () {
         _super.prototype.destroy.call(this);

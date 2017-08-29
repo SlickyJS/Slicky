@@ -23,6 +23,8 @@ export abstract class RenderableTemplate extends BaseTemplate
 
 	protected root: Template;
 
+	protected initialized: boolean = false;
+
 	private listeners: Array<TemplateListener> = [];
 
 
@@ -37,6 +39,10 @@ export abstract class RenderableTemplate extends BaseTemplate
 
 	public refresh(): void
 	{
+		if (!this.initialized) {
+			return;
+		}
+
 		this._refreshing++;
 
 		this.getProvider('watcher').check();
@@ -46,6 +52,14 @@ export abstract class RenderableTemplate extends BaseTemplate
 		});
 
 		this._refreshing--;
+	}
+
+
+	public init(): void
+	{
+		super.init();
+
+		this.initialized = true;
 	}
 
 
