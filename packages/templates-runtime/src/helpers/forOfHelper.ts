@@ -76,9 +76,9 @@ export class ForOfHelper
 
 	private addItem(index: number, item: any): void
 	{
-		this.templates[index] = this.container.add((template: EmbeddedTemplate) => {
+		this.templates.splice(index, 0, this.container.add(index, (template: EmbeddedTemplate) => {
 			this.updateTemplate(template, item, index);
-		});
+		}));
 	}
 
 

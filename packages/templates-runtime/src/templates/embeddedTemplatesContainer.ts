@@ -1,4 +1,4 @@
-import {forEach} from '@slicky/utils';
+import {forEach, exists} from '@slicky/utils';
 import {RenderableTemplate} from './renderableTemplate';
 import {EmbeddedTemplate} from './embeddedTemplate';
 import {ApplicationTemplate} from './applicationTemplate';
@@ -28,10 +28,22 @@ export class EmbeddedTemplatesContainer extends RenderableTemplate
 	}
 
 
-	public add(setup: (template: EmbeddedTemplate) => void = null): EmbeddedTemplate
+	public add(index: number = null, setup: (template: EmbeddedTemplate) => void = null): EmbeddedTemplate
 	{
 		let before = this.el;
+
+		if (index === null) {
+			index = this.children.length;
+		} else if (exists(this.children[index])) {
+			before = this.children[index].getFirstNode();
+		}
+
 		let template = new EmbeddedTemplate(this.application, this, this.root);
+
+		// move template to correct index withing children
+		if (index !== (this.children.length - 1)) {
+			this.children.splice(index, 0, this.children.splice(this.children.length - 1, 1)[0]);
+		}
 
 		return this.factory(template, before, setup);
 	}

@@ -8,7 +8,7 @@ export declare class EmbeddedTemplatesContainer extends RenderableTemplate {
     private el;
     private factory;
     constructor(application: ApplicationTemplate, el: Node, factory: EmbeddedTemplateFactory, parent?: RenderableTemplate, root?: Template);
-    add(setup?: (template: EmbeddedTemplate) => void): EmbeddedTemplate;
+    add(index?: number, setup?: (template: EmbeddedTemplate) => void): EmbeddedTemplate;
     remove(template: EmbeddedTemplate): void;
     move(template: EmbeddedTemplate, index: number): void;
 }

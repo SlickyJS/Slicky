@@ -55,9 +55,9 @@ var ForOfHelper = (function () {
     };
     ForOfHelper.prototype.addItem = function (index, item) {
         var _this = this;
-        this.templates[index] = this.container.add(function (template) {
+        this.templates.splice(index, 0, this.container.add(index, function (template) {
             _this.updateTemplate(template, item, index);
-        });
+        }));
     };
     ForOfHelper.prototype.updateItem = function (previousIndex, value) {
         if (!utils_1.exists(this.templates[previousIndex])) {

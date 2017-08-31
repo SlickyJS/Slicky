@@ -24,10 +24,20 @@ var EmbeddedTemplatesContainer = (function (_super) {
         _this.factory = factory;
         return _this;
     }
-    EmbeddedTemplatesContainer.prototype.add = function (setup) {
+    EmbeddedTemplatesContainer.prototype.add = function (index, setup) {
+        if (index === void 0) { index = null; }
         if (setup === void 0) { setup = null; }
         var before = this.el;
+        if (index === null) {
+            index = this.children.length;
+        }
+        else if (utils_1.exists(this.children[index])) {
+            before = this.children[index].getFirstNode();
+        }
         var template = new embeddedTemplate_1.EmbeddedTemplate(this.application, this, this.root);
+        if (index !== (this.children.length - 1)) {
+            this.children.splice(index, 0, this.children.splice(this.children.length - 1, 1)[0]);
+        }
         return this.factory(template, before, setup);
     };
     EmbeddedTemplatesContainer.prototype.remove = function (template) {
