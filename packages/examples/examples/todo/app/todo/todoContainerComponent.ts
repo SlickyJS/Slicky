@@ -113,6 +113,12 @@ export class TodoContainerComponent implements OnInit, OnDestroy, OnUpdate
 	}
 
 
+	public removeDone(): void
+	{
+		this.todos = <List<Todo>>this.todos.filter((todo) => !todo.done);
+	}
+
+
 	public todoTrackByFn(todo: Todo): number
 	{
 		return todo.id;

@@ -7,6 +7,10 @@
 			<li><a (click)="showOnlyActiveTodos()" href="#">Active</a></li>
 			<li><a (click)="showOnlyDoneTodos()" href="#">Done</a></li>
 		</ul>
+
+		<small [hidden]="!todos.count((todo) => todo.done)" class="uk-float-right uk-margin-right" style="margin-top: 7px;">
+			<a (click.prevent)="removeDone()" href="#">Remove completed</a>
+		</small>
 	</div>
 
 	<ul *s:if="todos.size" class="uk-list uk-list-divider">
