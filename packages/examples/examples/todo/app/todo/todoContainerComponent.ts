@@ -2,6 +2,7 @@ import {Component, HostElement, OnInit} from '@slicky/core';
 import {List} from 'immutable';
 import {Todo, DEFAULT_TODO_COLOR} from './todo';
 import {TodoComponent, } from './todoComponent';
+import {TODOS_CONTAINER_TRANSLATIONS} from './todosContainerTranslations';
 import {IconDirective} from '../helpers';
 
 
@@ -9,6 +10,7 @@ import {IconDirective} from '../helpers';
 	selector: 'todos',
 	template: require('./todoContainerComponentTemplate.html'),
 	directives: [TodoComponent, IconDirective],
+	translations: TODOS_CONTAINER_TRANSLATIONS,
 })
 export class TodoContainerComponent implements OnInit
 {

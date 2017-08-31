@@ -14,6 +14,8 @@ import {PlatformBrowser} from '@slicky/platform-browser';
 import {Container} from '@slicky/di';
 import {Application} from '@slicky/application';
 import {ApplicationTemplate} from '@slicky/templates-runtime';
+import {TranslatorExtension} from '@slicky/extension-translator';
+
 import {APP_DIRECTIVES} from './directives';
 //import {APP_TEMPLATES_FACTORY} from '../aot/app-templates-factory';
 
@@ -27,5 +29,7 @@ let app = new Application(platform, template, container, {
 	appElement: document.getElementById('app'),
 	directives: APP_DIRECTIVES,
 });
+
+app.addExtension(new TranslatorExtension('en'));
 
 app.run();

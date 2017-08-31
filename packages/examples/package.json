@@ -22,6 +22,7 @@
 		"@slicky/di": "github:SlickyJS/DI#master",
 		"@slicky/lang": "github:SlickyJS/Lang#master",
 		"@slicky/event-emitter": "github:SlickyJS/EventEmitter#master",
+		"@slicky/extension-translator": "^0.0.1",
 		"zone.js": "^0.8.16",
 		"immutable": "^3.8.1",
 		"uikit": "^3.0.0-beta.30",
