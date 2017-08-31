@@ -1,4 +1,4 @@
-import {Component, Input, Output, OnInit, OnDestroy, OnUpdate, ElementRef} from '@slicky/core';
+import {Component, Input, Output, ElementRef} from '@slicky/core';
 import {EventEmitter} from '@slicky/event-emitter';
 import {Todo} from './todo';
 import {IconDirective, TimeAgoInWordsComponent} from '../helpers';
@@ -9,7 +9,7 @@ import {IconDirective, TimeAgoInWordsComponent} from '../helpers';
 	template: require('./todoComponentTemplate.html'),
 	directives: [IconDirective, TimeAgoInWordsComponent],
 })
-export class TodoComponent implements OnInit, OnDestroy, OnUpdate
+export class TodoComponent
 {
 
 
@@ -33,26 +33,6 @@ export class TodoComponent implements OnInit, OnDestroy, OnUpdate
 	constructor(el: ElementRef)
 	{
 		this.el = el;
-	}
-
-
-	public onInit(): void
-	{
-		console.log(`TodoComponent: initialized todo "${this.todo.text}" in:`);
-		console.log(this.el.nativeElement);
-	}
-
-
-	public onDestroy(): void
-	{
-		console.log(`TodoComponent: destroyed todo "${this.todo.text}"`);
-	}
-
-
-	public onUpdate(input: string, value: any): void
-	{
-		console.log(`TodoComponent: updated "${input}" with:`);
-		console.log(value);
 	}
 
 
