@@ -1,8 +1,16 @@
 <div class="uk-card uk-card-secondary uk-card-hover uk-card-body">
-	<h3 class="uk-card-title">Todos <small *s:if="todos.size">({{ todos.count((todo) => todo.done) }}/{{ todos.size }}<template [s:if]="todos.count((todo) => todo.done) === todos.size"> 😎</template>)</small></h3>
+	<div class="uk-clearfix">
+		<h3 class="uk-card-title uk-float-left">Todos <small *s:if="todos.size">({{ todos.count((todo) => todo.done) }}/{{ todos.size }}<template [s:if]="todos.count((todo) => todo.done) === todos.size"> 😎</template>)</small></h3>
+
+		<ul [hidden]="!todos.size" class="uk-subnav uk-subnav-pill uk-float-right" uk-switcher style="margin-top: 0;">
+			<li><a (click)="showAllTodos()" href="#">All</a></li>
+			<li><a (click)="showOnlyActiveTodos()" href="#">Active</a></li>
+			<li><a (click)="showOnlyDoneTodos()" href="#">Done</a></li>
+		</ul>
+	</div>
 
 	<ul *s:if="todos.size" class="uk-list uk-list-divider">
-		<li *s:for="todo of todos.sort(todoSort)" *s:for-track-by="todoTrackByFn" [todo]="todo" (removed)="removeTodo($value)" (updating)="updateTodo($value)" (toggled)="void 0"></li>
+		<li *s:for="todo of todos.filter(todoFilter).sort(todoSort)" *s:for-track-by="todoTrackByFn" [todo]="todo" (removed)="removeTodo($value)" (updating)="updateTodo($value)" (toggled)="void 0"></li>
 	</ul>
 
 	<form class="uk-grid-collapse" uk-grid>

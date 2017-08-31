@@ -30,6 +30,8 @@ export class TodoContainerComponent implements OnInit, OnDestroy, OnUpdate
 
 	public todos: List<Todo> = List();
 
+	public todoFilter: (todo: Todo) => boolean;
+
 	private el: ElementRef;
 
 	private updating: Todo = null;
@@ -38,6 +40,7 @@ export class TodoContainerComponent implements OnInit, OnDestroy, OnUpdate
 	constructor(el: ElementRef)
 	{
 		this.el = el;
+		this.showAllTodos();
 	}
 
 
@@ -127,6 +130,24 @@ export class TodoContainerComponent implements OnInit, OnDestroy, OnUpdate
 		}
 
 		return 0;
+	}
+
+
+	public showAllTodos(): void
+	{
+		this.todoFilter = () => true;
+	}
+
+
+	public showOnlyActiveTodos(): void
+	{
+		this.todoFilter = (todo) => !todo.done;
+	}
+
+
+	public showOnlyDoneTodos(): void
+	{
+		this.todoFilter = (todo) => todo.done;
 	}
 
 }
