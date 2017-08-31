@@ -17,7 +17,7 @@
 		<li *s:for="todo of todos.filter(todoFilter).sort(todoSort)" *s:for-track-by="todoTrackByFn" [todo]="todo" (removed)="removeTodo($value)" (updating)="updateTodo($value)" (toggled)="void 0"></li>
 	</ul>
 
-	<form class="uk-grid-collapse" uk-grid>
+	<form (submit.prevent)="saveTodo()" class="uk-grid-collapse" uk-grid>
 		<div class="uk-width-5-6">
 			<div class="uk-inline" style="width: 100%;">
 				<a [hidden]="!currentText.length" (click.prevent)="saveTodo()" class="uk-form-icon uk-form-icon-flip" href="#" [icon]="updating ? 'check' : 'plus'"></a>
