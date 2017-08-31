@@ -30,6 +30,7 @@ const config: Config = {
 		{name: 'htmlParser', root: path.join(__dirname, 'packages', 'html-parser')},
 		{name: 'templatesRuntime', root: path.join(__dirname, 'packages', 'templates-runtime')},
 		{name: 'core', root: path.join(__dirname, 'packages', 'core')},
+		{name: 'extensionTranslator', root: path.join(__dirname, 'packages', 'extension-translator')},
 		{name: 'templates', root: path.join(__dirname, 'packages', 'templates')},
 		{name: 'compiler', root: path.join(__dirname, 'packages', 'compiler')},
 		{name: 'compilerCli', root: path.join(__dirname, 'packages', 'compiler-cli')},
