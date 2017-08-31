@@ -5,4 +5,5 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./ifHelper"));
 __export(require("./forOfHelper"));
+__export(require("./classHelper"));
 __export(require("./commonTemplateHelpers"));

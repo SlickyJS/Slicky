@@ -92,7 +92,13 @@ var Engine = (function () {
                 el.setup.add(b.createElementEventListener(event.name, _this.compileExpression(event.value, progress), event.preventDefault));
             });
             utils_1.forEach(element.properties, function (property) {
-                el.setup.add(b.createWatch(_this.compileExpression(property.value, progress, true), function (watcher) { return watcher.update.add("parent." + utils_1.hyphensToCamelCase(property.name) + " = value;"); }));
+                if (utils_1.startsWith(property.name, 'class.')) {
+                    var className = property.name.substring(6);
+                    el.setup.add(b.createClassHelper(className, _this.compileExpression(property.value, progress, true)));
+                }
+                else {
+                    el.setup.add(b.createWatch(_this.compileExpression(property.value, progress, true), function (watcher) { return watcher.update.add("parent." + utils_1.hyphensToCamelCase(property.name) + " = value;"); }));
+                }
             });
             utils_1.forEach(element.exports, function (exp) {
                 if (exp.value !== '' && exp.value !== '$this') {

@@ -1,5 +1,5 @@
 import {Matcher} from '@slicky/query-selector';
-import {forEach, map, hyphensToCamelCase, find, merge} from '@slicky/utils';
+import {forEach, map, hyphensToCamelCase, find, merge, startsWith} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
 import {InputStream} from '@slicky/tokenizer';
@@ -141,12 +141,21 @@ export class Engine
 				forEach(element.properties, (property: _.ASTHTMLNodeExpressionAttribute) => {
 					// todo: check if property is valid html property
 
-					el.setup.add(
-						b.createWatch(
-							this.compileExpression(property.value, progress, true),
-							(watcher) => watcher.update.add(`parent.${hyphensToCamelCase(property.name)} = value;`)
-						)
-					);
+					if (startsWith(property.name, 'class.')) {
+						let className = property.name.substring(6);
+
+						el.setup.add(
+							b.createClassHelper(className, this.compileExpression(property.value, progress, true))
+						);
+
+					} else {
+						el.setup.add(
+							b.createWatch(
+								this.compileExpression(property.value, progress, true),
+								(watcher) => watcher.update.add(`parent.${hyphensToCamelCase(property.name)} = value;`)
+							)
+						);
+					}
 				});
 
 				forEach(element.exports, (exp: _.ASTHTMLNodeTextAttribute) => {

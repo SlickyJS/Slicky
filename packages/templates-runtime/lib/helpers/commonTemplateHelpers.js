@@ -3,10 +3,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@slicky/utils");
 var ifHelper_1 = require("./ifHelper");
 var forOfHelper_1 = require("./forOfHelper");
+var classHelper_1 = require("./classHelper");
 var CommonTemplateHelpers = (function () {
     function CommonTemplateHelpers() {
     }
     CommonTemplateHelpers.install = function (template) {
+        template.addProvider('classHelperFactory', function (el, className, setup) {
+            if (setup === void 0) { setup = null; }
+            var helper = new classHelper_1.ClassHelper(el, className);
+            if (utils_1.isFunction(setup)) {
+                setup(helper);
+            }
+            return helper;
+        });
         template.addProvider('ifHelperFactory', function (container, setup) {
             if (setup === void 0) { setup = null; }
             var helper = new ifHelper_1.IfHelper(container);

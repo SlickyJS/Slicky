@@ -158,6 +158,13 @@ export declare class BuilderFunctionCall implements BuilderNodeInterface {
     constructor(left: BuilderNodeInterface, args?: Array<BuilderNodeInterface>);
     render(): string;
 }
+export declare function createClassHelper(className: string, watch: string): BuilderClassHelper;
+export declare class BuilderClassHelper implements BuilderNodeInterface {
+    className: string;
+    watch: string;
+    constructor(className: string, watch: string);
+    render(): string;
+}
 export declare function createIfHelper(templateId: number, watch: string): BuilderIfHelper;
 export declare class BuilderIfHelper implements BuilderNodeInterface {
     templateId: number;

@@ -531,6 +531,26 @@ var BuilderFunctionCall = (function () {
     return BuilderFunctionCall;
 }());
 exports.BuilderFunctionCall = BuilderFunctionCall;
+function createClassHelper(className, watch) {
+    return new BuilderClassHelper(className, watch);
+}
+exports.createClassHelper = createClassHelper;
+var BuilderClassHelper = (function () {
+    function BuilderClassHelper(className, watch) {
+        this.className = className;
+        this.watch = watch;
+    }
+    BuilderClassHelper.prototype.render = function () {
+        var watcher = createWatch(this.watch, function (watcher) {
+            watcher.update.add('helper.check(value);');
+        });
+        return ("tmpl.getProvider(\"classHelperFactory\")(parent, \"" + this.className + "\", function(helper) {\n" +
+            (utils_1.indent(watcher.render()) + "\n") +
+            "});\n");
+    };
+    return BuilderClassHelper;
+}());
+exports.BuilderClassHelper = BuilderClassHelper;
 function createIfHelper(templateId, watch) {
     return new BuilderIfHelper(templateId, watch);
 }

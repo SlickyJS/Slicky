@@ -903,6 +903,46 @@ export class BuilderFunctionCall implements BuilderNodeInterface
 }
 
 
+/***************** CLASS HELPER *****************/
+
+
+export function createClassHelper(className: string, watch: string): BuilderClassHelper
+{
+	return new BuilderClassHelper(className, watch);
+}
+
+export class BuilderClassHelper implements BuilderNodeInterface
+{
+
+
+	public className: string;
+
+	public watch: string;
+
+
+	constructor(className: string, watch: string)
+	{
+		this.className = className;
+		this.watch = watch;
+	}
+
+
+	public render(): string
+	{
+		let watcher = createWatch(this.watch, (watcher) => {
+			watcher.update.add('helper.check(value);');
+		});
+
+		return (
+			`tmpl.getProvider("classHelperFactory")(parent, "${this.className}", function(helper) {\n` +
+			`${indent(watcher.render())}\n` +
+			`});\n`
+		);
+	}
+
+}
+
+
 /***************** IF HELPER *****************/
 
 
