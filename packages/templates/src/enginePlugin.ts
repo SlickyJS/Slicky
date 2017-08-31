@@ -3,7 +3,7 @@ import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
 import {Engine} from './engine';
 import {EngineProgress} from './engineProgress';
-import * as t from './builder';
+import * as b from './builder';
 
 
 export declare interface OnBeforeProcessElementArgument
@@ -24,7 +24,7 @@ export declare interface OnExpressionVariableHookArgument
 
 export declare interface OnProcessElementArgument
 {
-	element: t.TemplateNodeElement;
+	element: b.BuilderAddElement;
 	progress: EngineProgress;
 	matcher: Matcher;
 	engine: Engine;
@@ -34,8 +34,8 @@ export declare interface OnProcessElementArgument
 export declare interface OnProcessTemplateArgument
 {
 	element: _.ASTHTMLNodeElement;
-	template: t.TemplateMethodTemplate;
-	comment: t.TemplateNodeComment;
+	template: b.BuilderTemplateMethod;
+	comment: b.BuilderAddComment;
 	progress: EngineProgress;
 	engine: Engine;
 }

@@ -9,7 +9,7 @@ import {EnginePluginManager} from './enginePluginManager';
 import {EnginePlugin} from './enginePlugin';
 import {IfEnginePlugin, ForEnginePlugin} from './default';
 import {EngineProgress} from './engineProgress';
-import * as t from './builder';
+import * as b from './builder';
 
 
 export class Engine
@@ -40,10 +40,10 @@ export class Engine
 	{
 		let progress = new EngineProgress;
 		let matcher = new Matcher(new DocumentWalker);
-		let builder = new t.TemplateBuilder(name + '', matcher);
+		let builder = new b.TemplateBuilder(name + '', matcher);
 		let tree = (new _.HTMLParser(template)).parse();
 
-		this.processTree(builder, builder.getMainMethod(), progress, matcher, tree);
+		this.processTree(builder, builder.getMainMethod().body, progress, matcher, tree);
 
 		let code = builder.render();
 
@@ -56,31 +56,38 @@ export class Engine
 	}
 
 
-	private processTree(builder: t.TemplateBuilder, builderParent: t.TemplateNodeParent, progress: EngineProgress, matcher: Matcher, parent: _.ASTHTMLNodeParent, insertBefore: boolean = false): void
+	private processTree(builder: b.TemplateBuilder, method: b.BuilderNodesContainer<b.BuilderNodeInterface>, progress: EngineProgress, matcher: Matcher, parent: _.ASTHTMLNodeParent, insertBefore: boolean = false): void
 	{
 		forEach(parent.childNodes, (child: _.ASTHTMLNode) => {
 			if (child instanceof _.ASTHTMLNodeElement) {
-				this.processElement(builder, builderParent, progress, matcher, child, insertBefore);
+				this.processElement(builder, method, progress, matcher, child, insertBefore);
 
 			} else if (child instanceof _.ASTHTMLNodeExpression) {
-				this.processExpression(builderParent, progress, child, insertBefore);
+				this.processExpression(method, progress, child, insertBefore);
 
 			} else if (child instanceof _.ASTHTMLNodeText) {
-				this.processText(builderParent, child, insertBefore);
+				this.processText(method, child, insertBefore);
 			}
 		});
 	}
 
 
-	private processExpression(parent: t.TemplateNodeParent, progress: EngineProgress, expression: _.ASTHTMLNodeExpression, insertBefore: boolean = false): void
+	private processExpression(parent: b.BuilderNodesContainer<b.BuilderNodeInterface>, progress: EngineProgress, expression: _.ASTHTMLNodeExpression, insertBefore: boolean = false): void
 	{
-		parent.addText('', insertBefore, (text) => {
-			text.addSetupWatch(this.compileExpression(expression.value, progress, true), 'text.nodeValue = value');
-		});
+		parent.add(
+			b.createAddText('', !insertBefore, (text) => {
+				text.setup.add(
+					b.createWatch(
+						this.compileExpression(expression.value, progress, true),
+						(watcher) => watcher.update.add('text.nodeValue = value;')
+					)
+				);
+			})
+		);
 	}
 
 
-	private processText(parent: t.TemplateNodeParent, text: _.ASTHTMLNodeText, insertBefore: boolean = false): void
+	private processText(parent: b.BuilderNodesContainer<b.BuilderNodeInterface>, text: _.ASTHTMLNodeText, insertBefore: boolean = false): void
 	{
 		let value = text.value;
 
@@ -94,11 +101,13 @@ export class Engine
 			return;
 		}
 
-		parent.addText(value, insertBefore);
+		parent.add(
+			b.createAddText(value, !insertBefore)
+		);
 	}
 
 
-	private processElement(builder: t.TemplateBuilder, parent: t.TemplateNodeParent, progress: EngineProgress, matcher: Matcher, element: _.ASTHTMLNodeElement, insertBefore: boolean = false): void
+	private processElement(builder: b.TemplateBuilder, parent: b.BuilderNodesContainer<b.BuilderNodeInterface>, progress: EngineProgress, matcher: Matcher, element: _.ASTHTMLNodeElement, insertBefore: boolean = false): void
 	{
 		element = this.plugins.onBeforeProcessElement(element, {
 			progress: progress,
@@ -114,83 +123,107 @@ export class Engine
 			return this.processElementTemplate(builder, parent, progress, matcher, element);
 		}
 
-		parent.addElement(element.name, insertBefore, (el: t.TemplateNodeElement) => {
-			this.plugins.onProcessElement(element, {
-				element: el,
-				progress: progress,
-				matcher: matcher,
-				engine: this,
-			});
+		parent.add(
+			b.createAddElement(element.name, !insertBefore, (el) => {
+				this.plugins.onProcessElement(element, {
+					element: el,
+					progress: progress,
+					matcher: matcher,
+					engine: this,
+				});
 
-			forEach(element.events, (event: _.ASTHTMLNodeExpressionAttributeEvent) => {
-				el.addSetupAddEventListener(event.name, this.compileExpression(event.value, progress), event.preventDefault);
-			});
-
-			forEach(element.properties, (property: _.ASTHTMLNodeExpressionAttribute) => {
-				// todo: check if property is valid html property
-
-				el.addSetupWatch(this.compileExpression(property.value, progress, true), `parent.${hyphensToCamelCase(property.name)} = value`);
-			});
-
-			forEach(element.exports, (exp: _.ASTHTMLNodeTextAttribute) => {
-				if (exp.value !== '' && exp.value !== '$this') {
-					throw Error(`Can not export "${exp.value}" into "${exp.name}"`);
-				}
-
-				el.addSetupParameterSet(hyphensToCamelCase(exp.name), 'parent');
-			});
-
-			forEach(element.attributes, (attribute: _.ASTHTMLNodeAttribute) => {
-				if (attribute instanceof _.ASTHTMLNodeExpressionAttribute) {
-					el.setAttribute(attribute.name, '');
-					el.addSetupWatch(this.compileExpression(attribute.value, progress, true), `parent.setAttribute("${attribute.name}", value)`);
-
-				} else {
-					el.setAttribute(attribute.name, attribute.value);
-				}
-			});
-
-			this.processTree(builder, el, progress, matcher, element);
-		});
-	}
-
-
-	private processElementInclude(builder: t.TemplateBuilder, parent: t.TemplateNodeParent, progress: EngineProgress, element: _.ASTHTMLNodeElement, insertBefore: boolean = false): void
-	{
-		parent.addComment('slicky-import', insertBefore, (comment: t.TemplateNodeComment) => {
-			let selector: string = '';
-			let setParameters: Array<_.ASTHTMLNodeTextAttribute> = [];
-
-			forEach(element.attributes, (attribute: _.ASTHTMLNodeTextAttribute) => {
-				if (attribute.name === 'selector') {
-					selector = attribute.value;
-				} else {
-					setParameters.push(attribute);
-				}
-			});
-
-			// todo: check selector
-
-			let template = builder.findTemplate(selector);
-
-			// todo: check template
-
-			comment.addSetupImportTemplate(template.id, (templateImport: t.TemplateSetupImportTemplate) => {
-				forEach(setParameters, (parameter: _.ASTHTMLNodeTextAttribute) => {
-					templateImport.addSetupParameterSet(hyphensToCamelCase(parameter.name), `"${parameter.value}"`);
+				forEach(element.events, (event: _.ASTHTMLNodeExpressionAttributeEvent) => {
+					el.setup.add(
+						b.createElementEventListener(event.name, this.compileExpression(event.value, progress), event.preventDefault)
+					);
 				});
 
 				forEach(element.properties, (property: _.ASTHTMLNodeExpressionAttribute) => {
-					templateImport.addSetupParameterSet(hyphensToCamelCase(property.name), this.compileExpression(property.value, progress));
+					// todo: check if property is valid html property
+
+					el.setup.add(
+						b.createWatch(
+							this.compileExpression(property.value, progress, true),
+							(watcher) => watcher.update.add(`parent.${hyphensToCamelCase(property.name)} = value;`)
+						)
+					);
 				});
 
-				// todo: check whether all injects were injected
-			});
-		});
+				forEach(element.exports, (exp: _.ASTHTMLNodeTextAttribute) => {
+					if (exp.value !== '' && exp.value !== '$this') {
+						throw Error(`Can not export "${exp.value}" into "${exp.name}"`);
+					}
+
+					el.setup.add(
+						b.createSetParameter(hyphensToCamelCase(exp.name), 'parent')
+					);
+				});
+
+				forEach(element.attributes, (attribute: _.ASTHTMLNodeAttribute) => {
+					if (attribute instanceof _.ASTHTMLNodeExpressionAttribute) {
+						el.setAttribute(attribute.name, '');
+						el.setup.add(
+							b.createWatch(
+								this.compileExpression(attribute.value, progress, true),
+								(watcher) => watcher.update.add(`parent.setAttribute("${attribute.name}", value);`)
+							)
+						);
+
+					} else {
+						el.setAttribute(attribute.name, attribute.value);
+					}
+				});
+
+				this.processTree(builder, el.setup, progress, matcher, element);
+			})
+		);
 	}
 
 
-	private processElementTemplate(builder: t.TemplateBuilder, parent: t.TemplateNodeParent, progress: EngineProgress, matcher: Matcher, element: _.ASTHTMLNodeElement): void
+	private processElementInclude(builder: b.TemplateBuilder, parent: b.BuilderNodesContainer<b.BuilderNodeInterface>, progress: EngineProgress, element: _.ASTHTMLNodeElement, insertBefore: boolean = false): void
+	{
+		parent.add(
+			b.createAddComment('slicky-import', !insertBefore, (comment: b.BuilderAddComment) => {
+				let selector: string = '';
+				let setParameters: Array<_.ASTHTMLNodeTextAttribute> = [];
+
+				forEach(element.attributes, (attribute: _.ASTHTMLNodeTextAttribute) => {
+					if (attribute.name === 'selector') {
+						selector = attribute.value;
+					} else {
+						setParameters.push(attribute);
+					}
+				});
+
+				// todo: check selector
+
+				let template = builder.findTemplate(selector);
+
+				// todo: check template
+
+				comment.setup.add(
+					b.createImportTemplate(template.id, [], (templateImport) => {
+						forEach(setParameters, (parameter: _.ASTHTMLNodeTextAttribute) => {
+							templateImport.factorySetup.add(
+								b.createSetParameter(hyphensToCamelCase(parameter.name), `"${parameter.value}"`)
+							);
+						});
+
+						forEach(element.properties, (property: _.ASTHTMLNodeExpressionAttribute) => {
+							templateImport.factorySetup.add(
+								b.createSetParameter(hyphensToCamelCase(property.name), this.compileExpression(property.value, progress))
+							);
+						});
+
+						// todo: check whether all injects were injected
+					})
+				);
+			})
+		);
+	}
+
+
+	private processElementTemplate(builder: b.TemplateBuilder, parent: b.BuilderNodesContainer<b.BuilderNodeInterface>, progress: EngineProgress, matcher: Matcher, element: _.ASTHTMLNodeElement): void
 	{
 		let injectAttribute: _.ASTHTMLNodeTextAttribute = find(element.attributes, (attribute: _.ASTHTMLNodeTextAttribute) => {
 			return attribute.name === 'inject';
@@ -202,18 +235,20 @@ export class Engine
 		innerProgress.localVariables = merge(innerProgress.localVariables, inject);
 		innerProgress.inTemplate = true;
 
-		return builder.addTemplate(element, (template: t.TemplateMethodTemplate) => {
-			parent.addComment(`slicky-template-${template.id}`, false, (comment: t.TemplateNodeComment) => {
-				this.plugins.onProcessTemplate({
-					element: element,
-					template: template,
-					comment: comment,
-					progress: innerProgress,
-					engine: this,
-				});
-			});
+		builder.addTemplate(element, (template) => {
+			parent.add(
+				b.createAddComment('slicky-template', true, (comment) => {
+					this.plugins.onProcessTemplate({
+						element: element,
+						template: template,
+						comment: comment,
+						progress: innerProgress,
+						engine: this,
+					});
+				})
+			);
 
-			this.processTree(builder, template, innerProgress, matcher, element, true);
+			this.processTree(builder, template.body, innerProgress, matcher, element, true);
 		});
 	}
 

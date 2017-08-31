@@ -10,7 +10,7 @@ export declare class Engine {
     constructor();
     addPlugin(plugin: EnginePlugin): void;
     compile(name: string | number, template: string): string;
-    private processTree(builder, builderParent, progress, matcher, parent, insertBefore?);
+    private processTree(builder, method, progress, matcher, parent, insertBefore?);
     private processExpression(parent, progress, expression, insertBefore?);
     private processText(parent, text, insertBefore?);
     private processElement(builder, parent, progress, matcher, element, insertBefore?);

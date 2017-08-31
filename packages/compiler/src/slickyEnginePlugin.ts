@@ -1,13 +1,13 @@
-import {EnginePlugin, OnProcessElementArgument, OnExpressionVariableHookArgument} from '@slicky/templates';
 import {forEach, find, exists} from '@slicky/utils';
 import * as c from '@slicky/core';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
-import * as s from './nodes';
+import * as t from '@slicky/templates';
+import * as b from './nodes';
 import {Compiler} from './compiler';
 
 
-export class SlickyEnginePlugin extends EnginePlugin
+export class SlickyEnginePlugin extends t.EnginePlugin
 {
 
 
@@ -27,14 +27,16 @@ export class SlickyEnginePlugin extends EnginePlugin
 	}
 
 
-	public onProcessElement(element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): _.ASTHTMLNodeElement
+	public onProcessElement(element: _.ASTHTMLNodeElement, arg: t.OnProcessElementArgument): _.ASTHTMLNodeElement
 	{
 		forEach(this.metadata.elements, (hostElement: c.DirectiveDefinitionElement) => {
 			if (!arg.matcher.matches(element, hostElement.selector)) {
 				return;
 			}
 
-			arg.element.addSetup(new s.TemplateSetupComponentHostElement(hostElement.property));
+			arg.element.setup.add(
+				b.createComponentSetHostElement(hostElement.property)
+			);
 		});
 
 		forEach(this.metadata.directives, (directive: c.DirectiveDefinitionDirective) => {
@@ -46,128 +48,150 @@ export class SlickyEnginePlugin extends EnginePlugin
 				this.compiler.compile(directive.metadata);
 			}
 
-			arg.element.addSetup(new s.TemplateSetupDirective(directive.metadata.hash, directive.metadata.type), (setup: s.TemplateSetupDirective) => {
-				let onTemplateDestroy: Array<string> = [];
+			arg.element.setup.add(
+				b.createCreateDirective(directive.metadata.hash, directive.metadata.type, (setup) => {
+					let onTemplateDestroy: Array<t.BuilderNodeInterface> = [];
 
-				forEach(directive.metadata.inputs, (input: c.DirectiveDefinitionInput) => {
-					let property: _.ASTHTMLNodeAttribute;
-					let isProperty: boolean = false;
+					forEach(directive.metadata.inputs, (input: c.DirectiveDefinitionInput) => {
+						let property: _.ASTHTMLNodeAttribute;
+						let isProperty: boolean = false;
 
-					let propertyFinder = (isProp: boolean) => {
-						return (prop: _.ASTHTMLNodeAttribute) => {
-							if (prop.name === input.name) {
-								property = prop;
-								isProperty = isProp;
+						let propertyFinder = (isProp: boolean) => {
+							return (prop: _.ASTHTMLNodeAttribute) => {
+								if (prop.name === input.name) {
+									property = prop;
+									isProperty = isProp;
 
-								return true;
+									return true;
+								}
+							}
+						};
+
+						property =
+							find(element.properties, propertyFinder(true)) ||
+							find(element.attributes, propertyFinder(false))
+						;
+
+						if (!exists(property) && input.required) {
+							// todo: error
+						}
+
+						if (!exists(property)) {
+							return;
+						}
+
+						if (isProperty) {
+							element.properties.splice(element.properties.indexOf(property), 1);
+
+							let watchOnParent = directive.metadata.type === c.DirectiveDefinitionType.Component;
+
+							this.expressionInParent = true;
+							setup.setup.add(
+								t.createWatch(
+									arg.engine.compileExpression(property.value, arg.progress, true),
+									(watcher) => {
+										watcher.watchParent = watchOnParent;
+										watcher.update.add(`directive.${input.property} = value;`);
+
+										if (directive.metadata.onUpdate) {
+											watcher.update.add(`directive.onUpdate('${property.name}', value);`);
+										}
+
+										if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
+											watcher.update.add('tmpl.refresh();');
+										}
+									}
+								)
+							);
+							this.expressionInParent = false;
+
+						} else {
+							element.attributes.splice(element.attributes.indexOf(property), 1);
+							setup.setup.add(
+								b.createDirectivePropertyWrite(input.property, `"${property.value}"`)
+							);
+
+							if (directive.metadata.onUpdate) {
+								setup.setup.add(
+									b.createDirectiveMethodCall('onUpdate', [`"${input.property}"`, `"${property.value}"`])
+								);
 							}
 						}
-					};
-
-					property =
-						find(element.properties, propertyFinder(true)) ||
-						find(element.attributes, propertyFinder(false))
-					;
-
-					if (!exists(property) && input.required) {
-						// todo: error
-					}
-
-					if (!exists(property)) {
-						return;
-					}
-
-					if (isProperty) {
-						element.properties.splice(element.properties.indexOf(property), 1);
-
-						let onUpdate = [
-							`directive.${input.property} = value`
-						];
-
-						if (directive.metadata.onUpdate) {
-							onUpdate.push(`directive.onUpdate('${property.name}', value)`);
-						}
-
-						if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
-							onUpdate.push('tmpl.refresh()');
-						}
-
-						let watchOnParent = directive.metadata.type === c.DirectiveDefinitionType.Component;
-
-						this.expressionInParent = true;
-						setup.addSetupWatch(arg.engine.compileExpression(property.value, arg.progress, true), onUpdate.join(';\n'), watchOnParent);
-						this.expressionInParent = false;
-
-					} else {
-						element.attributes.splice(element.attributes.indexOf(property), 1);
-						setup.addSetup(new s.TemplateSetupDirectivePropertyWrite(input.property, `"${property.value}"`));
-
-						if (directive.metadata.onUpdate) {
-							setup.addSetup(new s.TemplateSetupDirectiveMethodCall('onUpdate', `"${input.property}", "${property.value}"`));
-						}
-					}
-				});
-
-				forEach(directive.metadata.outputs, (output: c.DirectiveDefinitionOutput) => {
-					let event: _.ASTHTMLNodeExpressionAttributeEvent = find(element.events, (event: _.ASTHTMLNodeExpressionAttributeEvent) => {
-						return event.name === output.name;
 					});
 
-					if (event) {
-						element.events.splice(element.events.indexOf(event), 1);
+					forEach(directive.metadata.outputs, (output: c.DirectiveDefinitionOutput) => {
+						let event: _.ASTHTMLNodeExpressionAttributeEvent = find(element.events, (event: _.ASTHTMLNodeExpressionAttributeEvent) => {
+							return event.name === output.name;
+						});
+
+						if (event) {
+							element.events.splice(element.events.indexOf(event), 1);
+						}
+
+						setup.setup.add(
+							b.createDirectiveOutput(output.property, arg.engine.compileExpression(event.value, arg.progress))
+						);
+					});
+
+					let removeChildDirectives = [];
+					forEach(this.metadata.childDirectives, (childDirective: c.DirectiveDefinitionChildDirective, i: number) => {
+						if (childDirective.directiveType === directive.directiveType && !arg.progress.inTemplate) {
+							removeChildDirectives.push(i);
+							setup.setup.add(
+								b.createDirectivePropertyWrite(childDirective.property, 'directive', true)
+							);
+						}
+					});
+
+					forEach(removeChildDirectives, (i: number) => {
+						this.metadata.childDirectives.splice(i, 1);
+					});
+
+					let removeChildrenDirectives = [];
+					forEach(this.metadata.childrenDirectives, (childrenDirectives: c.DirectiveDefinitionChildrenDirective, i: number) => {
+						if (childrenDirectives.directiveType === directive.directiveType) {
+							onTemplateDestroy.push(t.createCode(`root.getProvider("component").${childrenDirectives.property}.remove.emit(directive);`));
+							removeChildrenDirectives.push(i);
+							setup.setup.add(
+								b.createDirectiveMethodCall(`${childrenDirectives.property}.add.emit`, ['directive'], true)
+							);
+						}
+					});
+
+					forEach(removeChildrenDirectives, (i: number) => {
+						this.metadata.childrenDirectives.splice(i, 1);
+					});
+
+					if (directive.metadata.onDestroy) {
+						onTemplateDestroy.push(t.createCode('directive.onDestroy();'));
 					}
 
-					setup.addSetup(new s.TemplateSetupDirectiveOutput(output.property, arg.engine.compileExpression(event.value, arg.progress)));
-				});
-
-				let removeChildDirectives = [];
-				forEach(this.metadata.childDirectives, (childDirective: c.DirectiveDefinitionChildDirective, i: number) => {
-					if (childDirective.directiveType === directive.directiveType && !arg.progress.inTemplate) {
-						setup.addSetup(new s.TemplateSetupDirectivePropertyWrite(childDirective.property, 'directive', true));
-						removeChildDirectives.push(i);
+					if (onTemplateDestroy.length) {
+						setup.setup.add(
+							t.createTemplateOnDestroy(false, (node) => node.callback.addList(onTemplateDestroy))
+						);
 					}
-				});
 
-				forEach(removeChildDirectives, (i: number) => {
-					this.metadata.childDirectives.splice(i, 1);
-				});
-
-				let removeChildrenDirectives = [];
-				forEach(this.metadata.childrenDirectives, (childrenDirectives: c.DirectiveDefinitionChildrenDirective, i: number) => {
-					if (childrenDirectives.directiveType === directive.directiveType) {
-						setup.addSetup(new s.TemplateSetupDirectiveMethodCall(`${childrenDirectives.property}.add.emit`, 'directive', true));
-						onTemplateDestroy.push(`root.getProvider("component").${childrenDirectives.property}.remove.emit(directive);`);
-						removeChildrenDirectives.push(i);
+					if (directive.metadata.onInit) {
+						setup.setup.add(
+							b.createDirectiveOnInit()
+						);
 					}
-				});
 
-				forEach(removeChildrenDirectives, (i: number) => {
-					this.metadata.childrenDirectives.splice(i, 1);
-				});
-
-				if (directive.metadata.onDestroy) {
-					onTemplateDestroy.push('directive.onDestroy()');
-				}
-
-				if (onTemplateDestroy.length) {
-					setup.addSetup(new s.TemplateSetupTemplateOnDestroy(onTemplateDestroy.join('\n')));
-				}
-
-				if (directive.metadata.onInit) {
-					setup.addSetup(new s.TemplateSetupDirectiveOnInit);
-				}
-
-				if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
-					setup.addSetup(new s.TemplateSetupComponentRender);
-				}
-			});
+					if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
+						setup.setup.add(
+							b.createComponentRender()
+						);
+					}
+				})
+			);
 		});
 
 		return element;
 	}
 
 
-	public onExpressionVariableHook(identifier: tjs.ASTCallExpression, arg: OnExpressionVariableHookArgument): tjs.ASTExpression
+	public onExpressionVariableHook(identifier: tjs.ASTCallExpression, arg: t.OnExpressionVariableHookArgument): tjs.ASTExpression
 	{
 		let parameter: string = (<tjs.ASTStringLiteral>identifier.arguments[0]).value;
 

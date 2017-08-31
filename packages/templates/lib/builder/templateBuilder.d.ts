@@ -1,16 +1,15 @@
 import { Matcher } from '@slicky/query-selector';
 import * as _ from '@slicky/html-parser';
-import * as t from './nodes';
+import * as b from './nodes';
 export declare class TemplateBuilder {
-    private className;
+    private templateClass;
+    private templateMainMethod;
     private matcher;
     private templatesCount;
     private templates;
-    private methods;
     constructor(className: string, matcher: Matcher);
-    getMainMethod(): t.TemplateMethod;
-    addTemplate(element: _.ASTHTMLNodeElement, fn?: (template: t.TemplateMethodTemplate) => void): void;
-    findTemplate(selector: string): t.TemplateMethodTemplate;
+    getMainMethod(): b.BuilderMethod;
+    addTemplate(element: _.ASTHTMLNodeElement, setup?: (method: b.BuilderTemplateMethod) => void): void;
+    findTemplate(selector: string): b.BuilderTemplateMethod;
     render(): string;
-    private renderMethods();
 }

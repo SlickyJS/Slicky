@@ -12,6 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@slicky/utils");
 var enginePlugin_1 = require("../enginePlugin");
+var b = require("../builder");
 var IfEnginePlugin = (function (_super) {
     __extends(IfEnginePlugin, _super);
     function IfEnginePlugin() {
@@ -24,7 +25,7 @@ var IfEnginePlugin = (function (_super) {
         if (!condition) {
             return;
         }
-        arg.comment.addSetupIf(arg.template.id, arg.engine.compileExpression(condition.value, arg.progress, true));
+        arg.comment.setup.add(b.createIfHelper(arg.template.id, arg.engine.compileExpression(condition.value, arg.progress, true)));
     };
     return IfEnginePlugin;
 }(enginePlugin_1.EnginePlugin));

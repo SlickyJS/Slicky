@@ -1,81 +1,766 @@
-import {isFunction, indent, map, filter, keys, forEach} from '@slicky/utils';
+import {map, indent, forEach, isFunction, isString} from '@slicky/utils';
 
 
-export abstract class TemplateNodeSetupAware
+function applyReplacements(code: string, replacements: {[name: string]: string}): string
+{
+	forEach(replacements, (replacement: string, name: string) => {
+		code = code.replace(new RegExp(`{{\\s${name}\\s}}`, 'g'), replacement);
+	});
+
+	return code;
+}
+
+
+export interface BuilderNodeInterface
 {
 
-	public setup: Array<TemplateSetup> = [];
+
+	render(): string;
+
+}
 
 
-	public addSetup(setup: TemplateSetup, fn: (setup: TemplateSetup) => void = null): void
+export class BuilderNodesContainer<T extends BuilderNodeInterface> implements BuilderNodeInterface
+{
+
+
+	public delimiter: string;
+
+	private nodes: Array<T>;
+
+
+	constructor(nodes: Array<T> = [], delimiter: string = '\n')
 	{
-		this.setup.push(setup);
+		this.nodes = nodes;
+		this.delimiter = delimiter;
+	}
 
-		if (isFunction(fn)) {
-			fn(setup);
+
+	public add(node: T|string): void
+	{
+		if (isString(node)) {
+			node = <any>createCode(<string>node);
 		}
+
+		this.nodes.push(<T>node);
 	}
 
 
-	public addSetupParameterSet(name: string, value: string): void
+	public addList(nodes: Array<T>): void
 	{
-		this.setup.push(new TemplateSetupParameterSet(name, value));
+		this.nodes = this.nodes.concat(nodes);
 	}
 
 
-	public addSetupWatch(watch: string, update: string, callParent: boolean = false): void
+	public replace(container: BuilderNodesContainer<T>): void
 	{
-		this.setup.push(new TemplateSetupWatch(watch, update, callParent));
+		this.nodes = container.nodes;
 	}
 
 
-	public addSetupAddEventListener(name: string, callback: string, preventDefault: boolean = false): void
+	public isEmpty(): boolean
 	{
-		this.setup.push(new TemplateSetupAddEventListener(name, callback, preventDefault));
+		return this.nodes.length === 0;
 	}
 
 
-	public addSetupIf(id: number, watch: string): void
+	public render(): string
 	{
-		this.setup.push(new TemplateSetupIf(id, watch));
-	}
-
-
-	public addSetupForOf(id: number, forOf: string, forItem: string, forIndex: string = null, trackBy: string = null): void
-	{
-		this.setup.push(new TemplateSetupForOf(id, forOf, forItem, forIndex, trackBy));
-	}
-
-
-	public addSetupImportTemplate(id: number, fn: (importTemplate: TemplateSetupImportTemplate) => void = null): void
-	{
-		let templateImport = new TemplateSetupImportTemplate(id);
-		this.setup.push(templateImport);
-
-		if (isFunction(fn)) {
-			fn(templateImport);
-		}
-	}
-
-
-	public renderSetup(): string
-	{
-		return map(this.setup, (line: TemplateSetup) => line.render()).join('\n');
+		return map(this.nodes, (node: BuilderNodeInterface) => node.render()).join(this.delimiter);
 	}
 
 }
 
 
-export abstract class TemplateSetup extends TemplateNodeSetupAware
+/***************** CODE *****************/
+
+
+export function createCode(code: string): BuilderCode
+{
+	return new BuilderCode(code);
+}
+
+export class BuilderCode implements BuilderNodeInterface
 {
 
 
-	public abstract render(): string;
+	public code: string;
+
+
+	constructor(code: string)
+	{
+		this.code = code;
+	}
+
+
+	public render(): string
+	{
+		return this.code;
+	}
 
 }
 
 
-export class TemplateSetupParameterSet extends TemplateSetup
+/***************** IDENTIFIER *****************/
+
+
+export function createIdentifier(identifier: string): BuilderIdentifier
+{
+	return new BuilderIdentifier(identifier);
+}
+
+export class BuilderIdentifier extends BuilderCode
+{
+}
+
+
+/***************** STRING *****************/
+
+
+export function createString(str: string): BuilderString
+{
+	return new BuilderString(str);
+}
+
+export class BuilderString extends BuilderCode
+{
+
+
+	public render(): string
+	{
+		return `"${super.render()}"`;
+	}
+
+}
+
+
+/***************** RETURN *****************/
+
+
+export function createReturn(node: BuilderNodeInterface): BuilderReturn
+{
+	return new BuilderReturn(node);
+}
+
+export class BuilderReturn implements BuilderNodeInterface
+{
+
+
+	public node: BuilderNodeInterface;
+
+
+	constructor(node: BuilderNodeInterface)
+	{
+		this.node = node;
+	}
+
+
+	public render(): string
+	{
+		return `return ${this.node.render()}`;
+	}
+
+}
+
+
+/***************** FUNCTION *****************/
+
+
+export function createFunction(name: string, args: Array<string> = [], setup: (fn: BuilderFunction) => void = null): BuilderFunction
+{
+	let fn = new BuilderFunction(name, args);
+
+	if (isFunction(setup)) {
+		setup(fn);
+	}
+
+	return fn;
+}
+
+export class BuilderFunction implements BuilderNodeInterface
+{
+
+
+	public name: string;
+
+	public args: Array<string>;
+
+	public body = new BuilderNodesContainer;
+
+
+	constructor(name: string = null, args: Array<string> = [])
+	{
+		this.name = name;
+		this.args = args;
+	}
+
+
+	public render(): string
+	{
+		let name = this.name === null ? '' : ` ${this.name}`;
+		let firstListDelimiter = this.name === null ? ' ' : '\n';
+
+		return (
+			`function${name}(${this.args.join(', ')})${firstListDelimiter}` +
+			`{\n` +
+			`${indent(this.body.render())}\n` +
+			`}`
+		);
+	}
+
+}
+
+
+/***************** CLASS *****************/
+
+
+export function createClass(name: string, args: Array<string> = [], setup: (cls: BuilderClass) => void = null): BuilderClass
+{
+	let cls = new BuilderClass(name, args);
+
+	if (isFunction(setup)) {
+		setup(cls);
+	}
+
+	return cls;
+}
+
+export class BuilderClass implements BuilderNodeInterface
+{
+
+
+	public name: string;
+
+	public args: Array<string>;
+
+	public beforeClass = new BuilderNodesContainer;
+
+	public afterClass = new BuilderNodesContainer;
+
+	public body = new BuilderNodesContainer;
+
+	public methods = new BuilderNodesContainer<BuilderMethod>();
+
+
+	constructor(name: string, args: Array<string> = [])
+	{
+		this.name = name;
+		this.args = args;
+	}
+
+
+	public render(): string
+	{
+		let r = (code: string): string => {
+			return applyReplacements(code, {
+				className: this.name,
+			});
+		};
+
+		return (
+			`${r(this.beforeClass.render())}\n` +
+			`function ${this.name}(${this.args.join(', ')})\n` +
+			`{\n` +
+			`${indent(r(this.body.render()))}\n` +
+			`}\n` +
+			`${r(this.methods.render())}\n` +
+			r(this.afterClass.render())
+		);
+	}
+
+}
+
+
+/***************** METHOD *****************/
+
+
+export function createMethod(parent: BuilderClass, name: string, args: Array<string> = [], setup: (method: BuilderMethod) => void = null): BuilderMethod
+{
+	let method = new BuilderMethod(parent, name, args);
+
+	if (isFunction(setup)) {
+		setup(method);
+	}
+
+	return method;
+}
+
+export class BuilderMethod implements BuilderNodeInterface
+{
+
+
+	public parent: BuilderClass;
+
+	public name: string;
+
+	public args: Array<string>;
+
+	public body = new BuilderNodesContainer;
+
+	public end = new BuilderNodesContainer;
+
+
+	constructor(parent: BuilderClass, name: string, args: Array<string> = [])
+	{
+		this.parent = parent;
+		this.name = name;
+		this.args = args;
+	}
+
+
+	public render(): string
+	{
+		return (
+			`${this.parent.name}.prototype.${this.name} = function(${this.args.join(', ')})\n` +
+			`{\n` +
+			`${indent(this.body.render())}\n` +
+			`${indent(this.end.render())}\n` +
+			`};`
+		);
+	}
+
+}
+
+
+/***************** TEMPLATE METHOD *****************/
+
+
+export function createTemplateMethod(parent: BuilderClass, id: number, setup: (method: BuilderTemplateMethod) => void = null): BuilderTemplateMethod
+{
+	let method = new BuilderTemplateMethod(parent, id);
+
+	if (isFunction(setup)) {
+		setup(method);
+	}
+
+	return method;
+}
+
+export class BuilderTemplateMethod extends BuilderMethod
+{
+
+
+	public id: number;
+
+
+	constructor(parent: BuilderClass, id: number)
+	{
+		super(parent, `template${id}`, ['tmpl', 'parent', 'setup']);
+
+		this.id = id;
+
+		this.body.add('var root = this;');
+		this.body.add(
+			`if (setup) {\n` +
+			`	setup(tmpl);\n` +
+			`}`
+		);
+
+		this.end.add('tmpl.init();');
+		this.end.add('return tmpl;');
+	}
+
+}
+
+
+/***************** METHOD CALL *****************/
+
+
+export function createMethodCall(caller: BuilderNodeInterface, method: string, args: Array<BuilderNodeInterface> = []): BuilderMethodCall
+{
+	return new BuilderMethodCall(caller, method, args);
+}
+
+export class BuilderMethodCall implements BuilderNodeInterface
+{
+
+
+	public caller: BuilderNodeInterface;
+
+	public method: string;
+
+	public args: BuilderNodesContainer<BuilderNodeInterface>;
+
+
+	constructor(caller: BuilderNodeInterface, method: string, args: Array<BuilderNodeInterface> = [])
+	{
+		this.caller = caller;
+		this.method = method;
+		this.args = new BuilderNodesContainer(args, ', ');
+	}
+
+
+	public render(): string
+	{
+		return `${this.caller.render()}.${this.method}(${this.args.render()})`;
+	}
+
+}
+
+
+/***************** VAR *****************/
+
+
+export function createVar(name: string, value: BuilderNodeInterface): BuilderVar
+{
+	return new BuilderVar(name, value);
+}
+
+export class BuilderVar implements BuilderNodeInterface
+{
+
+
+	public name: string;
+
+	public value: BuilderNodeInterface;
+
+
+	constructor(name: string, value: BuilderNodeInterface)
+	{
+		this.name = name;
+		this.value = value;
+	}
+
+
+	public render(): string
+	{
+		return `var ${this.name} = ${this.value.render()};`;
+	}
+
+}
+
+
+/***************** ADD COMMENT *****************/
+
+
+export function createAddComment(comment: string, appendMode: boolean = true, setup: (comment: BuilderAddComment) => void = null): BuilderAddComment
+{
+	let node = new BuilderAddComment(comment, appendMode);
+
+	if (isFunction(setup)) {
+		setup(node);
+	}
+
+	return node;
+}
+
+export class BuilderAddComment implements BuilderNodeInterface
+{
+
+
+	public comment: string;
+
+	public appendMode: boolean;
+
+	public setup = new BuilderNodesContainer;
+
+
+	constructor(comment: string, appendMode: boolean = true)
+	{
+		this.comment = comment;
+		this.appendMode = appendMode;
+	}
+
+
+	public render(): string
+	{
+		let args: Array<BuilderNodeInterface> = [
+			createIdentifier('parent'),
+			createString(this.comment),
+		];
+
+		if (!this.setup.isEmpty()) {
+			args.push(createFunction(null, ['parent'], (fn) => {
+				fn.body.replace(this.setup);
+			}));
+		}
+
+		return createMethodCall(
+			createIdentifier('tmpl'),
+			this.appendMode ? '_appendComment' : '_insertCommentBefore',
+			args
+		).render() + ';';
+	}
+
+}
+
+
+/***************** ADD TEXT *****************/
+
+
+export function createAddText(text: string, appendMode: boolean = true, setup: (text: BuilderAddText) => void = null): BuilderAddText
+{
+	let node = new BuilderAddText(text, appendMode);
+
+	if (isFunction(setup)) {
+		setup(node);
+	}
+
+	return node;
+}
+
+export class BuilderAddText implements BuilderNodeInterface
+{
+
+
+	public text: string;
+
+	public appendMode: boolean;
+
+	public setup = new BuilderNodesContainer;
+
+
+	constructor(text: string, appendMode: boolean = true)
+	{
+		this.text = text;
+		this.appendMode = appendMode;
+	}
+
+
+	public render(): string
+	{
+		let args: Array<BuilderNodeInterface> = [
+			createIdentifier('parent'),
+			createString(this.text),
+		];
+
+		if (!this.setup.isEmpty()) {
+			args.push(createFunction(null, ['text'], (fn) => {
+				fn.body.replace(this.setup);
+			}));
+		}
+
+		return createMethodCall(
+			createIdentifier('tmpl'),
+			this.appendMode ? '_appendText' : '_insertTextBefore',
+			args
+		).render() + ';';
+	}
+
+}
+
+
+/***************** ADD ELEMENT *****************/
+
+
+export function createAddElement(name: string, appendMode: boolean = true, setup: (element: BuilderAddElement) => void = null): BuilderAddElement
+{
+	let element = new BuilderAddElement(name, appendMode);
+
+	if (isFunction(setup)) {
+		setup(element);
+	}
+
+	return element;
+}
+
+export class BuilderAddElement implements BuilderNodeInterface
+{
+
+
+	public name: string;
+
+	public attributes: {[name: string]: string} = {};
+
+	public appendMode: boolean;
+
+	public setup = new BuilderNodesContainer;
+
+
+	constructor(name: string, appendMode: boolean = true)
+	{
+		this.name = name;
+		this.appendMode = appendMode;
+	}
+
+
+	public setAttribute(name: string, value: string): void
+	{
+		this.attributes[name] = value;
+	}
+
+
+	public render(): string
+	{
+		let attributes = [];
+
+		forEach(this.attributes, (value: string, name: string) => {
+			attributes.push(`"${name}": "${value}"`);
+		});
+
+		let args: Array<BuilderNodeInterface> = [
+			createIdentifier('parent'),
+			createString(this.name),
+		];
+
+		if (!attributes.length && !this.setup.isEmpty()) {
+			args.push(createCode('{}'));
+
+		} else if (attributes.length) {
+			args.push(createCode(`{${attributes.join(', ')}}`));
+		}
+
+		if (!this.setup.isEmpty()) {
+			args.push(createFunction(null, ['parent'], (fn) => {
+				fn.body.replace(this.setup);
+			}));
+		}
+
+		return createMethodCall(
+			createIdentifier('tmpl'),
+			this.appendMode ? '_appendElement' : '_insertElementBefore',
+			args
+		).render() + ';';
+	}
+
+}
+
+
+/***************** ELEMENT EVENT LISTENER *****************/
+
+
+export function createElementEventListener(event: string, callback: string, preventDefault: boolean = false): BuilderElementEventListener
+{
+	return new BuilderElementEventListener(event, callback, preventDefault);
+}
+
+export class BuilderElementEventListener implements BuilderNodeInterface
+{
+
+
+	public event: string;
+
+	public callback: string;
+
+	public preventDefault: boolean;
+
+
+	constructor(event: string, callback: string, preventDefault: boolean = false)
+	{
+		this.event = event;
+		this.callback = callback;
+		this.preventDefault = preventDefault;
+	}
+
+
+	public render(): string
+	{
+		return createMethodCall(createIdentifier('tmpl'), '_addElementEventListener', [
+			createIdentifier('parent'),
+			createString(this.event),
+			createFunction(null, ['$event'], (fn) => {
+				if (this.preventDefault) {
+					fn.body.add(createCode('$event.preventDefault();'));
+				}
+
+				fn.body.add(this.callback + ';')
+			}),
+		]).render() + ';';
+	}
+
+}
+
+
+/***************** WATCH *****************/
+
+
+export function createWatch(watch: string, setup: (watcher: BuilderWatch) => void = null): BuilderWatch
+{
+	let watcher = new BuilderWatch(watch);
+
+	if (isFunction(setup)) {
+		setup(watcher);
+	}
+
+	return watcher;
+}
+
+export class BuilderWatch implements BuilderNodeInterface
+{
+
+
+	public watch: string;
+
+	public update = new BuilderNodesContainer;
+
+	public watchParent: boolean;
+
+
+	constructor(watch: string, watchParent: boolean = false)
+	{
+		this.watch = watch;
+		this.watchParent = watchParent;
+	}
+
+
+	public render(): string
+	{
+		let caller = this.watchParent ? 'tmpl.parent' : 'tmpl';
+
+		return createMethodCall(
+			createMethodCall(createIdentifier(caller), 'getProvider', [createString('watcher')]),
+			'watch',
+			[
+				createFunction(null, [], (fn) => fn.body.add(this.watch + ';')),
+				createFunction(null, ['value'], (fn) => fn.body.replace(this.update)),
+			]
+		).render() + ';';
+	}
+
+}
+
+
+/***************** IMPORT TEMPLATE *****************/
+
+
+export function createImportTemplate(templateId: number, factorySetup: Array<BuilderNodeInterface> = [], setup: (template: BuilderImportTemplate) => void = null): BuilderImportTemplate
+{
+	let template = new BuilderImportTemplate(templateId, factorySetup);
+
+	if (isFunction(setup)) {
+		setup(template);
+	}
+
+	return template;
+}
+
+export class BuilderImportTemplate implements BuilderNodeInterface
+{
+
+
+	public templateId: number;
+
+	public factorySetup: BuilderNodesContainer<BuilderNodeInterface>;
+
+
+	constructor(templateId: number, factorySetup: Array<BuilderNodeInterface> = [])
+	{
+		this.templateId = templateId;
+		this.factorySetup = new BuilderNodesContainer(factorySetup);
+	}
+
+
+	public render(): string
+	{
+		return createMethodCall(createIdentifier('root'), `template${this.templateId}`, [
+			createIdentifier('tmpl'),
+			createIdentifier('parent'),
+			createFunction(null, ['tmpl'], (fn) => fn.body.replace(this.factorySetup))
+		]).render();
+	}
+
+}
+
+
+/***************** SET PARAMETER *****************/
+
+
+export function createSetParameter(name: string, value: string): BuilderSetParameter
+{
+	return new BuilderSetParameter(name, value);
+}
+
+export class BuilderSetParameter implements BuilderNodeInterface
 {
 
 
@@ -86,8 +771,6 @@ export class TemplateSetupParameterSet extends TemplateSetup
 
 	constructor(name: string, value: string)
 	{
-		super();
-
 		this.name = name;
 		this.value = value;
 	}
@@ -101,102 +784,75 @@ export class TemplateSetupParameterSet extends TemplateSetup
 }
 
 
-export class TemplateSetupAddEventListener extends TemplateSetup
+/***************** TEMPLATE ON DESTROY *****************/
+
+
+export function createTemplateOnDestroy(callParent: boolean = false, setup: (node: BuilderTemplateOnDestroy) => void = null): BuilderTemplateOnDestroy
 {
+	let node = new BuilderTemplateOnDestroy(callParent);
 
-
-	public name: string;
-
-	public callback: string;
-
-	public preventDefault: boolean;
-
-
-	constructor(name: string, callback: string, preventDefault: boolean = false)
-	{
-		super();
-
-		this.name = name;
-		this.callback = callback;
-		this.preventDefault = preventDefault;
+	if (isFunction(setup)) {
+		setup(node);
 	}
 
-
-	public render(): string
-	{
-		let setup = [];
-
-		if (this.preventDefault) {
-			setup.push(`$event.preventDefault();`);
-		}
-
-		setup.push(this.callback);
-
-		return (
-			`tmpl._addElementEventListener(parent, "${this.name}", function($event) {\n` +
-			`${indent(setup.join('\n'))};\n` +
-			`});`
-		);
-	}
-
+	return node;
 }
 
-
-export class TemplateSetupWatch extends TemplateSetup
+export class BuilderTemplateOnDestroy implements BuilderNodeInterface
 {
 
-
-	public watch: string;
-
-	public update: string;
 
 	public callParent: boolean;
 
+	public callback = new BuilderNodesContainer;
 
-	constructor(watch: string, update: string, callParent: boolean = false)
+
+	constructor(callParent: boolean = false)
 	{
-		super();
-
-		this.watch = watch;
-		this.update = update;
 		this.callParent = callParent;
 	}
 
 
 	public render(): string
 	{
-		let callee = this.callParent ? '.parent' : '';
-
-		return (
-			`tmpl${callee}.getProvider("watcher").watch(\n` +
-			`	function() {\n` +
-			`${indent(this.watch, 2)};\n` +
-			`	},\n` +
-			`	function(value) {\n` +
-			`${indent(this.update, 2)};\n` +
-			`	}\n` +
-			`);`
-		);
+		return createMethodCall(
+			createCode(this.callParent ? 'tmpl.parent' : 'tmpl'),
+			'onDestroy',
+			[
+				createFunction(null, [], (fn) => fn.body.replace(this.callback)),
+			]
+		).render() + ';';
 	}
 
 }
 
 
-export class TemplateSetupIf extends TemplateSetup
+/***************** EMBEDDED TEMPLATES CONTAINER *****************/
+
+
+export function createEmbeddedTemplatesContainer(templateId: number, setup: (container: BuilderEmbeddedTemplatesContainer) => void = null): BuilderEmbeddedTemplatesContainer
+{
+	let container = new BuilderEmbeddedTemplatesContainer(templateId);
+
+	if (isFunction(setup)) {
+		setup(container);
+	}
+
+	return container;
+}
+
+export class BuilderEmbeddedTemplatesContainer implements BuilderNodeInterface
 {
 
 
-	public id: number;
+	public templateId: number;
 
-	public watch: string;
+	public setup = new BuilderNodesContainer;
 
 
-	constructor(id: number, watch: string)
+	constructor(templateId: number)
 	{
-		super();
-
-		this.id = id;
-		this.watch = watch;
+		this.templateId = templateId;
 	}
 
 
@@ -204,24 +860,115 @@ export class TemplateSetupIf extends TemplateSetup
 	{
 		return (
 			`root._createEmbeddedTemplatesContainer(tmpl, parent, function(tmpl, parent, setup) {\n` +
-			`	return root.template${this.id}(tmpl, parent, setup);\n` +
+			`	return root.template${this.templateId}(tmpl, parent, setup);\n` +
 			`}, function(tmpl) {\n` +
-			`	tmpl.getProvider("ifHelperFactory")(tmpl, function(helper) {\n` +
-			`		tmpl.getProvider("watcher").watch(function() {\n` +
-			`			${this.watch};\n` +
-			`		}, function(value) {\n` +
-			`			helper.check(value);\n` +
-			`		});\n` +
-			`	});\n` +
+			`${indent(this.setup.render())}\n` +
 			`	tmpl.init();\n` +
 			`});`
-		);
+		)
 	}
 
 }
 
 
-export class TemplateSetupForOf extends TemplateSetup
+/***************** FUNCTION CALL *****************/
+
+
+export function createFunctionCall(left: BuilderNodeInterface, args: Array<BuilderNodeInterface> = []): BuilderFunctionCall
+{
+	return new BuilderFunctionCall(left, args);
+}
+
+export class BuilderFunctionCall implements BuilderNodeInterface
+{
+
+
+	public left: BuilderNodeInterface;
+
+	public args: BuilderNodesContainer<BuilderNodeInterface>;
+
+
+	constructor(left: BuilderNodeInterface, args: Array<BuilderNodeInterface> = [])
+	{
+		this.left = left;
+		this.args = new BuilderNodesContainer(args, ', ');
+	}
+
+
+	public render(): string
+	{
+		return `${this.left.render()}(${this.args.render()});`;
+	}
+
+}
+
+
+/***************** IF HELPER *****************/
+
+
+export function createIfHelper(templateId: number, watch: string): BuilderIfHelper
+{
+	return new BuilderIfHelper(templateId, watch);
+}
+
+export class BuilderIfHelper implements BuilderNodeInterface
+{
+
+
+	public templateId: number;
+
+	public watch: string;
+
+
+	constructor(templateId: number, watch: string)
+	{
+		this.templateId = templateId;
+		this.watch = watch;
+	}
+
+
+	public render(): string
+	{
+		return createEmbeddedTemplatesContainer(this.templateId, (container) => {
+			container.setup.add(
+				createFunctionCall(
+					createMethodCall(
+						createIdentifier('tmpl'),
+						'getProvider',
+						[
+							createString('ifHelperFactory'),
+						]
+					),
+					[
+						createIdentifier('tmpl'),
+						createFunction(null, ['helper'], (fn) => {
+							fn.body.add(
+								createWatch(
+									this.watch,
+									(watcher) => {
+										watcher.update.add('helper.check(value);')
+									}
+								)
+							)
+						}),
+					]
+				)
+			)
+		}).render();
+	}
+
+}
+
+
+/***************** FOR HELPER *****************/
+
+
+export function createForOfHelper(id: number, forOf: string, forItem: string, forIndex: string = null, trackBy: string = null): BuilderForOfHelper
+{
+	return new BuilderForOfHelper(id, forOf, forItem, forIndex, trackBy);
+}
+
+export class BuilderForOfHelper implements BuilderNodeInterface
 {
 
 
@@ -238,8 +985,6 @@ export class TemplateSetupForOf extends TemplateSetup
 
 	constructor(id: number, forOf: string, forItem: string, forIndex: string = null, trackBy: string = null)
 	{
-		super();
-
 		this.id = id;
 		this.forOf = forOf;
 		this.forItem = forItem;
@@ -268,321 +1013,6 @@ export class TemplateSetupForOf extends TemplateSetup
 			`	tmpl.init();\n` +
 			`});`
 		);
-	}
-
-}
-
-
-export class TemplateSetupImportTemplate extends TemplateSetup
-{
-
-
-	public id: number;
-
-
-	constructor(id: number)
-	{
-		super();
-
-		this.id = id;
-	}
-
-
-	public render(): string
-	{
-		if (!this.setup.length) {
-			return `root.template${this.id}(tmpl, parent);`;
-		}
-
-		return (
-			`root.template${this.id}(tmpl, parent, function(tmpl) {\n` +
-			`${indent(this.renderSetup())}\n` +
-			`});`
-		);
-	}
-
-}
-
-
-export abstract class TemplateNode extends TemplateNodeSetupAware
-{
-
-
-	public parentNode: TemplateNodeParent;
-
-
-	constructor(parentNode: TemplateNodeParent = null)
-	{
-		super();
-
-		this.parentNode = parentNode;		// todo: remove
-	}
-
-
-	public abstract render(): string;
-
-}
-
-
-export abstract class TemplateNodeParent extends TemplateNode
-{
-
-	public childNodes: Array<TemplateNode> = [];
-
-
-	constructor(parentNode: TemplateNodeParent = null)
-	{
-		super(parentNode);
-	}
-
-
-	public addComment(text: string, insertBefore: boolean = false, fn: (text: TemplateNodeComment) => void = null): void
-	{
-		let node = new TemplateNodeComment(text, insertBefore);
-		this.childNodes.push(node);
-
-		if (isFunction(fn)) {
-			fn(node);
-		}
-	}
-
-
-	public addText(text: string, insertBefore: boolean = false, fn: (text: TemplateNodeText) => void = null): void
-	{
-		let node = new TemplateNodeText(text, insertBefore);
-		this.childNodes.push(node);
-
-		if (isFunction(fn)) {
-			fn(node);
-		}
-	}
-
-
-	public addElement(elementName: string, insertBefore: boolean = false, fn: (element: TemplateNodeElement) => void = null): void
-	{
-		let node = new TemplateNodeElement(elementName, insertBefore);
-		this.childNodes.push(node);
-
-		if (isFunction(fn)) {
-			fn(node);
-		}
-	}
-
-
-	public renderChildNodes(): string
-	{
-		return map(this.childNodes, (node: TemplateNode) => node.render()).join('\n');
-	}
-
-}
-
-
-export class TemplateMethod extends TemplateNodeParent
-{
-
-
-	public className: string;
-
-	public name: string;
-
-
-	constructor(className: string, name: string)
-	{
-		super();
-
-		this.className = className;
-		this.name = name;
-	}
-
-
-	public render(): string
-	{
-		return (
-			`Template${this.className}.prototype.${this.name} = function(parent)\n` +
-			`{\n` +
-			`	var root = this;\n` +
-			`	var tmpl = this;\n` +
-			`${indent(this.renderChildNodes())}\n` +
-			`	tmpl.init();\n` +
-			`};`
-		);
-	}
-
-}
-
-
-export class TemplateMethodTemplate extends TemplateMethod
-{
-
-
-	public id: number;
-
-
-	constructor(className: string, name: string, id: number)
-	{
-		super(className, name);
-
-		this.id = id;
-	}
-
-
-	public render(): string
-	{
-		return (
-			`Template${this.className}.prototype.${this.name} = function(tmpl, parent, setup)\n` +
-			`{\n` +
-			`	var root = this;\n` +
-			`	if (setup) {\n` +
-			`		setup(tmpl);\n` +
-			`	}\n` +
-			`${indent(this.renderChildNodes())}\n` +
-			`	tmpl.init();\n` +
-			`	return tmpl;\n` +
-			`};`
-		);
-	}
-
-}
-
-
-export class TemplateNodeComment extends TemplateNode
-{
-
-
-	public text: string;
-
-	public insertBefore: boolean;
-
-
-	constructor(text: string, insertBefore: boolean = false, parent: TemplateNodeParent = null)
-	{
-		super(parent);
-
-		this.text = text;
-		this.insertBefore = insertBefore;
-	}
-
-
-	public render(): string
-	{
-		let method = this.insertBefore ? '_insertCommentBefore' : '_appendComment';
-
-		if (!this.setup.length) {
-			return `tmpl.${method}(parent, "${this.text}");`
-		}
-
-		return (
-			`tmpl.${method}(parent, "${this.text}", function(parent) {\n` +
-			`${indent(this.renderSetup())}\n` +
-			`});`
-		);
-	}
-
-}
-
-
-export class TemplateNodeText extends TemplateNode
-{
-
-
-	public text: string;
-
-	public insertBefore: boolean;
-
-
-	constructor(text: string, insertBefore: boolean = false, parent: TemplateNodeParent = null)
-	{
-		super(parent);
-
-		this.text = text;
-		this.insertBefore = insertBefore;
-	}
-
-
-	public render(): string
-	{
-		let method = this.insertBefore ? '_insertTextBefore' : '_appendText';
-
-		if (!this.setup.length) {
-			return `tmpl.${method}(parent, "${this.text}");`;
-		}
-
-		return (
-			`tmpl.${method}(parent, "${this.text}", function(text) {\n` +
-			`${indent(this.renderSetup())}\n` +
-			`});`
-		);
-	}
-
-}
-
-
-export class TemplateNodeElement extends TemplateNodeParent
-{
-
-
-	public name: string;
-
-	public insertBefore: boolean;
-
-	public attributes: {[name: string]: string} = {};
-
-	public childNodes: Array<TemplateNode>;
-
-
-	constructor(name: string, insertBefore: boolean = false, parentNode: TemplateNodeParent = null)
-	{
-		super(parentNode);
-
-		this.name = name;
-		this.insertBefore = insertBefore;
-	}
-
-
-	public setAttribute(name: string, value: string): void
-	{
-		this.attributes[name] = value;
-	}
-
-
-	public render(): string
-	{
-		let method = this.insertBefore ? '_insertElementBefore' : '_appendElement';
-
-		if (!this.setup.length && !this.childNodes.length) {
-			if (!keys(this.attributes).length) {
-				return `tmpl.${method}(parent, "${this.name}");`;
-			}
-
-			return `tmpl.${method}(parent, "${this.name}", ${this.renderAttributes()});`;
-		}
-
-		let setup = [
-			this.renderSetup(),
-			this.renderChildNodes(),
-		];
-
-		setup = filter(setup, (block: string) => {
-			return block !== '';
-		});
-
-		return (
-			`tmpl.${method}(parent, "${this.name}", ${this.renderAttributes()}, function(parent) {\n` +
-			`${indent(setup.join('\n'))}\n` +
-			`});`
-		);
-	}
-
-
-	private renderAttributes(): string
-	{
-		let attributes = [];
-
-		forEach(this.attributes, (value: string, name: string) => {
-			attributes.push(`"${name}": "${value}"`);
-		});
-
-		return `{${attributes.join(', ')}}`;
 	}
 
 }

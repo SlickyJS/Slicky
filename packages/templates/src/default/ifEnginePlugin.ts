@@ -1,6 +1,7 @@
 import * as _ from '@slicky/html-parser';
 import {find} from '@slicky/utils';
 import {EnginePlugin, OnProcessTemplateArgument} from '../enginePlugin';
+import * as b from '../builder';
 
 
 export class IfEnginePlugin extends EnginePlugin
@@ -17,7 +18,9 @@ export class IfEnginePlugin extends EnginePlugin
 			return;
 		}
 
-		arg.comment.addSetupIf(arg.template.id, arg.engine.compileExpression(condition.value, arg.progress, true));
+		arg.comment.setup.add(
+			b.createIfHelper(arg.template.id, arg.engine.compileExpression(condition.value, arg.progress, true))
+		);
 	}
 
 }

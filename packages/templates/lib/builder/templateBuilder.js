@@ -1,33 +1,38 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@slicky/utils");
-var t = require("./nodes");
+var b = require("./nodes");
 var TemplateBuilder = (function () {
     function TemplateBuilder(className, matcher) {
+        var _this = this;
         this.templatesCount = 0;
         this.templates = [];
-        this.methods = {};
-        this.className = className;
         this.matcher = matcher;
-        this.methods['main'] = new t.TemplateMethod(this.className, 'main');
+        this.templateClass = b.createClass("Template" + className, ['application', 'parent'], function (cls) {
+            cls.beforeClass.add('_super.childTemplateExtend({{ className }});');
+            cls.afterClass.add('return {{ className }};');
+            cls.body.add('_super.call(this, application, parent);');
+            _this.templateMainMethod = b.createMethod(cls, 'main', ['parent'], function (main) {
+                main.body.add('var root = this;');
+                main.body.add('var tmpl = this;');
+                main.end.add('tmpl.init();');
+            });
+            cls.methods.add(_this.templateMainMethod);
+        });
     }
     TemplateBuilder.prototype.getMainMethod = function () {
-        return this.methods['main'];
+        return this.templateMainMethod;
     };
-    TemplateBuilder.prototype.addTemplate = function (element, fn) {
-        if (fn === void 0) { fn = null; }
+    TemplateBuilder.prototype.addTemplate = function (element, setup) {
+        if (setup === void 0) { setup = null; }
         var id = this.templatesCount++;
-        var name = "template" + id;
-        var template = new t.TemplateMethodTemplate(this.className, name, id);
-        if (utils_1.isFunction(fn)) {
-            fn(template);
-        }
+        var template = b.createTemplateMethod(this.templateClass, id, setup);
+        this.templateClass.methods.add(template);
         this.templates.push({
             id: id,
             element: element,
             method: template,
         });
-        this.methods[name] = template;
     };
     TemplateBuilder.prototype.findTemplate = function (selector) {
         var _this = this;
@@ -37,23 +42,10 @@ var TemplateBuilder = (function () {
         return utils_1.exists(template) ? template.method : undefined;
     };
     TemplateBuilder.prototype.render = function () {
-        return ("return function(_super)\n" +
-            "{\n" +
-            ("\t_super.childTemplateExtend(Template" + this.className + ");\n") +
-            ("\tfunction Template" + this.className + "(application, parent)\n") +
-            "\t{\n" +
-            "\t\t_super.call(this, application, parent);\n" +
-            "\t}\n" +
-            (utils_1.indent(this.renderMethods()) + "\n") +
-            ("\treturn Template" + this.className + ";\n") +
-            "}");
-    };
-    TemplateBuilder.prototype.renderMethods = function () {
-        var methods = [];
-        utils_1.forEach(this.methods, function (method) {
-            methods.push(method.render());
-        });
-        return methods.join('\n');
+        var _this = this;
+        return b.createReturn(b.createFunction(null, ['_super'], function (fn) {
+            fn.body.add(_this.templateClass);
+        })).render();
     };
     return TemplateBuilder;
 }());

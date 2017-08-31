@@ -1,6 +1,7 @@
 import * as _ from '@slicky/html-parser';
 import {find, map, exists} from '@slicky/utils';
 import {EnginePlugin, OnProcessTemplateArgument} from '../enginePlugin';
+import * as b from '../builder';
 
 
 export class ForEnginePlugin extends EnginePlugin
@@ -29,7 +30,9 @@ export class ForEnginePlugin extends EnginePlugin
 			arg.progress.localVariables.push(forLoop.forIndex);
 		}
 
-		arg.comment.addSetupForOf(arg.template.id, arg.engine.compileExpression(forLoop.forOf, arg.progress, true), forLoop.forItem, forLoop.forIndex, trackBy ? arg.engine.compileExpression(trackBy.value, arg.progress) : null);
+		arg.comment.setup.add(
+			b.createForOfHelper(arg.template.id, arg.engine.compileExpression(forLoop.forOf, arg.progress, true), forLoop.forItem, forLoop.forIndex, trackBy ? arg.engine.compileExpression(trackBy.value, arg.progress) : null)
+		);
 	}
 
 

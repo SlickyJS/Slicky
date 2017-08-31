@@ -1,14 +1,14 @@
-import {isFunction, indent, forEach, find, exists} from '@slicky/utils';
+import {find, exists} from '@slicky/utils';
 import {Matcher} from '@slicky/query-selector';
 import * as _ from '@slicky/html-parser';
-import * as t from './nodes';
+import * as b from './nodes';
 
 
 declare interface TemplateBuffer
 {
 	id: number;
 	element: _.ASTHTMLNodeElement;
-	method: t.TemplateMethodTemplate;
+	method: b.BuilderTemplateMethod;
 }
 
 
@@ -16,7 +16,9 @@ export class TemplateBuilder
 {
 
 
-	private className: string;
+	private templateClass: b.BuilderClass;
+
+	private templateMainMethod: b.BuilderMethod;
 
 	private matcher: Matcher;
 
@@ -24,45 +26,49 @@ export class TemplateBuilder
 
 	private templates: Array<TemplateBuffer> = [];
 
-	private methods: {[name: string]: t.TemplateMethod} = {};
-
 
 	constructor(className: string, matcher: Matcher)
 	{
-		this.className = className;
 		this.matcher = matcher;
-		this.methods['main'] = new t.TemplateMethod(this.className, 'main');
+		this.templateClass = b.createClass(`Template${className}`, ['application', 'parent'], (cls) => {
+			cls.beforeClass.add('_super.childTemplateExtend({{ className }});');
+			cls.afterClass.add('return {{ className }};');
+			cls.body.add('_super.call(this, application, parent);');
+
+			this.templateMainMethod = b.createMethod(cls, 'main', ['parent'], (main) => {
+				main.body.add('var root = this;');
+				main.body.add('var tmpl = this;');
+
+				main.end.add('tmpl.init();');
+			});
+
+			cls.methods.add(this.templateMainMethod);
+		});
 	}
 
 
-	public getMainMethod(): t.TemplateMethod
+	public getMainMethod(): b.BuilderMethod
 	{
-		return this.methods['main'];
+		return this.templateMainMethod;
 	}
 
 
-	public addTemplate(element: _.ASTHTMLNodeElement, fn: (template: t.TemplateMethodTemplate) => void = null): void
+	public addTemplate(element: _.ASTHTMLNodeElement, setup: (method: b.BuilderTemplateMethod) => void = null): void
 	{
 		let id = this.templatesCount++;
-		let name = `template${id}`;
+		let template = b.createTemplateMethod(this.templateClass, id, setup);
 
-		let template = new t.TemplateMethodTemplate(this.className, name, id);
-
-		if (isFunction(fn)) {
-			fn(template);
-		}
+		this.templateClass.methods.add(template);
 
 		this.templates.push({
 			id: id,
 			element: element,
 			method: template,
 		});
-
-		this.methods[name] = template;
 	}
 
 
-	public findTemplate(selector: string): t.TemplateMethodTemplate
+	public findTemplate(selector: string): b.BuilderTemplateMethod
 	{
 		let template: TemplateBuffer = find(this.templates, (template: TemplateBuffer) => {
 			return this.matcher.matches(template.element, selector);
@@ -74,30 +80,9 @@ export class TemplateBuilder
 
 	public render(): string
 	{
-		return (
-			`return function(_super)\n` +
-			`{\n` +
-			`	_super.childTemplateExtend(Template${this.className});\n` +
-			`	function Template${this.className}(application, parent)\n` +
-			`	{\n` +
-			`		_super.call(this, application, parent);\n` +
-			`	}\n` +
-			`${indent(this.renderMethods())}\n` +
-			`	return Template${this.className};\n` +
-			`}`
-		);
-	}
-
-
-	private renderMethods(): string
-	{
-		let methods = [];
-
-		forEach(this.methods, (method: t.TemplateMethod) => {
-			methods.push(method.render());
-		});
-
-		return methods.join('\n');
+		return b.createReturn(b.createFunction(null, ['_super'], (fn) => {
+			fn.body.add(this.templateClass);
+		})).render();
 	}
 
 }

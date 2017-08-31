@@ -12,6 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@slicky/utils");
 var enginePlugin_1 = require("../enginePlugin");
+var b = require("../builder");
 var ForEnginePlugin = (function (_super) {
     __extends(ForEnginePlugin, _super);
     function ForEnginePlugin() {
@@ -32,7 +33,7 @@ var ForEnginePlugin = (function (_super) {
         if (forLoop.forIndex) {
             arg.progress.localVariables.push(forLoop.forIndex);
         }
-        arg.comment.addSetupForOf(arg.template.id, arg.engine.compileExpression(forLoop.forOf, arg.progress, true), forLoop.forItem, forLoop.forIndex, trackBy ? arg.engine.compileExpression(trackBy.value, arg.progress) : null);
+        arg.comment.setup.add(b.createForOfHelper(arg.template.id, arg.engine.compileExpression(forLoop.forOf, arg.progress, true), forLoop.forItem, forLoop.forIndex, trackBy ? arg.engine.compileExpression(trackBy.value, arg.progress) : null));
     };
     ForEnginePlugin.prototype.parseFor = function (loop) {
         var parts = utils_1.map(loop.split('of'), function (part) { return part.trim(); });

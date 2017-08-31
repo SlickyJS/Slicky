@@ -5,7 +5,7 @@ import {PlatformBrowser} from '@slicky/platform-browser';
 import {Container} from '@slicky/di';
 import {Application} from '@slicky/application';
 import {ApplicationTemplate} from '@slicky/templates-runtime';
-import {AppComponent} from './app';
+import {APP_DIRECTIVES} from './directives';
 
 
 let platform = new PlatformBrowser;
@@ -14,7 +14,7 @@ let template = new ApplicationTemplate;
 
 let app = new Application(platform, template, container, {
 	appElement: document.getElementById('app'),
-	directives: [AppComponent],
+	directives: APP_DIRECTIVES,
 });
 
 app.run();

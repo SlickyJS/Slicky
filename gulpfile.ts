@@ -39,6 +39,7 @@ const config: Config = {
 		{name: 'platformServer', root: path.join(__dirname, 'packages', 'platform-server')},
 	],
 	aot: [
+		{name: 'templates', root: path.join(__dirname, 'packages', 'examples', 'examples', 'templates')},
 		{name: 'todo', root: path.join(__dirname, 'packages', 'examples', 'examples', 'todo')},
 	],
 	examples: [

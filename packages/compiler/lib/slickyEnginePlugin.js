@@ -10,11 +10,11 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var templates_1 = require("@slicky/templates");
 var utils_1 = require("@slicky/utils");
 var c = require("@slicky/core");
 var tjs = require("@slicky/tiny-js");
-var s = require("./nodes");
+var t = require("@slicky/templates");
+var b = require("./nodes");
 var SlickyEnginePlugin = (function (_super) {
     __extends(SlickyEnginePlugin, _super);
     function SlickyEnginePlugin(compiler, metadata) {
@@ -30,7 +30,7 @@ var SlickyEnginePlugin = (function (_super) {
             if (!arg.matcher.matches(element, hostElement.selector)) {
                 return;
             }
-            arg.element.addSetup(new s.TemplateSetupComponentHostElement(hostElement.property));
+            arg.element.setup.add(b.createComponentSetHostElement(hostElement.property));
         });
         utils_1.forEach(this.metadata.directives, function (directive) {
             if (!arg.matcher.matches(element, directive.metadata.selector)) {
@@ -39,7 +39,7 @@ var SlickyEnginePlugin = (function (_super) {
             if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
                 _this.compiler.compile(directive.metadata);
             }
-            arg.element.addSetup(new s.TemplateSetupDirective(directive.metadata.hash, directive.metadata.type), function (setup) {
+            arg.element.setup.add(b.createCreateDirective(directive.metadata.hash, directive.metadata.type, function (setup) {
                 var onTemplateDestroy = [];
                 utils_1.forEach(directive.metadata.inputs, function (input) {
                     var property;
@@ -63,25 +63,25 @@ var SlickyEnginePlugin = (function (_super) {
                     }
                     if (isProperty) {
                         element.properties.splice(element.properties.indexOf(property), 1);
-                        var onUpdate = [
-                            "directive." + input.property + " = value"
-                        ];
-                        if (directive.metadata.onUpdate) {
-                            onUpdate.push("directive.onUpdate('" + property.name + "', value)");
-                        }
-                        if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
-                            onUpdate.push('tmpl.refresh()');
-                        }
-                        var watchOnParent = directive.metadata.type === c.DirectiveDefinitionType.Component;
+                        var watchOnParent_1 = directive.metadata.type === c.DirectiveDefinitionType.Component;
                         _this.expressionInParent = true;
-                        setup.addSetupWatch(arg.engine.compileExpression(property.value, arg.progress, true), onUpdate.join(';\n'), watchOnParent);
+                        setup.setup.add(t.createWatch(arg.engine.compileExpression(property.value, arg.progress, true), function (watcher) {
+                            watcher.watchParent = watchOnParent_1;
+                            watcher.update.add("directive." + input.property + " = value;");
+                            if (directive.metadata.onUpdate) {
+                                watcher.update.add("directive.onUpdate('" + property.name + "', value);");
+                            }
+                            if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
+                                watcher.update.add('tmpl.refresh();');
+                            }
+                        }));
                         _this.expressionInParent = false;
                     }
                     else {
                         element.attributes.splice(element.attributes.indexOf(property), 1);
-                        setup.addSetup(new s.TemplateSetupDirectivePropertyWrite(input.property, "\"" + property.value + "\""));
+                        setup.setup.add(b.createDirectivePropertyWrite(input.property, "\"" + property.value + "\""));
                         if (directive.metadata.onUpdate) {
-                            setup.addSetup(new s.TemplateSetupDirectiveMethodCall('onUpdate', "\"" + input.property + "\", \"" + property.value + "\""));
+                            setup.setup.add(b.createDirectiveMethodCall('onUpdate', ["\"" + input.property + "\"", "\"" + property.value + "\""]));
                         }
                     }
                 });
@@ -92,13 +92,13 @@ var SlickyEnginePlugin = (function (_super) {
                     if (event) {
                         element.events.splice(element.events.indexOf(event), 1);
                     }
-                    setup.addSetup(new s.TemplateSetupDirectiveOutput(output.property, arg.engine.compileExpression(event.value, arg.progress)));
+                    setup.setup.add(b.createDirectiveOutput(output.property, arg.engine.compileExpression(event.value, arg.progress)));
                 });
                 var removeChildDirectives = [];
                 utils_1.forEach(_this.metadata.childDirectives, function (childDirective, i) {
                     if (childDirective.directiveType === directive.directiveType && !arg.progress.inTemplate) {
-                        setup.addSetup(new s.TemplateSetupDirectivePropertyWrite(childDirective.property, 'directive', true));
                         removeChildDirectives.push(i);
+                        setup.setup.add(b.createDirectivePropertyWrite(childDirective.property, 'directive', true));
                     }
                 });
                 utils_1.forEach(removeChildDirectives, function (i) {
@@ -107,27 +107,27 @@ var SlickyEnginePlugin = (function (_super) {
                 var removeChildrenDirectives = [];
                 utils_1.forEach(_this.metadata.childrenDirectives, function (childrenDirectives, i) {
                     if (childrenDirectives.directiveType === directive.directiveType) {
-                        setup.addSetup(new s.TemplateSetupDirectiveMethodCall(childrenDirectives.property + ".add.emit", 'directive', true));
-                        onTemplateDestroy.push("root.getProvider(\"component\")." + childrenDirectives.property + ".remove.emit(directive);");
+                        onTemplateDestroy.push(t.createCode("root.getProvider(\"component\")." + childrenDirectives.property + ".remove.emit(directive);"));
                         removeChildrenDirectives.push(i);
+                        setup.setup.add(b.createDirectiveMethodCall(childrenDirectives.property + ".add.emit", ['directive'], true));
                     }
                 });
                 utils_1.forEach(removeChildrenDirectives, function (i) {
                     _this.metadata.childrenDirectives.splice(i, 1);
                 });
                 if (directive.metadata.onDestroy) {
-                    onTemplateDestroy.push('directive.onDestroy()');
+                    onTemplateDestroy.push(t.createCode('directive.onDestroy();'));
                 }
                 if (onTemplateDestroy.length) {
-                    setup.addSetup(new s.TemplateSetupTemplateOnDestroy(onTemplateDestroy.join('\n')));
+                    setup.setup.add(t.createTemplateOnDestroy(false, function (node) { return node.callback.addList(onTemplateDestroy); }));
                 }
                 if (directive.metadata.onInit) {
-                    setup.addSetup(new s.TemplateSetupDirectiveOnInit);
+                    setup.setup.add(b.createDirectiveOnInit());
                 }
                 if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
-                    setup.addSetup(new s.TemplateSetupComponentRender);
+                    setup.setup.add(b.createComponentRender());
                 }
-            });
+            }));
         });
         return element;
     };
@@ -149,5 +149,5 @@ var SlickyEnginePlugin = (function (_super) {
         ]), new tjs.ASTIdentifier(parameter));
     };
     return SlickyEnginePlugin;
-}(templates_1.EnginePlugin));
+}(t.EnginePlugin));
 exports.SlickyEnginePlugin = SlickyEnginePlugin;
