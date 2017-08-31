@@ -66,6 +66,22 @@ describe('#Parser.returnStatement', () => {
 			);
 		});
 
+		it('should add automatically return statement to block', () => {
+			let ast = _.Parser.createFromString('(a)', {addMissingReturn: true}).parse();
+
+			expect(ast).to.be.eql(
+				new _.ASTProgram([
+					new _.ASTReturnStatement(
+						new _.ASTBlockStatement(
+							[
+								new _.ASTIdentifier('a'),
+							]
+						)
+					),
+				])
+			);
+		});
+
 		it('should add automatically return statement with function having own return', () => {
 			let ast = _.Parser.createFromString('() => {return a}; b', {addMissingReturn: true}).parse();
 

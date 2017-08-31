@@ -654,7 +654,7 @@ export class Parser
 	{
 		if (this.addMissingReturn && !progress.hasReturn) {
 			for (let i = statements.length - 1; i >= 0; i--) {
-				if (statements[i] instanceof _.ASTExpression) {
+				if (statements[i] instanceof _.ASTExpression || statements[i] instanceof _.ASTBlockStatement) {
 					statements[i] = new _.ASTReturnStatement(statements[i]);
 					break;
 				}
