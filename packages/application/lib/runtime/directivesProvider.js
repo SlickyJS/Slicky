@@ -3,9 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@slicky/core");
 var utils_1 = require("@slicky/utils");
 var DirectivesProvider = (function () {
-    function DirectivesProvider(metadataLoader) {
+    function DirectivesProvider(extensions, metadataLoader) {
         var _this = this;
         this.directives = {};
+        this.extensions = extensions;
         metadataLoader.loaded.subscribe(function (directive) {
             _this.directives[directive.metadata.hash] = directive;
         });
@@ -18,15 +19,18 @@ var DirectivesProvider = (function () {
     };
     DirectivesProvider.prototype.create = function (hash, el, container, setup) {
         if (setup === void 0) { setup = null; }
-        var directiveType = this.directives[hash].directiveType;
-        var directive = container.create(directiveType, [
+        var services = [
             {
                 service: core_1.ElementRef,
                 options: {
                     useFactory: function () { return core_1.ElementRef.getForElement(el); },
                 },
             },
-        ]);
+        ];
+        var directiveType = this.directives[hash].directiveType;
+        var metadata = this.directives[hash].metadata;
+        this.extensions.doUpdateDirectiveServices(directiveType, metadata, services);
+        var directive = container.create(directiveType, services);
         if (utils_1.isFunction(setup)) {
             setup(directive);
         }

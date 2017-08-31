@@ -13,6 +13,7 @@ import {DirectiveAnnotationDefinition} from './directive';
 import {ComponentAnnotationDefinition} from './component';
 import {FilterDefinition} from './filter';
 import {FilterInterface} from '../filters';
+import {ExtensionsManager} from '../extensions';
 
 
 export enum DirectiveDefinitionType
@@ -148,9 +149,17 @@ export class DirectiveMetadataLoader
 
 	public loaded = new EventEmitter<DirectiveDefinitionDirective>();
 
+	private extensions: ExtensionsManager;
+
 	private definitions: {[uniqueName: string]: DirectiveDefinition} = {};
 
 	private filters: Array<ClassType<FilterInterface>> = [];
+
+
+	constructor(extensions: ExtensionsManager)
+	{
+		this.extensions = extensions;
+	}
 
 
 	public addGlobalFilters(filters: Array<ClassType<FilterInterface>>): void
@@ -315,6 +324,8 @@ export class DirectiveMetadataLoader
 				};
 			});
 		}
+
+		this.extensions.doUpdateDirectiveMetadata(directiveType, definition, annotation._options);
 
 		this.loaded.emit({
 			metadata: definition,

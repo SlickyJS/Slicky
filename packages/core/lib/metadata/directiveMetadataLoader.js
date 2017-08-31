@@ -19,10 +19,11 @@ var DirectiveDefinitionType;
     DirectiveDefinitionType[DirectiveDefinitionType["Component"] = 1] = "Component";
 })(DirectiveDefinitionType = exports.DirectiveDefinitionType || (exports.DirectiveDefinitionType = {}));
 var DirectiveMetadataLoader = (function () {
-    function DirectiveMetadataLoader() {
+    function DirectiveMetadataLoader(extensions) {
         this.loaded = new event_emitter_1.EventEmitter();
         this.definitions = {};
         this.filters = [];
+        this.extensions = extensions;
     }
     DirectiveMetadataLoader.prototype.addGlobalFilters = function (filters) {
         this.filters = utils_1.merge(this.filters, filters);
@@ -162,6 +163,7 @@ var DirectiveMetadataLoader = (function () {
                 };
             });
         }
+        this.extensions.doUpdateDirectiveMetadata(directiveType, definition, annotation._options);
         this.loaded.emit({
             metadata: definition,
             directiveType: directiveType,

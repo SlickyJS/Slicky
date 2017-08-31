@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import {exists, forEach} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
-import {DirectiveMetadataLoader, DirectiveDefinitionType} from '@slicky/core';
+import {DirectiveMetadataLoader, DirectiveDefinitionType, ExtensionsManager} from '@slicky/core';
 import {Compiler} from '@slicky/compiler';
 import {readFileSync} from 'fs';
 import * as path from 'path';
@@ -71,7 +71,7 @@ if (!exists(directivesFile[APP_DIRECTIVES_EXPORT])) {
 
 const directives: Array<ClassType<any>> = directivesFile.APP_DIRECTIVES;
 
-const metadataLoader = new DirectiveMetadataLoader;
+const metadataLoader = new DirectiveMetadataLoader(new ExtensionsManager);
 const compiler = new Compiler;
 
 

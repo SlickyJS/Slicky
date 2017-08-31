@@ -1,6 +1,7 @@
 import { ClassType } from '@slicky/lang';
 import { EventEmitter } from '@slicky/event-emitter';
 import { FilterInterface } from '../filters';
+import { ExtensionsManager } from '../extensions';
 export declare enum DirectiveDefinitionType {
     Directive = 0,
     Component = 1,
@@ -80,8 +81,10 @@ export interface DirectiveDefinition {
 }
 export declare class DirectiveMetadataLoader {
     loaded: EventEmitter<DirectiveDefinitionDirective>;
+    private extensions;
     private definitions;
     private filters;
+    constructor(extensions: ExtensionsManager);
     addGlobalFilters(filters: Array<ClassType<FilterInterface>>): void;
     load(directiveType: ClassType<any>): DirectiveDefinition;
     private getDirectiveHash(name, annotation);

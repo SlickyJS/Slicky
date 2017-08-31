@@ -5,30 +5,25 @@ var utils_1 = require("@slicky/utils");
 var directivesProvider_1 = require("./directivesProvider");
 var templatesProvider_1 = require("./templatesProvider");
 var RootDirectiveRunner = (function () {
-    function RootDirectiveRunner(platform, template, container, metadataLoader, document) {
+    function RootDirectiveRunner(platform, template, container, metadataLoader, extensions, document) {
         this.platform = platform;
         this.template = template;
         this.container = container;
         this.metadataLoader = metadataLoader;
+        this.extensions = extensions;
         this.document = document;
-        this.directivesProvider = new directivesProvider_1.DirectivesProvider(this.metadataLoader);
-        this.templatesProvider = new templatesProvider_1.TemplatesProvider(this.platform, this.template);
+        this.directivesProvider = new directivesProvider_1.DirectivesProvider(this.extensions, this.metadataLoader);
+        this.templatesProvider = new templatesProvider_1.TemplatesProvider(this.platform, this.extensions, this.template, this.directivesProvider);
     }
     RootDirectiveRunner.prototype.run = function (directiveType) {
         var _this = this;
         var metadata = this.metadataLoader.load(directiveType);
         var els = this.document.querySelectorAll(metadata.selector);
-        utils_1.forEach(els, function (el) { return _this.runDirective(directiveType, metadata, el); });
+        utils_1.forEach(els, function (el) { return _this.runDirective(metadata, el); });
     };
-    RootDirectiveRunner.prototype.runDirective = function (directiveType, metadata, el) {
-        var directive = this.container.create(directiveType, [
-            {
-                service: core_1.ElementRef,
-                options: {
-                    useFactory: function () { return core_1.ElementRef.getForElement(el); },
-                },
-            },
-        ]);
+    RootDirectiveRunner.prototype.runDirective = function (metadata, el) {
+        var container = metadata.type === core_1.DirectiveDefinitionType.Component ? this.container.fork() : this.container;
+        var directive = this.directivesProvider.create(metadata.hash, el, container);
         utils_1.forEach(metadata.inputs, function (input) {
             directive[input.property] = el.getAttribute(input.name);
         });
@@ -40,26 +35,15 @@ var RootDirectiveRunner = (function () {
             eventEl.addEventListener(event.event, function (e) { return directive[event.method](e, eventEl); });
         });
         if (metadata.type === core_1.DirectiveDefinitionType.Component) {
-            this.runComponentTemplate(metadata, directive, el);
+            this.extensions.doInitComponentContainer(container, metadata, directive);
+            this.runComponentTemplate(container, metadata, directive, el);
         }
         if (utils_1.isFunction(directive['onInit'])) {
             directive.onInit();
         }
     };
-    RootDirectiveRunner.prototype.runComponentTemplate = function (metadata, component, el) {
-        var _this = this;
-        var templateType = this.platform.compileComponentTemplate(metadata);
-        var template = new templateType(this.template, this.template);
-        template.addProvider('component', component);
-        template.addProvider('container', this.container);
-        template.addProvider('templatesProvider', this.templatesProvider);
-        template.addProvider('directivesProvider', this.directivesProvider);
-        utils_1.forEach(metadata.filters, function (filterData) {
-            var filter = _this.container.create(filterData.filterType);
-            template.addFilter(filterData.metadata.name, function (obj, args) {
-                return filter.transform.apply(filter, [obj].concat(args));
-            });
-        });
+    RootDirectiveRunner.prototype.runComponentTemplate = function (container, metadata, component, el) {
+        var template = this.templatesProvider.createComponentTemplate(container, this.template, metadata, component);
         template.render(el);
     };
     return RootDirectiveRunner;

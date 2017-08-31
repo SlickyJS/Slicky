@@ -18,7 +18,8 @@
 		"@slicky/reflection": "github:SlickyJS/Reflection#master",
 		"@slicky/utils": "github:SlickyJS/Utils#master",
 		"@slicky/event-emitter": "github:SlickyJS/EventEmitter#master",
-		"@slicky/templates-runtime": "^0.0.1"
+		"@slicky/templates-runtime": "^0.0.1",
+		"@slicky/di": "github:SlickyJS/DI#master"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",

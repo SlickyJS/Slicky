@@ -1,4 +1,4 @@
-import {DirectiveMetadataLoader, DirectiveDefinitionDirective, DirectiveDefinition, ElementRef} from '@slicky/core';
+import {DirectiveMetadataLoader, DirectiveDefinitionDirective, DirectiveDefinition, ElementRef, ExtensionsManager} from '@slicky/core';
 import {ClassType} from '@slicky/lang';
 import {Container} from '@slicky/di';
 import {isFunction} from '@slicky/utils';
@@ -8,11 +8,15 @@ export class DirectivesProvider
 {
 
 
+	private extensions: ExtensionsManager;
+
 	private directives: {[hash: number]: DirectiveDefinitionDirective} = {};
 
 
-	constructor(metadataLoader: DirectiveMetadataLoader)
+	constructor(extensions: ExtensionsManager, metadataLoader: DirectiveMetadataLoader)
 	{
+		this.extensions = extensions;
+
 		metadataLoader.loaded.subscribe((directive: DirectiveDefinitionDirective) => {
 			this.directives[directive.metadata.hash] = directive;
 		});
@@ -33,15 +37,21 @@ export class DirectivesProvider
 
 	public create(hash: number, el: HTMLElement, container: Container, setup: (directive: any) => void = null): any
 	{
-		let directiveType = this.directives[hash].directiveType;
-		let directive = container.create(directiveType, [
+		let services = [
 			{
 				service: ElementRef,
 				options: {
 					useFactory: () => ElementRef.getForElement(el),
 				},
 			},
-		]);
+		];
+
+		let directiveType = this.directives[hash].directiveType;
+		let metadata = this.directives[hash].metadata;
+
+		this.extensions.doUpdateDirectiveServices(directiveType, metadata, services);
+
+		let directive = container.create(directiveType, services);
 
 		if (isFunction(setup)) {
 			setup(directive);

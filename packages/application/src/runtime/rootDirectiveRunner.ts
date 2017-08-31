@@ -1,8 +1,8 @@
-import {ElementRef, FilterInterface, IPlatform, OnInit, DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionInput, DirectiveDefinitionFilter} from '@slicky/core';
+import {IPlatform, OnInit, DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionInput, ExtensionsManager} from '@slicky/core';
 import {forEach, isFunction, exists} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {Container} from '@slicky/di';
-import {ApplicationTemplate, Template} from '@slicky/templates-runtime';
+import {ApplicationTemplate} from '@slicky/templates-runtime';
 import {DirectivesProvider} from './directivesProvider';
 import {TemplatesProvider} from './templatesProvider';
 
@@ -19,6 +19,8 @@ export class RootDirectiveRunner
 
 	private metadataLoader: DirectiveMetadataLoader;
 
+	private extensions: ExtensionsManager;
+
 	private document: Document;
 
 	private directivesProvider: DirectivesProvider;
@@ -26,16 +28,17 @@ export class RootDirectiveRunner
 	private templatesProvider: TemplatesProvider;
 
 
-	constructor(platform: IPlatform, template: ApplicationTemplate, container: Container, metadataLoader: DirectiveMetadataLoader, document: Document)
+	constructor(platform: IPlatform, template: ApplicationTemplate, container: Container, metadataLoader: DirectiveMetadataLoader, extensions: ExtensionsManager, document: Document)
 	{
 		this.platform = platform;
 		this.template = template;
 		this.container = container;
 		this.metadataLoader = metadataLoader;
+		this.extensions = extensions;
 		this.document = document;
 
-		this.directivesProvider = new DirectivesProvider(this.metadataLoader);
-		this.templatesProvider = new TemplatesProvider(this.platform, this.template);
+		this.directivesProvider = new DirectivesProvider(this.extensions, this.metadataLoader);
+		this.templatesProvider = new TemplatesProvider(this.platform, this.extensions, this.template, this.directivesProvider);
 	}
 
 
@@ -44,20 +47,14 @@ export class RootDirectiveRunner
 		let metadata = this.metadataLoader.load(directiveType);
 		let els = this.document.querySelectorAll(metadata.selector);
 
-		forEach(els, (el: HTMLElement) => this.runDirective(directiveType, metadata, el));
+		forEach(els, (el: HTMLElement) => this.runDirective(metadata, el));
 	}
 
 
-	private runDirective(directiveType: ClassType<any>, metadata: DirectiveDefinition, el: HTMLElement): void
+	private runDirective(metadata: DirectiveDefinition, el: HTMLElement): void
 	{
-		let directive = this.container.create(directiveType, [
-			{
-				service: ElementRef,
-				options: {
-					useFactory: () => ElementRef.getForElement(el),
-				},
-			},
-		]);
+		let container = metadata.type === DirectiveDefinitionType.Component ? this.container.fork() : this.container;
+		let directive = this.directivesProvider.create(metadata.hash, el, container);
 
 		forEach(metadata.inputs, (input: DirectiveDefinitionInput) => {
 			directive[input.property] = el.getAttribute(input.name);
@@ -74,7 +71,8 @@ export class RootDirectiveRunner
 		});
 
 		if (metadata.type === DirectiveDefinitionType.Component) {
-			this.runComponentTemplate(metadata, directive, el);
+			this.extensions.doInitComponentContainer(container, metadata, directive);
+			this.runComponentTemplate(container, metadata, directive, el);
 		}
 
 		if (isFunction(directive['onInit'])) {
@@ -83,23 +81,9 @@ export class RootDirectiveRunner
 	}
 
 
-	private runComponentTemplate(metadata: DirectiveDefinition, component: any, el: HTMLElement): void
+	private runComponentTemplate(container: Container, metadata: DirectiveDefinition, component: any, el: HTMLElement): void
 	{
-		let templateType = this.platform.compileComponentTemplate(metadata);
-		let template: Template = new templateType(this.template, this.template);
-
-		template.addProvider('component', component);
-		template.addProvider('container', this.container);
-		template.addProvider('templatesProvider', this.templatesProvider);
-		template.addProvider('directivesProvider', this.directivesProvider);
-
-		forEach(metadata.filters, (filterData: DirectiveDefinitionFilter) => {
-			let filter = <FilterInterface>this.container.create(filterData.filterType);
-
-			template.addFilter(filterData.metadata.name, (obj: any, args: Array<any>) => {
-				return filter.transform(obj, ...args);
-			});
-		});
+		let template = this.templatesProvider.createComponentTemplate(container, this.template, metadata, component);
 
 		template.render(el);
 	}

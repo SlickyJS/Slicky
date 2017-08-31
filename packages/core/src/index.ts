@@ -4,3 +4,4 @@ export * from './filters';
 export * from './elementRef';
 export * from './platform';
 export * from './childrenDirectivesStorage';
+export * from './extensions';

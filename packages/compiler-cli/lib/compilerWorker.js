@@ -44,7 +44,7 @@ if (!utils_1.exists(directivesFile[APP_DIRECTIVES_EXPORT])) {
     process.exit(1);
 }
 var directives = directivesFile.APP_DIRECTIVES;
-var metadataLoader = new core_1.DirectiveMetadataLoader;
+var metadataLoader = new core_1.DirectiveMetadataLoader(new core_1.ExtensionsManager);
 var compiler = new compiler_1.Compiler;
 utils_1.forEach(directives, function (directive) {
     var metadata = metadataLoader.load(directive);
