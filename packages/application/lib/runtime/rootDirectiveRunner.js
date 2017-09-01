@@ -5,20 +5,20 @@ var utils_1 = require("@slicky/utils");
 var directivesProvider_1 = require("./directivesProvider");
 var templatesProvider_1 = require("./templatesProvider");
 var RootDirectiveRunner = (function () {
-    function RootDirectiveRunner(platform, template, container, metadataLoader, extensions, document) {
+    function RootDirectiveRunner(platform, template, container, metadataLoader, extensions, el) {
         this.platform = platform;
         this.template = template;
         this.container = container;
         this.metadataLoader = metadataLoader;
         this.extensions = extensions;
-        this.document = document;
+        this.el = el;
         this.directivesProvider = new directivesProvider_1.DirectivesProvider(this.extensions, this.metadataLoader);
         this.templatesProvider = new templatesProvider_1.TemplatesProvider(this.platform, this.extensions, this.template, this.directivesProvider);
     }
     RootDirectiveRunner.prototype.run = function (directiveType) {
         var _this = this;
         var metadata = this.metadataLoader.load(directiveType);
-        var els = this.document.querySelectorAll(metadata.selector);
+        var els = this.el.querySelectorAll(metadata.selector);
         utils_1.forEach(els, function (el) { return _this.runDirective(metadata, el); });
     };
     RootDirectiveRunner.prototype.runDirective = function (metadata, el) {

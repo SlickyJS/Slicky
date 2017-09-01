@@ -21,6 +21,7 @@
 		"@slicky/lang": "github:SlickyJs/Lang#master",
 		"@slicky/core": "^1.0.0",
 		"@slicky/compiler": "^0.0.1",
+		"@slicky/application": "^0.0.1",
 		"yargs": "^8.0.2",
 		"ts-node": "^3.3.0",
 		"reflect-metadata": "^0.1.10",

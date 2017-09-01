@@ -10,6 +10,9 @@ var PlatformServer = (function () {
     PlatformServer.prototype.getTemplateTypeByHash = function (hash) {
         return this.templatesFactory(hash);
     };
+    PlatformServer.prototype.run = function (application, el) {
+        application.run(this, el);
+    };
     return PlatformServer;
 }());
 exports.PlatformServer = PlatformServer;

@@ -1,15 +1,16 @@
-import {IPlatform, FilterInterface, DirectiveDefinitionFilter, DirectiveDefinition, ExtensionsManager} from '@slicky/core';
+import {FilterInterface, DirectiveDefinitionFilter, DirectiveDefinition, ExtensionsManager} from '@slicky/core';
 import {Container} from '@slicky/di';
 import {ApplicationTemplate, BaseTemplate, Template} from '@slicky/templates-runtime';
 import {forEach, isFunction} from '@slicky/utils';
 import {DirectivesProvider} from './directivesProvider';
+import {PlatformInterface} from '../platform';
 
 
 export class TemplatesProvider
 {
 
 
-	private platform: IPlatform;
+	private platform: PlatformInterface;
 
 	private extensions: ExtensionsManager;
 
@@ -18,7 +19,7 @@ export class TemplatesProvider
 	private directivesProvider: DirectivesProvider;
 
 
-	constructor(platform: IPlatform, extensions: ExtensionsManager, applicationTemplate: ApplicationTemplate, directivesProvider: DirectivesProvider)
+	constructor(platform: PlatformInterface, extensions: ExtensionsManager, applicationTemplate: ApplicationTemplate, directivesProvider: DirectivesProvider)
 	{
 		this.platform = platform;
 		this.extensions = extensions;

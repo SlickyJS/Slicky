@@ -1,11 +1,12 @@
-import {IPlatform, DirectiveDefinition} from '@slicky/core';
+import {DirectiveDefinition} from '@slicky/core';
 import {ClassType} from '@slicky/lang';
 import {Compiler} from '@slicky/compiler';
 import {Template} from '@slicky/templates-runtime';
 import {evalCode} from '@slicky/utils';
+import {Application, PlatformInterface} from '@slicky/application';
 
 
-export class PlatformBrowser implements IPlatform
+export class PlatformBrowser implements PlatformInterface
 {
 
 
@@ -27,6 +28,12 @@ export class PlatformBrowser implements IPlatform
 	public getTemplateTypeByHash(hash: number): ClassType<Template>
 	{
 		return this.createTemplateType(this.compiler.getTemplateByHash(hash))
+	}
+
+
+	public run(application: Application, el: HTMLElement): void
+	{
+		application.run(this, el);
 	}
 
 

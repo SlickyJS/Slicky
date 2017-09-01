@@ -18,7 +18,8 @@
 		"@slicky/core": "^1.0.0",
 		"@slicky/lang": "github:SlickyJS/Lang#master",
 		"@slicky/templates-runtime": "^0.0.1",
-		"@slicky/utils": "github:SlickyJS/Utils#master"
+		"@slicky/utils": "github:SlickyJS/Utils#master",
+		"@slicky/application": "^0.0.1"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",

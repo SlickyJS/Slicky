@@ -1,15 +1,14 @@
 import {Container, ProviderOptions} from '@slicky/di';
 import {exists, forEach} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
-import {IPlatform, DirectiveMetadataLoader, ExtensionsManager, AbstractExtension, FilterInterface} from '@slicky/core';
+import {DirectiveMetadataLoader, ExtensionsManager, AbstractExtension} from '@slicky/core';
 import {ApplicationTemplate, CommonTemplateHelpers} from '@slicky/templates-runtime';
 import {RootDirectiveRunner} from './runtime';
+import {PlatformInterface} from './platform';
 
 
 export declare interface ApplicationOptions
 {
-	document?: Document;
-	appElement?: HTMLElement|Document;
 	directives?: Array<ClassType<any>>;
 }
 
@@ -18,15 +17,7 @@ export class Application
 {
 
 
-	private platform: IPlatform;
-
-	private template: ApplicationTemplate;
-
 	private container: Container;
-
-	private document: Document;
-
-	private appElement: HTMLElement|Document;
 
 	private metadataLoader: DirectiveMetadataLoader;
 
@@ -35,13 +26,9 @@ export class Application
 	private directives: Array<ClassType<any>>;
 
 
-	constructor(platform: IPlatform, template: ApplicationTemplate, container: Container, options: ApplicationOptions = {})
+	constructor(container: Container, options: ApplicationOptions = {})
 	{
-		this.platform = platform;
-		this.template = template;
 		this.container = container;
-		this.document = exists(options.document) ? options.document : document;
-		this.appElement = exists(options.appElement) ? options.appElement : this.document;
 		this.directives = exists(options.directives) ? options.directives : [];
 
 		this.extensions = new ExtensionsManager;
@@ -59,17 +46,25 @@ export class Application
 	}
 
 
-	public run(): void
+	public getDirectives(): Array<ClassType<any>>
 	{
+		return this.directives;
+	}
+
+
+	public run(platform: PlatformInterface, el: HTMLElement): void
+	{
+		let applicationTemplate = new ApplicationTemplate;
+
 		forEach(this.extensions.getServices(), (provider: ProviderOptions) => {
 			this.container.addService(provider.service, provider.options);
 		});
 
 		this.metadataLoader.addGlobalFilters(this.extensions.getFilters());
 
-		CommonTemplateHelpers.install(this.template);
+		CommonTemplateHelpers.install(applicationTemplate);
 
-		let runner = new RootDirectiveRunner(this.platform, this.template, this.container, this.metadataLoader, this.extensions, this.document);
+		let runner = new RootDirectiveRunner(platform, applicationTemplate, this.container, this.metadataLoader, this.extensions, el);
 
 		forEach(this.directives, (directive: ClassType<any>) => {
 			runner.run(directive);

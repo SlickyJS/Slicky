@@ -1,9 +1,10 @@
-import {IPlatform, DirectiveDefinition} from '@slicky/core';
+import {DirectiveDefinition} from '@slicky/core';
 import {ClassType} from '@slicky/lang';
 import {Template} from '@slicky/templates-runtime';
+import {Application, PlatformInterface} from '@slicky/application';
 
 
-export class PlatformServer implements IPlatform
+export class PlatformServer implements PlatformInterface
 {
 
 
@@ -16,15 +17,21 @@ export class PlatformServer implements IPlatform
 	}
 
 
-	compileComponentTemplate(metadata: DirectiveDefinition): ClassType<Template>
+	public compileComponentTemplate(metadata: DirectiveDefinition): ClassType<Template>
 	{
 		return this.getTemplateTypeByHash(metadata.hash);
 	}
 
 
-	getTemplateTypeByHash(hash: number): ClassType<Template>
+	public getTemplateTypeByHash(hash: number): ClassType<Template>
 	{
 		return this.templatesFactory(hash);
+	}
+
+
+	public run(application: Application, el: HTMLElement): void
+	{
+		application.run(this, el);
 	}
 
 }

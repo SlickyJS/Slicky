@@ -3,9 +3,9 @@ import {Component} from '@slicky/core';
 
 @Component({
 	selector: 'app',
-	template: require('./appTemplate.html'),
+	template: require('./templatesComponentTemplate.html'),
 })
-export class AppComponent
+export class TemplatesComponent
 {
 
 

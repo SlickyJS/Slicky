@@ -13,6 +13,9 @@ var PlatformBrowser = (function () {
     PlatformBrowser.prototype.getTemplateTypeByHash = function (hash) {
         return this.createTemplateType(this.compiler.getTemplateByHash(hash));
     };
+    PlatformBrowser.prototype.run = function (application, el) {
+        application.run(this, el);
+    };
     PlatformBrowser.prototype.createTemplateType = function (code) {
         var templateFactory = utils_1.evalCode(code);
         return templateFactory(templates_runtime_1.Template);
