@@ -3,7 +3,7 @@ export interface CompilerTemplatesList {
 }
 export interface CompilerSlickyOptions {
     outDir: string;
-    directivesFile: string;
+    applicationFile: string;
 }
 export declare class Compiler {
     compileAndWrite(tsconfigPath: string, done?: (outDir: string, factory: string, templates: CompilerTemplatesList) => void): void;

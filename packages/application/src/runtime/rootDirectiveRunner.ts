@@ -1,17 +1,18 @@
-import {IPlatform, OnInit, DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionInput, ExtensionsManager} from '@slicky/core';
+import {OnInit, DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionInput, ExtensionsManager} from '@slicky/core';
 import {forEach, isFunction, exists} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {Container} from '@slicky/di';
 import {ApplicationTemplate} from '@slicky/templates-runtime';
 import {DirectivesProvider} from './directivesProvider';
 import {TemplatesProvider} from './templatesProvider';
+import {PlatformInterface} from '../platform';
 
 
 export class RootDirectiveRunner
 {
 
 
-	private platform: IPlatform;
+	private platform: PlatformInterface;
 
 	private template: ApplicationTemplate;
 
@@ -21,21 +22,21 @@ export class RootDirectiveRunner
 
 	private extensions: ExtensionsManager;
 
-	private document: Document;
+	private el: HTMLElement;
 
 	private directivesProvider: DirectivesProvider;
 
 	private templatesProvider: TemplatesProvider;
 
 
-	constructor(platform: IPlatform, template: ApplicationTemplate, container: Container, metadataLoader: DirectiveMetadataLoader, extensions: ExtensionsManager, document: Document)
+	constructor(platform: PlatformInterface, template: ApplicationTemplate, container: Container, metadataLoader: DirectiveMetadataLoader, extensions: ExtensionsManager, el: HTMLElement)
 	{
 		this.platform = platform;
 		this.template = template;
 		this.container = container;
 		this.metadataLoader = metadataLoader;
 		this.extensions = extensions;
-		this.document = document;
+		this.el = el;
 
 		this.directivesProvider = new DirectivesProvider(this.extensions, this.metadataLoader);
 		this.templatesProvider = new TemplatesProvider(this.platform, this.extensions, this.template, this.directivesProvider);
@@ -45,7 +46,7 @@ export class RootDirectiveRunner
 	public run(directiveType: ClassType<any>): void
 	{
 		let metadata = this.metadataLoader.load(directiveType);
-		let els = this.document.querySelectorAll(metadata.selector);
+		let els = this.el.querySelectorAll(metadata.selector);
 
 		forEach(els, (el: HTMLElement) => this.runDirective(metadata, el));
 	}

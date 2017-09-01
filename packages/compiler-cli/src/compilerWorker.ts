@@ -3,13 +3,14 @@ import {exists, forEach} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {DirectiveMetadataLoader, DirectiveDefinitionType, ExtensionsManager} from '@slicky/core';
 import {Compiler} from '@slicky/compiler';
+import {Application} from '@slicky/application';
 import {readFileSync} from 'fs';
 import * as path from 'path';
 import {CompilerSlickyOptions} from './compiler';
 
 
 const TSCONFIG_SLICKY_COMPILER_OPTIONS = 'slickyCompilerOptions';
-const APP_DIRECTIVES_EXPORT = 'APP_DIRECTIVES';
+const APPLICATION_EXPORT = 'APPLICATION';
 
 
 const tsconfigPath = process.env.TSCONFIG_PATH;
@@ -40,8 +41,8 @@ if (!exists(tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS])) {
 	process.exit(1);
 }
 
-if (!exists(tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS].directivesFile)) {
-	process.send({error: `Missing "${TSCONFIG_SLICKY_COMPILER_OPTIONS}.directivesFile" in ${tsconfigPath}`});
+if (!exists(tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS].applicationFile)) {
+	process.send({error: `Missing "${TSCONFIG_SLICKY_COMPILER_OPTIONS}.applicationFile" in ${tsconfigPath}`});
 	process.exit(1);
 }
 
@@ -53,29 +54,29 @@ if (!exists(tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS].outDir)) {
 
 const slickyCompilerOptions: CompilerSlickyOptions = {
 	outDir: path.join(path.dirname(tsconfigPath), tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS].outDir),
-	directivesFile: path.join(path.dirname(tsconfigPath), tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS].directivesFile),
+	applicationFile: path.join(path.dirname(tsconfigPath), tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS].applicationFile),
 };
 
 
 process.send({slickyCompilerOptions: slickyCompilerOptions});
 
 
-const directivesFile = require(slickyCompilerOptions.directivesFile);
+const applicationFile = require(slickyCompilerOptions.applicationFile);
 
 
-if (!exists(directivesFile[APP_DIRECTIVES_EXPORT])) {
-	process.send({error: `Missing ${APP_DIRECTIVES_EXPORT} export in ${directivesFile}`});
+if (!exists(applicationFile[APPLICATION_EXPORT])) {
+	process.send({error: `Missing ${APPLICATION_EXPORT} export in ${applicationFile}`});
 	process.exit(1);
 }
 
 
-const directives: Array<ClassType<any>> = directivesFile.APP_DIRECTIVES;
+const application: Application = applicationFile[APPLICATION_EXPORT];
 
 const metadataLoader = new DirectiveMetadataLoader(new ExtensionsManager);
 const compiler = new Compiler;
 
 
-forEach(directives, (directive: ClassType<any>) => {
+forEach(application.getDirectives(), (directive: ClassType<any>) => {
 	let metadata = metadataLoader.load(directive);
 
 	if (metadata.type !== DirectiveDefinitionType.Component) {

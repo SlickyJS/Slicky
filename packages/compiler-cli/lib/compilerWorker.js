@@ -7,7 +7,7 @@ var compiler_1 = require("@slicky/compiler");
 var fs_1 = require("fs");
 var path = require("path");
 var TSCONFIG_SLICKY_COMPILER_OPTIONS = 'slickyCompilerOptions';
-var APP_DIRECTIVES_EXPORT = 'APP_DIRECTIVES';
+var APPLICATION_EXPORT = 'APPLICATION';
 var tsconfigPath = process.env.TSCONFIG_PATH;
 if (!utils_1.exists(tsconfigPath)) {
     process.send({ error: 'Missing TSCONFIG_PATH environment variable' });
@@ -25,8 +25,8 @@ if (!utils_1.exists(tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS])) {
     process.send({ error: "Missing \"" + TSCONFIG_SLICKY_COMPILER_OPTIONS + "\" in " + tsconfigPath });
     process.exit(1);
 }
-if (!utils_1.exists(tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS].directivesFile)) {
-    process.send({ error: "Missing \"" + TSCONFIG_SLICKY_COMPILER_OPTIONS + ".directivesFile\" in " + tsconfigPath });
+if (!utils_1.exists(tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS].applicationFile)) {
+    process.send({ error: "Missing \"" + TSCONFIG_SLICKY_COMPILER_OPTIONS + ".applicationFile\" in " + tsconfigPath });
     process.exit(1);
 }
 if (!utils_1.exists(tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS].outDir)) {
@@ -35,18 +35,18 @@ if (!utils_1.exists(tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS].outDir)) {
 }
 var slickyCompilerOptions = {
     outDir: path.join(path.dirname(tsconfigPath), tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS].outDir),
-    directivesFile: path.join(path.dirname(tsconfigPath), tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS].directivesFile),
+    applicationFile: path.join(path.dirname(tsconfigPath), tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS].applicationFile),
 };
 process.send({ slickyCompilerOptions: slickyCompilerOptions });
-var directivesFile = require(slickyCompilerOptions.directivesFile);
-if (!utils_1.exists(directivesFile[APP_DIRECTIVES_EXPORT])) {
-    process.send({ error: "Missing " + APP_DIRECTIVES_EXPORT + " export in " + directivesFile });
+var applicationFile = require(slickyCompilerOptions.applicationFile);
+if (!utils_1.exists(applicationFile[APPLICATION_EXPORT])) {
+    process.send({ error: "Missing " + APPLICATION_EXPORT + " export in " + applicationFile });
     process.exit(1);
 }
-var directives = directivesFile.APP_DIRECTIVES;
+var application = applicationFile[APPLICATION_EXPORT];
 var metadataLoader = new core_1.DirectiveMetadataLoader(new core_1.ExtensionsManager);
 var compiler = new compiler_1.Compiler;
-utils_1.forEach(directives, function (directive) {
+utils_1.forEach(application.getDirectives(), function (directive) {
     var metadata = metadataLoader.load(directive);
     if (metadata.type !== core_1.DirectiveDefinitionType.Component) {
         return;

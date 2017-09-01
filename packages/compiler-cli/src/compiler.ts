@@ -13,7 +13,7 @@ export declare interface CompilerTemplatesList
 export declare interface CompilerSlickyOptions
 {
 	outDir: string;
-	directivesFile: string;
+	applicationFile: string;
 }
 
 
