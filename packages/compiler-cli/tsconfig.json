@@ -1,13 +1,11 @@
 {
+	"extends": "../tsconfig.json",
 	"compilerOptions": {
-		"target": "es5",
-		"removeComments": true,
-		"declaration": true,
+		"rootDir": ".",
 		"lib": [
 			"es5", "es2015.promise", "dom"
 		]
 	},
-	"compileOnSave": false,
 	"include": [
 		"./**/*.ts"
 	],

@@ -96,14 +96,13 @@ export class Compiler
 			`const _mapping = {\n` +
 			`${indent(templateMappings.join(',\n'))}\n` +
 			`};\n\n\n` +
-			`function _factory(hash: number)\n` +
+			`export function APP_TEMPLATES_FACTORY(hash: number)\n` +
 			`{\n` +
 			`	if (typeof _mapping[hash] === 'undefined') {\n` +
 			`		throw new Error("Component template " + hash + " does not exists.");\n` +
 			`	}\n\n` +
 			`	return _mapping[hash]();\n` +
-			`}\n\n\n` +
-			`export const APP_TEMPLATES_FACTORY = _factory;\n`
+			`}\n`
 		);
 	}
 

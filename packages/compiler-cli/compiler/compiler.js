@@ -62,14 +62,13 @@ var Compiler = (function () {
             "const _mapping = {\n" +
             (utils_1.indent(templateMappings.join(',\n')) + "\n") +
             "};\n\n\n" +
-            "function _factory(hash: number)\n" +
+            "export function APP_TEMPLATES_FACTORY(hash: number)\n" +
             "{\n" +
             "\tif (typeof _mapping[hash] === 'undefined') {\n" +
             "\t\tthrow new Error(\"Component template \" + hash + \" does not exists.\");\n" +
             "\t}\n\n" +
             "\treturn _mapping[hash]();\n" +
-            "}\n\n\n" +
-            "export const APP_TEMPLATES_FACTORY = _factory;\n");
+            "}\n");
     };
     return Compiler;
 }());

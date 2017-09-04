@@ -1,11 +1,8 @@
 {
+	"extends": "../tsconfig.json",
 	"compilerOptions": {
-		"target": "es5",
-		"removeComments": true,
-		"declaration": true,
 		"rootDir": "."
 	},
-	"compileOnSave": false,
 	"include": [
 		"./**/*.ts"
 	],

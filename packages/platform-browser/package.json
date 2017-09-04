@@ -28,8 +28,5 @@
 		"chai": "^4.1.1",
 		"mocha": "^3.5.0",
 		"reflect-metadata": "^0.1.10"
-	},
-	"scripts": {
-		"test": "exit 0 && cd tests && mocha -r ts-node/register index.ts"
 	}
 }

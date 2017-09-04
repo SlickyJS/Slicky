@@ -27,8 +27,5 @@
 		"@types/node": "^8.0.21",
 		"chai": "^4.1.1",
 		"mocha": "^3.5.0"
-	},
-	"scripts": {
-		"test": "exit 0 && cd tests && mocha -r ts-node/register index.ts"
 	}
 }
