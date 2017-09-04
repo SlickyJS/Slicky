@@ -1,3 +1,0 @@
-# Slicky/Application
-
-Slicky application
