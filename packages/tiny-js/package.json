@@ -14,7 +14,7 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/tokenizer": "github:SlickyJS/Tokenizer#refactoring",
+		"@slicky/tokenizer": "github:SlickyJS/Tokenizer#master",
 		"@slicky/utils": "github:SlickyJS/Utils#master"
 	},
 	"devDependencies": {

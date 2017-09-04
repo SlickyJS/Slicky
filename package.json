@@ -39,5 +39,8 @@
 		"lerna": "lerna",
 		"gulp": "gulp",
 		"test": "lerna run test"
+	},
+	"dependencies": {
+		"@slicky/query-selector": "^1.0.0"
 	}
 }

@@ -31,12 +31,18 @@
 
 "@slicky/lang@github:SlickyJs/Lang#master":
   version "1.0.2"
-  uid b10f6954c56228ad8c21c691ece7560892202dbd
   resolved "https://codeload.github.com/SlickyJs/Lang/tar.gz/b10f6954c56228ad8c21c691ece7560892202dbd"
 
-"@slicky/query-selector@github:SlickyJS/QuerySelector#refactoring":
+"@slicky/query-selector@^1.0.0":
   version "1.0.0"
-  resolved "https://codeload.github.com/SlickyJS/QuerySelector/tar.gz/9298a4df2ff0ff38ecc2890a2bc405102922c6d7"
+  resolved "https://registry.yarnpkg.com/@slicky/query-selector/-/query-selector-1.0.0.tgz#5f2ffeb029745ac2e831ba174d0d517ce6a7482b"
+  dependencies:
+    "@slicky/tokenizer" "^1.0.5"
+    "@slicky/utils" "^1.0.10"
+
+"@slicky/query-selector@github:SlickyJS/QuerySelector#master":
+  version "1.0.0"
+  resolved "https://codeload.github.com/SlickyJS/QuerySelector/tar.gz/0eaefaaaedac33c46a681f59402396a336da7bc5"
   dependencies:
     "@slicky/ast-query-selector" "github:SlickyJS/ASTQuerySelector#master"
     "@slicky/utils" "github:SlickyJS/Utils#master"
@@ -51,7 +57,7 @@
   version "1.0.2"
   resolved "https://codeload.github.com/SlickyJS/Reflection/tar.gz/6d1dcc7314a4297260b9e157cc0a030fecd37e30"
 
-"@slicky/tokenizer@github:SlickyJS/Tokenizer#refactoring":
+"@slicky/tokenizer@^1.0.5", "@slicky/tokenizer@github:SlickyJS/Tokenizer#refactoring":
   version "1.0.5"
   resolved "https://codeload.github.com/SlickyJS/Tokenizer/tar.gz/2f323c5d46da95585ab6783b6d430b38f32e60e1"
   dependencies:
@@ -61,9 +67,12 @@
   version "1.0.0"
   resolved "https://codeload.github.com/SlickyJS/Translator/tar.gz/8501993d2738757343dda50b7fecfa5b5b7bddcd"
   dependencies:
+    "@slicky/core" SlickyJS/Core#master
+    "@slicky/di" SlickyJS/DI#master
+    "@slicky/lang" SlickyJS/Lang#master
     "@slicky/utils" "^1.0.5"
 
-"@slicky/utils@SlickyJS/Utils#master", "@slicky/utils@^1.0.5", "@slicky/utils@github:SlickyJS/Utils#master":
+"@slicky/utils@SlickyJS/Utils#master", "@slicky/utils@^1.0.10", "@slicky/utils@^1.0.5", "@slicky/utils@github:SlickyJS/Utils#master":
   version "1.0.10"
   uid f50cca88d2e006cba3c173dcb7073824c5f24ec8
   resolved "https://codeload.github.com/SlickyJS/Utils/tar.gz/f50cca88d2e006cba3c173dcb7073824c5f24ec8"

@@ -16,7 +16,7 @@
 	"dependencies": {
 		"@slicky/core": "^1.0.0",
 		"@slicky/html-parser": "^1.0.0",
-		"@slicky/query-selector": "github:SlickyJS/QuerySelector#refactoring",
+		"@slicky/query-selector": "github:SlickyJS/QuerySelector#master",
 		"@slicky/templates": "^0.0.1",
 		"@slicky/tiny-js": "^1.0.1",
 		"@slicky/utils": "github:SlickyJS/Utils#master"
