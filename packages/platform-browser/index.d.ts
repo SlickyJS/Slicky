@@ -1,1 +1,0 @@
-export { PlatformBrowser } from './platform';
