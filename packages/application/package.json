@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/application",
 	"description": "Slicky application",
-	"version": "0.0.1",
+	"version": "0.0.3",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
