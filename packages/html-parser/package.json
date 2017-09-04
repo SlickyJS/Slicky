@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:SlickyJS/HTMLParser.git"
+		"url": "git@github.com:SlickyJS/Slicky.git"
 	},
 	"author": {
 		"name": "David Kudera",
