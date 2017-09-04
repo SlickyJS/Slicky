@@ -16,10 +16,10 @@
 	"dependencies": {
 		"@slicky/core": "^1.0.0",
 		"@slicky/html-parser": "^1.0.0",
-		"@slicky/query-selector": "github:SlickyJS/QuerySelector#master",
+		"@slicky/query-selector": "^1.0.1",
 		"@slicky/templates": "^0.0.1",
 		"@slicky/tiny-js": "^1.0.1",
-		"@slicky/utils": "github:SlickyJS/Utils#master"
+		"@slicky/utils": "^1.0.11"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",

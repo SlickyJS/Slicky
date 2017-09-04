@@ -14,8 +14,8 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/utils": "github:SlickyJS/Utils#master",
-		"@slicky/realm": "github:SlickyJS/Realm#master",
+		"@slicky/utils": "^1.0.11",
+		"@slicky/realm": "^1.0.1",
 		"@slicky/change-detection": "^1.0.0"
 	},
 	"devDependencies": {

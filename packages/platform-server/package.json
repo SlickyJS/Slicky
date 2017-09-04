@@ -15,7 +15,7 @@
 	"types": "./index.d.ts",
 	"dependencies": {
 		"@slicky/core": "^1.0.0",
-		"@slicky/lang": "github:SlickyJS/Lang#master",
+		"@slicky/lang": "^1.0.0",
 		"@slicky/templates-runtime": "^0.0.1",
 		"@slicky/application": "^0.0.1"
 	},

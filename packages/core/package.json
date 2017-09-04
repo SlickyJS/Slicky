@@ -14,12 +14,12 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/lang": "github:SlickyJS/Lang#master",
-		"@slicky/reflection": "github:SlickyJS/Reflection#master",
-		"@slicky/utils": "github:SlickyJS/Utils#master",
-		"@slicky/event-emitter": "github:SlickyJS/EventEmitter#master",
+		"@slicky/lang": "^1.0.0",
+		"@slicky/reflection": "^1.0.3",
+		"@slicky/utils": "^1.0.11",
+		"@slicky/event-emitter": "^1.0.1",
 		"@slicky/templates-runtime": "^0.0.1",
-		"@slicky/di": "github:SlickyJS/DI#master"
+		"@slicky/di": "^1.0.1"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",

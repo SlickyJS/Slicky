@@ -14,11 +14,11 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/translator": "github:SlickyJS/Translator#master",
+		"@slicky/translator": "^1.0.2",
 		"@slicky/core": "^1.0.0",
-		"@slicky/lang": "github:SlickyJS/Lang#master",
-		"@slicky/utils": "github:SlickyJS/Utils#master",
-		"@slicky/di": "github:SlickyJS/DI#master"
+		"@slicky/lang": "^1.0.0",
+		"@slicky/utils": "^1.0.11",
+		"@slicky/di": "^1.0.1"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",

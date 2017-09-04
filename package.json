@@ -19,7 +19,7 @@
 	],
 	"devDependencies": {
 		"@slicky/compiler-cli": "^0.0.1",
-		"@slicky/utils": "github:SlickyJS/Utils#master",
+		"@slicky/utils": "^1.0.11",
 		"@types/gulp": "^4.0.4",
 		"@types/merge2": "^1.1.1",
 		"gulp": "github:gulpjs/gulp#4.0",
@@ -41,6 +41,12 @@
 		"test": "lerna run test"
 	},
 	"dependencies": {
-		"@slicky/query-selector": "^1.0.0"
+		"@slicky/di": "^1.0.1",
+		"@slicky/event-emitter": "^1.0.1",
+		"@slicky/lang": "^1.0.0",
+		"@slicky/query-selector": "^1.0.1",
+		"@slicky/reflection": "^1.0.3",
+		"@slicky/tokenizer": "^1.0.6",
+		"@slicky/translator": "^1.0.2"
 	}
 }

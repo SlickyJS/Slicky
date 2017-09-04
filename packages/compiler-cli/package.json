@@ -17,8 +17,8 @@
 		"scc": "./bin/scc.js"
 	},
 	"dependencies": {
-		"@slicky/utils": "github:SlickyJS/Utils#master",
-		"@slicky/lang": "github:SlickyJs/Lang#master",
+		"@slicky/utils": "^1.0.11",
+		"@slicky/lang": "^1.0.0",
 		"@slicky/core": "^1.0.0",
 		"@slicky/compiler": "^0.0.1",
 		"@slicky/application": "^0.0.1",

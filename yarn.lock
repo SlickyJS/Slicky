@@ -2,80 +2,64 @@
 # yarn lockfile v1
 
 
-"@slicky/ast-query-selector@github:SlickyJS/ASTQuerySelector#master":
+"@slicky/ast-query-selector@^1.0.0":
   version "1.0.0"
-  resolved "https://codeload.github.com/SlickyJS/ASTQuerySelector/tar.gz/bc6946d27d7d41849d8b3afe5354e804fcaadcd8"
+  resolved "https://registry.yarnpkg.com/@slicky/ast-query-selector/-/ast-query-selector-1.0.0.tgz#ee35e615956044aba8a48fd1330ecebcd2c52651"
   dependencies:
-    "@slicky/tokenizer" "github:SlickyJS/Tokenizer#refactoring"
-    "@slicky/utils" "github:SlickyJS/Utils#master"
+    "@slicky/tokenizer" "^1.0.6"
+    "@slicky/utils" "^1.0.11"
 
-"@slicky/di@github:SlickyJS/DI#master":
-  version "1.0.0"
-  resolved "https://codeload.github.com/SlickyJS/DI/tar.gz/63c781d85b214b546eaf131e193f97477bab0205"
+"@slicky/di@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@slicky/di/-/di-1.0.1.tgz#33850705644fb2cf47e15c23a0fad527109d9b98"
   dependencies:
-    "@slicky/lang" SlickyJS/Lang#master
+    "@slicky/lang" "^1.0.0"
     "@slicky/reflection" "^1.0.2"
-    "@slicky/utils" SlickyJS/Utils#master
+    "@slicky/utils" "^1.0.11"
     reflect-metadata "^0.1.0"
 
-"@slicky/event-emitter@github:SlickyJS/EventEmitter#master":
-  version "1.0.0"
-  resolved "https://codeload.github.com/SlickyJS/EventEmitter/tar.gz/9e5f900df0635d4a2053078750c5cd4293aa1aff"
+"@slicky/event-emitter@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@slicky/event-emitter/-/event-emitter-1.0.1.tgz#24daa03a1c82445490eccb7505b23969b8984618"
   dependencies:
     rxjs "^5.4.3"
 
-"@slicky/lang@SlickyJS/Lang#master", "@slicky/lang@github:SlickyJS/Lang#master":
+"@slicky/lang@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@slicky/lang/-/lang-1.0.0.tgz#00591e6d3c764d057a8fe464f625b501259cf425"
+
+"@slicky/query-selector@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@slicky/query-selector/-/query-selector-1.0.1.tgz#80ee018a1a5249e3ff1cf0351366acd490463f2d"
+  dependencies:
+    "@slicky/ast-query-selector" "^1.0.0"
+    "@slicky/utils" "^1.0.11"
+
+"@slicky/realm@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@slicky/realm/-/realm-1.0.1.tgz#ee0fb189190ccc50f752e557f34945ec3c26a219"
+  dependencies:
+    zone.js "^0.7.8"
+
+"@slicky/reflection@^1.0.2", "@slicky/reflection@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@slicky/reflection/-/reflection-1.0.3.tgz#9229aa54ad94b5ac9b661e1abc06b50c1db2cead"
+
+"@slicky/tokenizer@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@slicky/tokenizer/-/tokenizer-1.0.6.tgz#6ac1adb7dded0af6c87e29254065be4a2b8c7396"
+  dependencies:
+    "@slicky/utils" "^1.0.11"
+
+"@slicky/translator@^1.0.2":
   version "1.0.2"
-  uid b10f6954c56228ad8c21c691ece7560892202dbd
-  resolved "https://codeload.github.com/SlickyJS/Lang/tar.gz/b10f6954c56228ad8c21c691ece7560892202dbd"
-
-"@slicky/lang@github:SlickyJs/Lang#master":
-  version "1.0.2"
-  resolved "https://codeload.github.com/SlickyJs/Lang/tar.gz/b10f6954c56228ad8c21c691ece7560892202dbd"
-
-"@slicky/query-selector@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@slicky/query-selector/-/query-selector-1.0.0.tgz#5f2ffeb029745ac2e831ba174d0d517ce6a7482b"
+  resolved "https://registry.yarnpkg.com/@slicky/translator/-/translator-1.0.2.tgz#b9afaac008eeaf1184dbbb6ba49d2d5a90763b1f"
   dependencies:
-    "@slicky/tokenizer" "^1.0.5"
-    "@slicky/utils" "^1.0.10"
+    "@slicky/utils" "^1.0.11"
 
-"@slicky/query-selector@github:SlickyJS/QuerySelector#master":
-  version "1.0.0"
-  resolved "https://codeload.github.com/SlickyJS/QuerySelector/tar.gz/0eaefaaaedac33c46a681f59402396a336da7bc5"
-  dependencies:
-    "@slicky/ast-query-selector" "github:SlickyJS/ASTQuerySelector#master"
-    "@slicky/utils" "github:SlickyJS/Utils#master"
-
-"@slicky/realm@github:SlickyJS/Realm#master":
-  version "1.0.0"
-  resolved "https://codeload.github.com/SlickyJS/Realm/tar.gz/357f93e02f891fe7e44ac427633deae8f078aba6"
-  dependencies:
-    zone.js "^0.7.0"
-
-"@slicky/reflection@^1.0.2", "@slicky/reflection@github:SlickyJS/Reflection#master":
-  version "1.0.2"
-  resolved "https://codeload.github.com/SlickyJS/Reflection/tar.gz/6d1dcc7314a4297260b9e157cc0a030fecd37e30"
-
-"@slicky/tokenizer@^1.0.5", "@slicky/tokenizer@github:SlickyJS/Tokenizer#refactoring":
-  version "1.0.5"
-  resolved "https://codeload.github.com/SlickyJS/Tokenizer/tar.gz/2f323c5d46da95585ab6783b6d430b38f32e60e1"
-  dependencies:
-    "@slicky/utils" SlickyJS/Utils#master
-
-"@slicky/translator@github:SlickyJS/Translator#master":
-  version "1.0.0"
-  resolved "https://codeload.github.com/SlickyJS/Translator/tar.gz/8501993d2738757343dda50b7fecfa5b5b7bddcd"
-  dependencies:
-    "@slicky/core" SlickyJS/Core#master
-    "@slicky/di" SlickyJS/DI#master
-    "@slicky/lang" SlickyJS/Lang#master
-    "@slicky/utils" "^1.0.5"
-
-"@slicky/utils@SlickyJS/Utils#master", "@slicky/utils@^1.0.10", "@slicky/utils@^1.0.5", "@slicky/utils@github:SlickyJS/Utils#master":
-  version "1.0.10"
-  uid f50cca88d2e006cba3c173dcb7073824c5f24ec8
-  resolved "https://codeload.github.com/SlickyJS/Utils/tar.gz/f50cca88d2e006cba3c173dcb7073824c5f24ec8"
+"@slicky/utils@^1.0.11":
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/@slicky/utils/-/utils-1.0.11.tgz#48f1d840d40ba144db2c59d0fa2022d7651b0aeb"
 
 "@types/chai@^4.0.3":
   version "4.0.4"
@@ -4377,7 +4361,7 @@ yn@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/yn/-/yn-2.0.0.tgz#e5adabc8acf408f6385fc76495684c88e6af689a"
 
-zone.js@^0.7.0:
+zone.js@^0.7.8:
   version "0.7.8"
   resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.7.8.tgz#4f3fe8834d44597f2639053a0fa438df34fffded"
 
