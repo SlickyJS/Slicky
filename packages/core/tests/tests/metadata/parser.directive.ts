@@ -1,4 +1,6 @@
-import {DirectiveMetadataLoader, OnInit, Directive, Input, Required, Output, HostElement, HostEvent, ParentComponent, DirectiveDefinitionType} from '../../../';
+import {OnInit, Directive, Input, Required, Output, HostElement, HostEvent, ParentComponent} from '../../../';
+import {DirectiveMetadataLoader, DirectiveDefinitionType} from '../../../metadata';
+import {ExtensionsManager} from '../../../extensions';
 import {expect} from 'chai';
 
 
@@ -8,7 +10,7 @@ let loader: DirectiveMetadataLoader;
 describe('#Metadata/Parser.directive/loader.load()', () => {
 
 	beforeEach(() => {
-		loader = new DirectiveMetadataLoader;
+		loader = new DirectiveMetadataLoader(new ExtensionsManager);
 	});
 
 	it('should throw an error for classes without @Directive() annotation', () => {
@@ -37,7 +39,6 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			exportAs: 'btn',
 			onInit: false,
 			onDestroy: false,
-			onCheckUpdates: false,
 			onUpdate: false,
 			inputs: [],
 			outputs: [],
@@ -63,7 +64,6 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			selector: 'button',
 			onInit: false,
 			onDestroy: false,
-			onCheckUpdates: false,
 			onUpdate: false,
 			inputs: [],
 			outputs: [],
@@ -101,7 +101,6 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			selector: 'button',
 			onInit: false,
 			onDestroy: false,
-			onCheckUpdates: false,
 			onUpdate: false,
 			inputs: [
 				{
@@ -156,7 +155,6 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			selector: 'button',
 			onInit: false,
 			onDestroy: false,
-			onCheckUpdates: false,
 			onUpdate: false,
 			inputs: [],
 			outputs: [
@@ -199,7 +197,6 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			selector: 'button',
 			onInit: false,
 			onDestroy: false,
-			onCheckUpdates: false,
 			onUpdate: false,
 			inputs: [],
 			outputs: [],
@@ -248,7 +245,6 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			selector: 'button',
 			onInit: false,
 			onDestroy: false,
-			onCheckUpdates: false,
 			onUpdate: false,
 			inputs: [],
 			outputs: [],
@@ -299,7 +295,6 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			selector: 'button',
 			onInit: false,
 			onDestroy: false,
-			onCheckUpdates: false,
 			onUpdate: false,
 			inputs: [],
 			outputs: [],
@@ -338,7 +333,6 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			selector: 'button',
 			onInit: true,
 			onDestroy: false,
-			onCheckUpdates: false,
 			onUpdate: false,
 			inputs: [],
 			outputs: [],

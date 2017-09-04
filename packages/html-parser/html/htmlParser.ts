@@ -91,7 +91,7 @@ export class HTMLParser
 	private processElementTemplates(element: _.ASTHTMLNodeElement): _.ASTHTMLNodeElement
 	{
 		let templates = element.templates;
-		delete element.templates;
+		element.templates = [];
 
 		let templatesGroups: {[prefix: string]: Array<_.ASTHTMLNodeExpressionAttribute>} = {};
 
@@ -109,7 +109,6 @@ export class HTMLParser
 		let marker = element;
 		forEach(templatesGroups, (group: Array<_.ASTHTMLNodeExpressionAttribute>) => {
 			let template = new _.ASTHTMLNodeElement('template');
-			delete template.templates;
 			template.properties = group;
 
 			if (marker === element) {

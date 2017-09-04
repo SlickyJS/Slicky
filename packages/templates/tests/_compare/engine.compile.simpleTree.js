@@ -1,20 +1,22 @@
-return function(_super)
-{
-	_super.childTemplateExtend(Template);
-	function Template()
+return function(_super) {
+	_super.childTemplateExtend(Template0);
+	function Template0(application, parent)
 	{
-		_super.call(this);
+		_super.call(this, application, parent);
 	}
-	Template.prototype.main = function(parent)
+	Template0.prototype.main = function(parent)
 	{
-		parent.addElement("div", {}, function(parent) {
-			parent.addElement("span", {}, function(parent) {
-				parent.addText("Hello ");
-				parent.addElement("i", {}, function(parent) {
-					parent.addText("world");
+		var root = this;
+		var tmpl = this;
+		tmpl._appendElement(parent, "div", {}, function(parent) {
+			tmpl._appendElement(parent, "span", {}, function(parent) {
+				tmpl._appendText(parent, "Hello ");
+				tmpl._appendElement(parent, "i", {}, function(parent) {
+					tmpl._appendText(parent, "world");
 				});
 			});
 		});
+		tmpl.init();
 	};
-	return Template;
-};
+	return Template0;
+}

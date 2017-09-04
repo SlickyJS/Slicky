@@ -18,7 +18,7 @@ describe('#DefaultWatcherProvider', () => {
 			let values = [0, 0];
 			let updates = [];
 
-			watcher.watch([], () => values.shift(), (value) => updates.push(value));
+			watcher.watch(() => values.shift(), (value) => updates.push(value));
 
 			watcher.check();
 
@@ -29,7 +29,7 @@ describe('#DefaultWatcherProvider', () => {
 			let values = [0, 1];
 			let updates = [];
 
-			watcher.watch([], () => values.shift(), (value) => updates.push(value));
+			watcher.watch(() => values.shift(), (value) => updates.push(value));
 
 			watcher.check();
 

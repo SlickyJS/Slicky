@@ -38,8 +38,6 @@
 	"scripts": {
 		"lerna": "lerna",
 		"gulp": "gulp",
-		"clean": "gulp clean",
-		"compile": "gulp compile",
-		"watch": "gulp watch"
+		"test": "lerna run test"
 	}
 }

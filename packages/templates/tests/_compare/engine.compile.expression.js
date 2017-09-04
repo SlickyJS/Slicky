@@ -1,16 +1,21 @@
-return function(_super)
-{
-	_super.childTemplateExtend(Template);
-	function Template()
+return function(_super) {
+	_super.childTemplateExtend(Template0);
+	function Template0(application, parent)
 	{
-		_super.call(this);
+		_super.call(this, application, parent);
 	}
-	Template.prototype.main = function(parent)
+	Template0.prototype.main = function(parent)
 	{
 		var root = this;
-		parent.addText("", function(text) {
-			root.getProvider("watcher").watch(["a"], function() {return a;}, function(value) {text.nodeValue = value;});
+		var tmpl = this;
+		tmpl._appendText(parent, "", function(text) {
+			tmpl.getProvider("watcher").watch(function() {
+				return tmpl.getParameter('a');
+			}, function(value) {
+				text.nodeValue = value;
+			});
 		});
+		tmpl.init();
 	};
-	return Template;
-};
+	return Template0;
+}

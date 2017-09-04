@@ -58,7 +58,7 @@ var HTMLParser = (function () {
     HTMLParser.prototype.processElementTemplates = function (element) {
         var _this = this;
         var templates = element.templates;
-        delete element.templates;
+        element.templates = [];
         var templatesGroups = {};
         utils_1.forEach(templates, function (template) {
             var found = utils_1.find(utils_1.keys(templatesGroups), function (name) { return utils_1.startsWith(template.name, name); });
@@ -71,7 +71,6 @@ var HTMLParser = (function () {
         var marker = element;
         utils_1.forEach(templatesGroups, function (group) {
             var template = new _.ASTHTMLNodeElement('template');
-            delete template.templates;
             template.properties = group;
             if (marker === element) {
                 _this.ast.insertBefore(marker.parentNode, template, marker);

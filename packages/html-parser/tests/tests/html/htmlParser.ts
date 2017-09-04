@@ -1,4 +1,4 @@
-import {HTMLParser, ASTHTMLNodeDocumentFragment, ASTHTMLNodeTextAttribute, ASTHTMLNodeExpressionAttribute, ASTHTMLNode, ASTHTMLNodeElement, ASTHTMLNodeText, ASTHTMLNodeExpression} from '../../../';
+import {HTMLParser, ASTHTMLNodeDocumentFragment, ASTHTMLNodeTextAttribute, ASTHTMLNodeExpressionAttribute, ASTHTMLNode, ASTHTMLNodeElement, ASTHTMLNodeText, ASTHTMLNodeExpression} from '../../../html';
 import {expect} from 'chai';
 
 
@@ -75,12 +75,10 @@ describe('#HTML/HTMLParser', () => {
 				new ASTHTMLNodeDocumentFragment([
 					new ASTHTMLNodeElement(
 						'div',
-						[],
 						[
 							new ASTHTMLNodeElement('span'),
 							new ASTHTMLNodeElement(
 								'i',
-								[],
 								[
 									new ASTHTMLNodeText('jou'),
 								]
@@ -96,14 +94,15 @@ describe('#HTML/HTMLParser', () => {
 
 			expect(ast).to.be.eql(
 				new ASTHTMLNodeDocumentFragment([
-					new ASTHTMLNodeElement(
-						'div',
-						[
-							new ASTHTMLNodeTextAttribute('hidden', ''),
-							new ASTHTMLNodeTextAttribute('id', 'div-id'),
-							new ASTHTMLNodeExpressionAttribute('class', 'divClass + \' red\' + " highlighted"'),
-						]
-					),
+					(() => {
+						let child = new ASTHTMLNodeElement('div');
+
+						child.attributes.push(new ASTHTMLNodeTextAttribute('hidden', ''));
+						child.attributes.push(new ASTHTMLNodeTextAttribute('id', 'div-id'));
+						child.attributes.push(new ASTHTMLNodeExpressionAttribute('class', '(divClass + \' red\') + " highlighted"'));
+
+						return child;
+					})(),
 				])
 			);
 		});
