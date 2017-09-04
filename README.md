@@ -8,6 +8,8 @@ immutable and typescript only!
 This framework if written specifically for non-SPA's, if you're choosing framework for SPA, just go with angular or 
 something else. (Maybe when there'll be router it could be used on SPA's also).
 
+**Still kinda experimental, but YOLO**
+
 ## Key points
 
 * Written for non SPA first
