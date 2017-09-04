@@ -1,4 +1,4 @@
-import * as _ from '../../src';
+import * as _ from '../../';
 import {expect} from 'chai';
 
 

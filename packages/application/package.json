@@ -11,8 +11,8 @@
 		"name": "David Kudera",
 		"email": "kudera.d@gmail.com"
 	},
-	"main": "./lib/index.js",
-	"types": "./lib/index.d.ts",
+	"main": "./index.js",
+	"types": "./index.d.ts",
 	"dependencies": {
 		"@slicky/core": "^1.0.0",
 		"@slicky/di": "github:SlickyJS/DI#master",

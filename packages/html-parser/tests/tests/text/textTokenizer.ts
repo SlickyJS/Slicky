@@ -1,6 +1,6 @@
 import {InputStream} from '@slicky/tokenizer';
 
-import {TextTokenizer, TextToken, TextTokenText, TextTokenExpression} from '../../../src';
+import {TextTokenizer, TextToken, TextTokenText, TextTokenExpression} from '../../../';
 import {expect} from 'chai';
 
 

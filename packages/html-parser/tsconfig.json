@@ -3,11 +3,14 @@
 		"target": "es5",
 		"removeComments": true,
 		"declaration": true,
-		"rootDir": ".",
-		"outDir": "./lib",
-		"declarationDir": "./lib"
+		"rootDir": "."
 	},
+	"compileOnSave": false,
 	"include": [
-		"./src/**/*.ts"
+		"./**/*.ts"
+	],
+	"exclude": [
+		"./node_modules",
+		"./tests"
 	]
 }

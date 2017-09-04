@@ -3,10 +3,16 @@
 		"target": "es5",
 		"removeComments": true,
 		"declaration": true,
-		"outDir": "./lib",
-		"declarationDir": "./lib"
+		"lib": [
+			"es5", "es2015.promise", "dom"
+		]
 	},
+	"compileOnSave": false,
 	"include": [
-		"./src/**/*.ts"
+		"./**/*.ts"
+	],
+	"exclude": [
+		"./node_modules",
+		"./tests"
 	]
 }

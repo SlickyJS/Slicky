@@ -1,4 +1,4 @@
-import {Tokenizer, TokenType, Token} from '../../src';
+import {Tokenizer, TokenType, Token} from '../../';
 import {expect} from 'chai';
 
 

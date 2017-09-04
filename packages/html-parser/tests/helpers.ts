@@ -1,4 +1,4 @@
-import {parseHTMLFromString, ASTNodeDocumentFragment, ASTNode, ASTNodeType, ASTNodeElement} from '../src';
+import {parseHTMLFromString, ASTNodeDocumentFragment, ASTNode, ASTNodeType, ASTNodeElement} from '../';
 
 
 export function parseHTML(input: string): ASTNodeDocumentFragment

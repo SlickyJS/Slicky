@@ -11,11 +11,11 @@
 		"name": "David Kudera",
 		"email": "kudera.d@gmail.com"
 	},
-	"main": "./lib/index.js",
+	"main": "./index.js",
+	"types": "./index.d.ts",
 	"bin": {
-		"scc": "./lib/bin/scc.js"
+		"scc": "./bin/scc.js"
 	},
-	"types": "./lib/index.d.ts",
 	"dependencies": {
 		"@slicky/utils": "github:SlickyJS/Utils#master",
 		"@slicky/lang": "github:SlickyJs/Lang#master",

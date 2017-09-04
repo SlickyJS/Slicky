@@ -1,4 +1,4 @@
-import {DefaultWatcherProvider} from '../../src';
+import {DefaultWatcherProvider} from '../../providers';
 
 import {expect} from 'chai';
 

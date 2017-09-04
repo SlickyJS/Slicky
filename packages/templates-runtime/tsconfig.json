@@ -2,11 +2,14 @@
 	"compilerOptions": {
 		"target": "es5",
 		"removeComments": true,
-		"declaration": true,
-		"outDir": "./lib",
-		"declarationDir": "./lib"
+		"declaration": true
 	},
+	"compileOnSave": false,
 	"include": [
-		"./src/**/*.ts"
+		"./**/*.ts"
+	],
+	"exclude": [
+		"./node_modules",
+		"./tests"
 	]
 }

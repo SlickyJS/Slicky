@@ -1,5 +1,7 @@
-import {DirectiveMetadataLoader, Directive} from '@slicky/core';
-import {Compiler} from '../../src';
+import {Directive} from '@slicky/core';
+import {DirectiveMetadataLoader} from '@slicky/core/metadata';
+import {ExtensionsManager} from '@slicky/core/extensions';
+import {Compiler} from '../..';
 
 import {expect} from 'chai';
 
@@ -11,7 +13,7 @@ let compiler: Compiler;
 describe('#Compiler', () => {
 
 	beforeEach(() => {
-		metadataLoader = new DirectiveMetadataLoader;
+		metadataLoader = new DirectiveMetadataLoader(new ExtensionsManager);
 		compiler = new Compiler;
 	});
 

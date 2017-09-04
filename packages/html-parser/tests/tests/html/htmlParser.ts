@@ -1,4 +1,4 @@
-import {HTMLParser, ASTHTMLNodeDocumentFragment, ASTHTMLNodeTextAttribute, ASTHTMLNodeExpressionAttribute, ASTHTMLNode, ASTHTMLNodeElement, ASTHTMLNodeText, ASTHTMLNodeExpression} from '../../../src';
+import {HTMLParser, ASTHTMLNodeDocumentFragment, ASTHTMLNodeTextAttribute, ASTHTMLNodeExpressionAttribute, ASTHTMLNode, ASTHTMLNodeElement, ASTHTMLNodeText, ASTHTMLNodeExpression} from '../../../';
 import {expect} from 'chai';
 
 

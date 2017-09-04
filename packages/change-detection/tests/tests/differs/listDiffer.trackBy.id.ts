@@ -1,4 +1,4 @@
-import {ListDiffer, DifferAction} from '../../../src';
+import {ListDiffer, DifferAction} from '../../../';
 import {expect} from 'chai';
 
 

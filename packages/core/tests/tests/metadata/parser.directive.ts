@@ -1,4 +1,4 @@
-import {DirectiveMetadataLoader, OnInit, Directive, Input, Required, Output, HostElement, HostEvent, ParentComponent, DirectiveDefinitionType} from '../../../src';
+import {DirectiveMetadataLoader, OnInit, Directive, Input, Required, Output, HostElement, HostEvent, ParentComponent, DirectiveDefinitionType} from '../../../';
 import {expect} from 'chai';
 
 

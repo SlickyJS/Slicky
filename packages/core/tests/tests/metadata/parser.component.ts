@@ -1,4 +1,6 @@
-import {DirectiveMetadataLoader, Component, Directive, Filter, DirectiveDefinitionType, ChildDirective, ChildrenDirective, ChangeDetectionStrategy} from '../../../src';
+import {Component, Directive, Filter, ChildDirective, ChildrenDirective} from '../../../';
+import {DirectiveMetadataLoader, DirectiveDefinitionType} from '../../../metadata';
+import {ExtensionsManager} from '../../../extensions';
 import {expect} from 'chai';
 
 
@@ -8,7 +10,7 @@ let loader: DirectiveMetadataLoader;
 describe('#Metadata/Parser.component/loader.load()', () => {
 
 	beforeEach(() => {
-		loader = new DirectiveMetadataLoader;
+		loader = new DirectiveMetadataLoader(new ExtensionsManager);
 	});
 
 	it('should throw an error when using invalid filter', () => {
@@ -39,7 +41,6 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 		@Component({
 			selector: 'button',
 			template: '<a>{{ title }}</a>',
-			changeDetection: ChangeDetectionStrategy.OnPush,
 			directives: [
 				TestChildDirective,
 			],
@@ -69,7 +70,6 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 			childDirectives: [],
 			childrenDirectives: [],
 			template: '<a>{{ title }}</a>',
-			changeDetection: ChangeDetectionStrategy.OnPush,
 			directives: [
 				{
 					directiveType: TestChildDirective,
@@ -147,7 +147,6 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 			],
 			childrenDirectives: [],
 			template: '',
-			changeDetection: ChangeDetectionStrategy.Default,
 			directives: [
 				{
 					directiveType: TestDirective,
@@ -217,7 +216,6 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 				},
 			],
 			template: '',
-			changeDetection: ChangeDetectionStrategy.Default,
 			directives: [
 				{
 					directiveType: TestDirective,

@@ -1,4 +1,4 @@
-import * as _ from '../../src';
+import * as _ from '../../';
 import {merge} from '@slicky/utils';
 import {expect} from 'chai';
 

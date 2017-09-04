@@ -6,7 +6,6 @@ import * as webpack from 'webpack';
 import * as gulp from 'gulp';
 import * as ts from 'gulp-typescript';
 import * as gutil from 'gulp-util';
-import * as clean from 'gulp-clean';
 import * as sass from 'gulp-sass';
 import * as concat from 'gulp-concat';
 
@@ -35,7 +34,6 @@ const config: Config = {
 		{name: 'application', root: path.join(__dirname, 'packages', 'application')},
 		{name: 'compiler', root: path.join(__dirname, 'packages', 'compiler')},
 		{name: 'compilerCli', root: path.join(__dirname, 'packages', 'compiler-cli')},
-		//{name: 'common', root: path.join(__dirname, 'packages', 'common')},
 		{name: 'platformBrowser', root: path.join(__dirname, 'packages', 'platform-browser')},
 		{name: 'platformServer', root: path.join(__dirname, 'packages', 'platform-server')},
 	],
@@ -66,7 +64,7 @@ function getExampleWebpackConfig(project: ConfigProject): any
 		},
 
 		resolve: {
-			extensions: ['.ts', '.js', '.json'],
+			extensions: ['.js', '.json', '.ts'],
 		},
 
 		module: {
@@ -80,28 +78,19 @@ function getExampleWebpackConfig(project: ConfigProject): any
 
 
 let compileTasks = [];
-let cleanTasks = [];
 forEach(config.packages, (pckg: ConfigProject) => {
 	compileTasks.push(`compile:${pckg.name}`);
-	cleanTasks.push(`clean:${pckg.name}`);
 
 	gulp.task(`compile:${pckg.name}`, () => {
 		let project = ts.createProject(path.join(pckg.root, 'tsconfig.json'));
 
-		let result = gulp
-			.src(path.join(pckg.root, 'src', '**', '*.ts'))
-			.pipe(project())
-		;
+		let result = project.src()
+			.pipe(project());
 
 		return merge([
-			result.js.pipe(gulp.dest(path.join(pckg.root, 'lib'))),
-			result.dts.pipe(gulp.dest(path.join(pckg.root, 'lib'))),
+			result.js.pipe(gulp.dest(pckg.root)),
+			result.dts.pipe(gulp.dest(pckg.root)),
 		]);
-	});
-
-	gulp.task(`clean:${pckg.name}`, () => {
-		return gulp.src([path.join(pckg.root, 'lib'), path.join(pckg.root, 'node_modules')], {read: false})
-			.pipe(clean());
 	});
 });
 
@@ -119,10 +108,8 @@ forEach(config.aot, (project: ConfigProject) => {
 
 
 let compileExampleTasks = [];
-let cleanExampleTasks = [];
 forEach(config.examples, (project: ConfigProject) => {
 	compileExampleTasks.push(`compile:examples:${project.name}`);
-	cleanExampleTasks.push(`clean:examples:${project.name}`);
 
 	gulp.task(`compile:examples:${project.name}:app`, (done) => {
 		const webpackConfig = getExampleWebpackConfig(project);
@@ -147,11 +134,6 @@ forEach(config.examples, (project: ConfigProject) => {
 			.pipe(gulp.dest(path.join(project.root, 'public')));
 	});
 
-	gulp.task(`clean:examples:${project.name}`, () => {
-		return gulp.src(path.join(project.root, 'public', 'app.js'), {read: false})
-			.pipe(clean());
-	});
-
 	gulp.task(`compile:examples:${project.name}`, gulp.parallel(`compile:examples:${project.name}:app`, `compile:examples:${project.name}:styles`));
 });
 
@@ -162,20 +144,3 @@ compileTasks.push('compile:examples');
 gulp.task('compile:aot', gulp.series(...compileAotTasks, (done) => done()));
 gulp.task('compile:examples', gulp.series(...compileExampleTasks, (done) => done()));
 gulp.task('compile', gulp.series(...compileTasks, (done) => done()));
-
-
-gulp.task('clean', gulp.parallel(...cleanTasks, (done) => done()));
-
-
-gulp.task('watch', gulp.series(...compileTasks, (done) => {
-	forEach(config.packages, (pckg: ConfigProject) => {
-		gulp.watch(path.join(pckg.root, 'src', '**', '*.ts'), <any>[`compile:${pckg.name}`, 'compile:examples']);
-	});
-
-	forEach(config.examples, (project: ConfigProject) => {
-		gulp.watch(path.join(project.root, 'app', '**', '*.ts'), <any>[`compile:examples:${project.name}:app`]);
-		gulp.watch(path.join(project.root, 'styles', '**', '*.scss'), <any>[`compile:examples:${project.name}:styles`]);
-	});
-
-	done();
-}));
