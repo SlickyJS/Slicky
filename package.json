@@ -48,6 +48,6 @@
 		"lerna": "lerna",
 		"gulp": "gulp",
 		"test": "lerna run test",
-		"lerna-publish": "gulp compile && lerna publish"
+		"lerna-publish": "gulp compile && lerna publish --skip-git"
 	}
 }
