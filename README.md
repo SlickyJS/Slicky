@@ -1,3 +1,5 @@
+[![Build Status](https://img.shields.io/travis/SlickyJS/Slicky.svg?style=flat-square)](https://travis-ci.org/SlickyJS/Slicky)
+
 # Slicky
 
 Javascript framework which combines features and ideas from angularjs, angular, vue and other frameworks. Fully 
