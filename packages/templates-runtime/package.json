@@ -14,9 +14,9 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/utils": "^1.0.11",
+		"@slicky/change-detection": "^1.0.1",
 		"@slicky/realm": "^1.0.1",
-		"@slicky/change-detection": "^1.0.0"
+		"@slicky/utils": "^1.0.11"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",

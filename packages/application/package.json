@@ -14,18 +14,18 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/core": "^1.0.0",
+		"@slicky/core": "^0.0.1",
 		"@slicky/di": "^1.0.1",
 		"@slicky/lang": "^1.0.0",
-		"@slicky/utils": "^1.0.11",
-		"@slicky/templates-runtime": "^0.0.1"
+		"@slicky/templates-runtime": "^0.0.1",
+		"@slicky/utils": "^1.0.11"
 	},
 	"devDependencies": {
-		"reflect-metadata": "^0.1.10",
 		"@types/chai": "^4.0.3",
 		"@types/mocha": "^2.2.41",
 		"@types/node": "^8.0.21",
 		"chai": "^4.1.1",
-		"mocha": "^3.5.0"
+		"mocha": "^3.5.0",
+		"reflect-metadata": "^0.1.10"
 	}
 }

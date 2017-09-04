@@ -14,11 +14,11 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/core": "^1.0.0",
-		"@slicky/html-parser": "^1.0.0",
+		"@slicky/core": "^0.0.1",
+		"@slicky/html-parser": "^0.0.1",
 		"@slicky/query-selector": "^1.0.1",
 		"@slicky/templates": "^0.0.1",
-		"@slicky/tiny-js": "^1.0.1",
+		"@slicky/tiny-js": "^1.0.2",
 		"@slicky/utils": "^1.0.11"
 	},
 	"devDependencies": {

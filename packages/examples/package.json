@@ -3,6 +3,7 @@
 	"description": "Slicky examples",
 	"version": "0.0.1",
 	"license": "MIT",
+	"private": true,
 	"repository": {
 		"type": "git",
 		"url": "git@github.com:SlickyJS/Slicky.git"
@@ -15,18 +16,18 @@
 	"types": "./lib/index.d.ts",
 	"dependencies": {
 		"@slicky/application": "^0.0.1",
-		"@slicky/platform-browser": "^0.0.1",
-		"@slicky/platform-server": "^0.0.1",
-		"@slicky/core": "^1.0.0",
+		"@slicky/core": "^0.0.1",
 		"@slicky/di": "^1.0.1",
-		"@slicky/lang": "^1.0.0",
 		"@slicky/event-emitter": "^1.0.1",
 		"@slicky/extension-translator": "^0.0.1",
-		"zone.js": "^0.8.16",
+		"@slicky/lang": "^1.0.0",
+		"@slicky/platform-browser": "^0.0.1",
+		"@slicky/platform-server": "^0.0.1",
 		"immutable": "^3.8.1",
-		"uikit": "^3.0.0-beta.30",
 		"jquery": "^3.2.1",
-		"moment": "^2.18.1"
+		"moment": "^2.18.1",
+		"uikit": "^3.0.0-beta.30",
+		"zone.js": "^0.8.16"
 	},
 	"devDependencies": {
 		"reflect-metadata": "^0.1.10"

@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/core",
 	"description": "Core part of slicky-js framework",
-	"version": "1.0.0",
+	"version": "0.0.1",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -14,12 +14,12 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
+		"@slicky/di": "^1.0.1",
+		"@slicky/event-emitter": "^1.0.1",
 		"@slicky/lang": "^1.0.0",
 		"@slicky/reflection": "^1.0.3",
-		"@slicky/utils": "^1.0.11",
-		"@slicky/event-emitter": "^1.0.1",
 		"@slicky/templates-runtime": "^0.0.1",
-		"@slicky/di": "^1.0.1"
+		"@slicky/utils": "^1.0.11"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",
