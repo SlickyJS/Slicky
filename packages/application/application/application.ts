@@ -21,7 +21,7 @@ export class Application
 {
 
 
-	private container: Container;
+	public container: Container;
 
 	private metadataLoader: DirectiveMetadataLoader;
 
