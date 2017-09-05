@@ -68,7 +68,14 @@ export class RootDirectiveRunner
 		});
 
 		forEach(metadata.events, (event: DirectiveDefinitionEvent) => {
-			let eventEl = exists(event.hostElement) ? directive[event.hostElement] : el.querySelector(event.selector);
+			let eventEl = exists(event.hostElement) ?
+				directive[event.hostElement] :
+				(
+					exists(event.selector) ?
+						el.querySelector(event.selector) :
+						el
+				)
+			;
 
 			eventEl.addEventListener(event.event, (e) => directive[event.method](e, eventEl));
 		});
