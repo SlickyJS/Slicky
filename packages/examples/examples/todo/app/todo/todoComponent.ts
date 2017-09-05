@@ -27,10 +27,10 @@ export class TodoComponent
 
 	public hoveringDone: boolean = false;
 
-	private el: ElementRef;
+	private el: ElementRef<HTMLLIElement>;
 
 
-	constructor(el: ElementRef)
+	constructor(el: ElementRef<HTMLLIElement>)
 	{
 		this.el = el;
 	}

@@ -11,10 +11,10 @@ export class IconDirective implements OnUpdate
 	@Input()
 	public icon: string;
 
-	public el: ElementRef;
+	public el: ElementRef<HTMLElement>;
 
 
-	constructor(el: ElementRef)
+	constructor(el: ElementRef<HTMLElement>)
 	{
 		this.el = el;
 	}

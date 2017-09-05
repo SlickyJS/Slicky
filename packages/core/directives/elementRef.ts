@@ -4,20 +4,20 @@ import {exists} from '@slicky/utils';
 const ELEMENT_STORAGE = '__slicky_element_ref';
 
 
-export class ElementRef
+export class ElementRef<T extends HTMLElement>
 {
 
 
-	public nativeElement: HTMLElement;
+	public nativeElement: T;
 
 
-	constructor(nativeElement: HTMLElement)
+	constructor(nativeElement: T)
 	{
 		this.nativeElement = nativeElement;
 	}
 
 
-	public static getForElement(nativeElement: HTMLElement): ElementRef
+	public static getForElement<T extends HTMLElement>(nativeElement: T): ElementRef<T>
 	{
 		if (exists(nativeElement[ELEMENT_STORAGE])) {
 			return nativeElement[ELEMENT_STORAGE];
