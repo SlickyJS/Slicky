@@ -1,5 +1,5 @@
 import {Container, ProviderOptions} from '@slicky/di';
-import {exists, forEach} from '@slicky/utils';
+import {exists, forEach, merge} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {AbstractExtension} from '@slicky/core';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
@@ -12,6 +12,7 @@ import {PlatformInterface} from '../platform';
 
 export declare interface ApplicationOptions
 {
+	precompile?: Array<ClassType<any>>;
 	directives?: Array<ClassType<any>>;
 }
 
@@ -26,12 +27,15 @@ export class Application
 
 	private extensions: ExtensionsManager;
 
+	private precompile: Array<ClassType<any>>;
+
 	private directives: Array<ClassType<any>>;
 
 
 	constructor(container: Container, options: ApplicationOptions = {})
 	{
 		this.container = container;
+		this.precompile = exists(options.precompile) ? options.precompile : [];
 		this.directives = exists(options.directives) ? options.directives : [];
 
 		this.extensions = new ExtensionsManager;
@@ -51,7 +55,7 @@ export class Application
 
 	public getDirectives(): Array<ClassType<any>>
 	{
-		return this.directives;
+		return merge(this.precompile, this.directives);
 	}
 
 
