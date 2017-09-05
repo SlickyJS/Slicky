@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/core",
 	"description": "Core part of slicky-js framework",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -18,7 +18,7 @@
 		"@slicky/event-emitter": "^1.0.1",
 		"@slicky/lang": "^1.0.0",
 		"@slicky/reflection": "^1.0.3",
-		"@slicky/templates-runtime": "^0.0.2",
+		"@slicky/templates-runtime": "^0.0.3",
 		"@slicky/utils": "^1.0.11"
 	},
 	"devDependencies": {

@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/platform-server",
 	"description": "",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -15,9 +15,9 @@
 	"types": "./index.d.ts",
 	"dependencies": {
 		"@slicky/application": "^0.0.1",
-		"@slicky/core": "^0.0.2",
+		"@slicky/core": "^0.0.3",
 		"@slicky/lang": "^1.0.0",
-		"@slicky/templates-runtime": "^0.0.2"
+		"@slicky/templates-runtime": "^0.0.3"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",
