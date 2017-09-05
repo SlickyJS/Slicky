@@ -54,7 +54,7 @@ export class RootDirectiveRunner
 	}
 
 
-	public runDirective(metadata: DirectiveDefinition, el: HTMLElement): void
+	public runDirective(metadata: DirectiveDefinition, el: HTMLElement): any
 	{
 		let container = metadata.type === DirectiveDefinitionType.Component ? this.container.fork() : this.container;
 		let directive = this.directivesProvider.create(metadata.hash, el, container);
@@ -88,6 +88,8 @@ export class RootDirectiveRunner
 		if (isFunction(directive['onInit'])) {
 			(<OnInit>directive).onInit();
 		}
+
+		return directive;
 	}
 
 
