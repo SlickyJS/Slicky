@@ -3,7 +3,7 @@ import {ExtensionsManager} from '@slicky/core/extensions';
 import {DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionInput} from '@slicky/core/metadata';
 import {forEach, isFunction, exists} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
-import {Container} from '@slicky/di';
+import {Container, ProviderOptions} from '@slicky/di';
 import {ApplicationTemplate} from '@slicky/templates-runtime/templates';
 import {DirectivesProvider} from './directivesProvider';
 import {TemplatesProvider} from './templatesProvider';
@@ -54,10 +54,10 @@ export class RootDirectiveRunner
 	}
 
 
-	public runDirective(metadata: DirectiveDefinition, el: HTMLElement): any
+	public runDirective(metadata: DirectiveDefinition, el: HTMLElement, providers: Array<ProviderOptions> = []): any
 	{
 		let container = metadata.type === DirectiveDefinitionType.Component ? this.container.fork() : this.container;
-		let directive = this.directivesProvider.create(metadata.hash, el, container);
+		let directive = this.directivesProvider.create(metadata.hash, el, container, providers);
 
 		forEach(metadata.inputs, (input: DirectiveDefinitionInput) => {
 			directive[input.property] = el.getAttribute(input.name);

@@ -67,7 +67,7 @@ export class BuilderCreateDirective implements b.BuilderNodeInterface
 	public render(): string
 	{
 		let init = this.type === DirectiveDefinitionType.Directive ?
-			`root.getProvider("directivesProvider").create(${this.hash}, parent, root.getProvider("container"), function(directive) {` :
+			`root.getProvider("directivesProvider").create(${this.hash}, parent, root.getProvider("container"), [], function(directive) {` :
 			`root.getProvider("templatesProvider").createFrom(${this.hash}, parent, tmpl, function(tmpl, directive) {`
 		;
 
