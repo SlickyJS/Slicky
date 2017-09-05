@@ -69,6 +69,10 @@ export class Application
 
 		let runner = new RootDirectiveRunner(platform, applicationTemplate, this.container, this.metadataLoader, this.extensions, el);
 
+		this.container.addService(RootDirectiveRunner, {
+			useValue: runner,
+		});
+
 		forEach(this.directives, (directive: ClassType<any>) => {
 			runner.run(directive);
 		});
