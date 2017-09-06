@@ -1,5 +1,5 @@
 import {Container, ProviderOptions} from '@slicky/di';
-import {exists, forEach, merge, clone} from '@slicky/utils';
+import {exists, forEach} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {AbstractExtension} from '@slicky/core';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';

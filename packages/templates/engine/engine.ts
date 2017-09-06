@@ -43,6 +43,11 @@ export class Engine
 		let builder = new b.TemplateBuilder(name + '', matcher);
 		let tree = (new _.HTMLParser(template)).parse();
 
+		this.plugins.onBeforeCompile({
+			progress: progress,
+			engine: this,
+		});
+
 		this.processTree(builder, builder.getMainMethod().body, progress, matcher, tree);
 
 		let code = builder.render();

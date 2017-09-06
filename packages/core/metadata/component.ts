@@ -9,6 +9,7 @@ export declare interface ComponentOptions extends DirectiveOptions
 {
 	controllerAs?: string,
 	template: string,
+	precompileDirectives?: Array<ClassType<any>>,
 	directives?: Array<ClassType<any>>,
 	filters?: Array<ClassType<FilterInterface>>,
 }
@@ -21,6 +22,8 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 	public controllerAs: string;
 
 	public template: string;
+
+	public precompileDirectives: Array<ClassType<any>> = [];
 
 	public directives: Array<ClassType<any>> = [];
 
@@ -35,6 +38,10 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 
 		if (exists(options.controllerAs)) {
 			this.controllerAs = options.controllerAs;
+		}
+
+		if (exists(options.precompileDirectives)) {
+			this.precompileDirectives = options.precompileDirectives;
 		}
 
 		if (exists(options.directives)) {

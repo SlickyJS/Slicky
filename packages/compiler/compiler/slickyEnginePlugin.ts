@@ -28,6 +28,16 @@ export class SlickyEnginePlugin extends EnginePlugin
 	}
 
 
+	public onBeforeCompile(): void
+	{
+		forEach(this.metadata.precompileDirectives, (directive: c.DirectiveDefinitionDirective) => {
+			if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
+				this.compiler.compile(directive.metadata);
+			}
+		});
+	}
+
+
 	public onProcessElement(element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): _.ASTHTMLNodeElement
 	{
 		forEach(this.metadata.elements, (hostElement: c.DirectiveDefinitionElement) => {

@@ -6,6 +6,13 @@ import {EngineProgress} from './engineProgress';
 import * as b from '../builder';
 
 
+export declare interface OnBeforeCompileArgument
+{
+	progress: EngineProgress,
+	engine: Engine,
+}
+
+
 export declare interface OnBeforeProcessElementArgument
 {
 	progress: EngineProgress;
@@ -43,6 +50,11 @@ export declare interface OnProcessTemplateArgument
 
 export abstract class EnginePlugin
 {
+
+
+	public onBeforeCompile(arg: OnBeforeCompileArgument): void
+	{
+	}
 
 
 	public onBeforeProcessElement(element: _.ASTHTMLNodeElement, arg: OnBeforeProcessElementArgument): _.ASTHTMLNodeElement
