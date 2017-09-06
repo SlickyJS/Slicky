@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/examples",
 	"description": "Slicky examples",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"license": "MIT",
 	"private": true,
 	"repository": {
@@ -16,13 +16,13 @@
 	"types": "./lib/index.d.ts",
 	"dependencies": {
 		"@slicky/application": "^0.0.1",
-		"@slicky/core": "^0.0.3",
+		"@slicky/core": "^0.1.0",
 		"@slicky/di": "^1.0.1",
 		"@slicky/event-emitter": "^1.0.1",
-		"@slicky/extension-translator": "^0.0.3",
+		"@slicky/extension-translator": "^0.0.4",
 		"@slicky/lang": "^1.0.0",
-		"@slicky/platform-browser": "^0.0.4",
-		"@slicky/platform-server": "^0.0.3",
+		"@slicky/platform-browser": "^0.0.5",
+		"@slicky/platform-server": "^0.0.4",
 		"immutable": "^3.8.1",
 		"jquery": "^3.2.1",
 		"moment": "^2.18.1",
