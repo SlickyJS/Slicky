@@ -53,7 +53,7 @@ export class Application
 	}
 
 
-	public getDirectives(): Array<ClassType<any>>
+	public getPrecompileDirectives(): Array<ClassType<any>>
 	{
 		return [].concat(this.precompile, this.extensions.getPrecompileDirectives(), this.directives);
 	}

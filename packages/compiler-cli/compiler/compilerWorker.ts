@@ -77,7 +77,7 @@ const metadataLoader = new DirectiveMetadataLoader(new ExtensionsManager);
 const compiler = new Compiler;
 
 
-forEach(application.getDirectives(), (directive: ClassType<any>) => {
+forEach(application.getPrecompileDirectives(), (directive: ClassType<any>) => {
 	let metadata = metadataLoader.load(directive);
 
 	if (metadata.type !== DirectiveDefinitionType.Component) {
