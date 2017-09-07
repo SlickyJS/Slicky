@@ -26,6 +26,6 @@
 		"mocha": "^3.5.0"
 	},
 	"scripts": {
-		"test": "cd tests && mocha -r ts-node/register index.ts"
+		"test": "TS_NODE_PROJECT='tests/tsconfig.json' mocha -r ts-node/register tests/tests/**/*.ts"
 	}
 }

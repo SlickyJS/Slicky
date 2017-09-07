@@ -1,3 +1,5 @@
+import '../bootstrap';
+
 import {Directive} from '@slicky/core';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {ExtensionsManager} from '@slicky/core/extensions';

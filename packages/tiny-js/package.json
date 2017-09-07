@@ -27,8 +27,6 @@
 		"typescript": "^2.4.2"
 	},
 	"scripts": {
-		"build": "tsc",
-		"pretest": "npm run build",
-		"test": "cd tests && mocha -r ts-node/register index.ts"
+		"test": "TS_NODE_PROJECT='tests/tsconfig.json' mocha -r ts-node/register tests/tests/**/*.ts"
 	}
 }

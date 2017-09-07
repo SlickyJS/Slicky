@@ -1,3 +1,5 @@
+import '../../bootstrap';
+
 import {OnInit, Directive, Input, Required, Output, HostElement, HostEvent, ParentComponent} from '../../../';
 import {DirectiveMetadataLoader, DirectiveDefinitionType} from '../../../metadata';
 import {ExtensionsManager} from '../../../extensions';
