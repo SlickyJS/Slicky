@@ -7,7 +7,6 @@ import {FilterInterface} from '../filters';
 
 export declare interface ComponentOptions extends DirectiveOptions
 {
-	controllerAs?: string,
 	template: string,
 	precompileDirectives?: Array<ClassType<any>>,
 	directives?: Array<ClassType<any>>,
@@ -18,8 +17,6 @@ export declare interface ComponentOptions extends DirectiveOptions
 export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 {
 
-
-	public controllerAs: string;
 
 	public template: string;
 
@@ -35,10 +32,6 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 		super(options);
 
 		this.template = options.template;
-
-		if (exists(options.controllerAs)) {
-			this.controllerAs = options.controllerAs;
-		}
 
 		if (exists(options.precompileDirectives)) {
 			this.precompileDirectives = options.precompileDirectives;

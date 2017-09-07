@@ -124,7 +124,6 @@ export declare interface DirectiveDefinition {
 	uniqueName: string,
 	hash: number,
 	selector: string,
-	controllerAs?: string,
 	exportAs?: string,
 	onInit: boolean,
 	onDestroy: boolean,
@@ -295,10 +294,6 @@ export class DirectiveMetadataLoader
 			definition.template = annotation.template;
 			definition.childDirectives = childDirectives;
 			definition.childrenDirectives = childrenDirectives;
-
-			if (annotation.controllerAs) {
-				definition.controllerAs = annotation.controllerAs;
-			}
 
 			let filters = unique(merge(this.filters, annotation.filters));
 
