@@ -56,6 +56,28 @@ class ParentComponent
 }
 ```
 
+`@ChildDirective` can be also marked as required:
+
+```typescript
+import {Component, ChildDirective, Required} from '@slicky/core';
+
+@Component({ ... })
+class ChildComponent
+{
+}
+
+@Component({ ... })
+class ParentComponent
+{
+	
+	
+	@ChildDirective(ChildComponent)
+	@Required()
+	public child: ChildComponent;
+	
+}
+```
+
 ## Children directives
 
 Children directives are also used for accessing child directives from parent, but with ability to access also dynamic 

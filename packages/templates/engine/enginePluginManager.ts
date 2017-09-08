@@ -1,7 +1,7 @@
 import {forEach, exists} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
-import {EnginePlugin, OnBeforeCompileArgument, OnBeforeProcessElementArgument, OnExpressionVariableHookArgument, OnProcessTemplateArgument, OnProcessElementArgument} from './enginePlugin';
+import {EnginePlugin, OnBeforeCompileArgument, OnAfterCompileArgument, OnBeforeProcessElementArgument, OnExpressionVariableHookArgument, OnProcessTemplateArgument, OnProcessElementArgument} from './enginePlugin';
 
 
 export class EnginePluginManager
@@ -20,6 +20,12 @@ export class EnginePluginManager
 	public onBeforeCompile(arg: OnBeforeCompileArgument): void
 	{
 		this.hook('onBeforeCompile', arg);
+	}
+
+
+	public onAfterCompile(arg: OnAfterCompileArgument): void
+	{
+		this.hook('onAfterCompile', arg);
 	}
 
 

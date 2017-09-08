@@ -1,8 +1,9 @@
 import {findAnnotation, getPropertiesMetadata} from '@slicky/reflection';
-import {exists, forEach, stringify, hash, map, isFunction, merge, unique} from '@slicky/utils';
+import {exists, forEach, stringify, hash, map, isFunction, merge, unique, camelCaseToHyphens} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {EventEmitter} from '@slicky/event-emitter';
-import {InputDefinition, RequiredInputDefinition} from './input';
+import {InputDefinition} from './input';
+import {RequiredDefinition} from './required';
 import {OutputDefinition} from './output';
 import {HostElementDefinition} from './hostElement';
 import {HostEventDefinition} from './hostEvent';
@@ -48,6 +49,7 @@ export declare interface DirectiveDefinitionElement
 {
 	property: string,
 	selector?: string,
+	required: boolean,
 }
 
 
@@ -79,6 +81,8 @@ export declare interface DirectiveDefinitionChildDirective
 {
 	property: string,
 	directiveType: ClassType<any>,
+	required: boolean,
+	metadata: DirectiveDefinition,
 }
 
 
@@ -196,35 +200,37 @@ export class DirectiveMetadataLoader
 
 		forEach(getPropertiesMetadata(directiveType), (metadataList: Array<any>, property: string) => {
 			let input: DirectiveDefinitionInput;
-			let inputRequired: boolean = false;
+			let childDirective: DirectiveDefinitionChildDirective;
+			let element: DirectiveDefinitionElement;
+
+			let required: boolean = false;
 
 			forEach(metadataList, (metadata: any) => {
 				if (metadata instanceof InputDefinition) {
 					input = {
 						property: property,
-						name: exists(metadata.name) ? metadata.name : property,
+						name: camelCaseToHyphens(exists(metadata.name) ? metadata.name : property),
 						required: false,
 					};
 
-				} else if (metadata instanceof RequiredInputDefinition) {
-					inputRequired = true;
+				} else if (metadata instanceof RequiredDefinition) {
+					required = true;
 
 				} else if (metadata instanceof OutputDefinition) {
 					outputs.push({
 						property: property,
-						name: exists(metadata.name) ? metadata.name : property,
+						name: camelCaseToHyphens(exists(metadata.name) ? metadata.name : property),
 					});
 
 				} else if (metadata instanceof HostElementDefinition) {
-					let element: DirectiveDefinitionElement = {
+					element = {
 						property: property,
+						required: false,
 					};
 
 					if (metadata.selector) {
 						element.selector = metadata.selector;
 					}
-
-					elements.push(element);
 
 				} else if (metadata instanceof HostEventDefinition) {
 					let event: DirectiveDefinitionEvent = {
@@ -247,10 +253,12 @@ export class DirectiveMetadataLoader
 					});
 
 				} else if (metadata instanceof ChildDirectiveDefinition) {
-					childDirectives.push({
+					childDirective = {
 						property: property,
 						directiveType: metadata.directiveType,
-					});
+						required: false,
+						metadata: this.load(metadata.directiveType),
+					};
 
 				} else if (metadata instanceof ChildrenDirectiveDefinition) {
 					childrenDirectives.push({
@@ -261,11 +269,25 @@ export class DirectiveMetadataLoader
 			});
 
 			if (input) {
-				if (inputRequired) {
+				if (required) {
 					input.required = true;
 				}
 
 				inputs.push(input);
+
+			} else if (childDirective) {
+				if (required) {
+					childDirective.required = true;
+				}
+
+				childDirectives.push(childDirective);
+
+			} else if (element) {
+				if (required) {
+					element.required = true;
+				}
+
+				elements.push(element);
 			}
 		});
 

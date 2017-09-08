@@ -50,6 +50,11 @@ export class Engine
 
 		this.processTree(builder, builder.getMainMethod().body, progress, matcher, tree);
 
+		this.plugins.onAfterCompile({
+			progress: progress,
+			engine: this,
+		});
+
 		let code = builder.render();
 
 		this.compiled.emit({
