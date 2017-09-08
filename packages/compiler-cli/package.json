@@ -28,10 +28,14 @@
 		"yargs": "^8.0.2"
 	},
 	"devDependencies": {
+		"@slicky/di": "^1.0.1",
 		"@types/chai": "^4.0.3",
 		"@types/mocha": "^2.2.41",
 		"@types/node": "^8.0.21",
 		"chai": "^4.1.1",
 		"mocha": "^3.5.0"
+	},
+	"scripts": {
+		"test": "TS_NODE_PROJECT='tests/tsconfig.json' mocha -r ts-node/register tests/tests/**/*.ts"
 	}
 }
