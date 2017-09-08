@@ -27,7 +27,7 @@
 		"@slicky/translator": "^1.0.2"
 	},
 	"devDependencies": {
-		"@slicky/compiler-cli": "^0.0.1",
+		"@slicky/compiler-cli": "^0.0.5",
 		"@slicky/utils": "^1.0.11",
 		"@types/gulp": "^4.0.4",
 		"@types/merge2": "^1.1.1",
