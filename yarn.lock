@@ -2,11 +2,57 @@
 # yarn lockfile v1
 
 
+"@slicky/application@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@slicky/application/-/application-0.0.1.tgz#c77dcb8fdbac9d2586f98d1d614734998c97dd56"
+  dependencies:
+    "@slicky/core" "^0.0.1"
+    "@slicky/di" "^1.0.1"
+    "@slicky/lang" "^1.0.0"
+    "@slicky/templates-runtime" "^0.0.1"
+    "@slicky/utils" "^1.0.11"
+
 "@slicky/ast-query-selector@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@slicky/ast-query-selector/-/ast-query-selector-1.0.0.tgz#ee35e615956044aba8a48fd1330ecebcd2c52651"
   dependencies:
     "@slicky/tokenizer" "^1.0.6"
+    "@slicky/utils" "^1.0.11"
+
+"@slicky/compiler-cli@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@slicky/compiler-cli/-/compiler-cli-0.0.1.tgz#3a8eebba103f45086a2dc2796c5bc46df9fdd9f4"
+  dependencies:
+    "@slicky/application" "^0.0.1"
+    "@slicky/compiler" "^0.0.1"
+    "@slicky/core" "^0.0.1"
+    "@slicky/lang" "^1.0.0"
+    "@slicky/utils" "^1.0.11"
+    colors "^1.1.2"
+    reflect-metadata "^0.1.10"
+    ts-node "^3.3.0"
+    yargs "^8.0.2"
+
+"@slicky/compiler@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@slicky/compiler/-/compiler-0.0.1.tgz#3fba2998fbac7f54306f8147079113d79782aea5"
+  dependencies:
+    "@slicky/core" "^0.0.1"
+    "@slicky/html-parser" "^0.0.1"
+    "@slicky/query-selector" "^1.0.1"
+    "@slicky/templates" "^0.0.1"
+    "@slicky/tiny-js" "^1.0.2"
+    "@slicky/utils" "^1.0.11"
+
+"@slicky/core@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@slicky/core/-/core-0.0.1.tgz#1fe8bae80a4eb830834642c79341c14767451064"
+  dependencies:
+    "@slicky/di" "^1.0.1"
+    "@slicky/event-emitter" "^1.0.1"
+    "@slicky/lang" "^1.0.0"
+    "@slicky/reflection" "^1.0.3"
+    "@slicky/templates-runtime" "^0.0.1"
     "@slicky/utils" "^1.0.11"
 
 "@slicky/di@^1.0.1":
@@ -23,6 +69,13 @@
   resolved "https://registry.yarnpkg.com/@slicky/event-emitter/-/event-emitter-1.0.1.tgz#24daa03a1c82445490eccb7505b23969b8984618"
   dependencies:
     rxjs "^5.4.3"
+
+"@slicky/html-parser@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@slicky/html-parser/-/html-parser-0.0.1.tgz#9e055e29a66670fa20aecb4c905a34d5898f2c61"
+  dependencies:
+    "@slicky/utils" "^1.0.11"
+    parse5 "^3.0.2"
 
 "@slicky/lang@^1.0.0":
   version "1.0.0"
@@ -44,6 +97,26 @@
 "@slicky/reflection@^1.0.2", "@slicky/reflection@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@slicky/reflection/-/reflection-1.0.3.tgz#9229aa54ad94b5ac9b661e1abc06b50c1db2cead"
+
+"@slicky/templates-runtime@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@slicky/templates-runtime/-/templates-runtime-0.0.1.tgz#8786d204bf3f1982d905865a87f9cf05ab8bc3ca"
+  dependencies:
+    "@slicky/change-detection" "^1.0.1"
+    "@slicky/realm" "^1.0.1"
+    "@slicky/utils" "^1.0.11"
+
+"@slicky/templates@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@slicky/templates/-/templates-0.0.1.tgz#6bf985d2871cfc5fb5f0263078d72f4b11c94721"
+  dependencies:
+    "@slicky/event-emitter" "^1.0.1"
+    "@slicky/html-parser" "^0.0.1"
+    "@slicky/query-selector" "^1.0.1"
+    "@slicky/tiny-js" "^1.0.2"
+    "@slicky/tokenizer" "^1.0.6"
+    "@slicky/utils" "^1.0.11"
+    parse5 "^3.0.2"
 
 "@slicky/tokenizer@^1.0.6":
   version "1.0.6"
