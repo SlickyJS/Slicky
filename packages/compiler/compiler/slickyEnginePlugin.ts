@@ -18,6 +18,10 @@ export class SlickyEnginePlugin extends EnginePlugin
 
 	private expressionInParent: boolean = false;
 
+	private processedHostElements: Array<c.DirectiveDefinitionElement> = [];
+
+	private processedChildDirectives: Array<c.DirectiveDefinitionChildDirective> = [];
+
 
 	constructor(compiler: Compiler, metadata: c.DirectiveDefinition)
 	{
@@ -38,6 +42,22 @@ export class SlickyEnginePlugin extends EnginePlugin
 	}
 
 
+	public onAfterCompile(): void
+	{
+		forEach(this.metadata.elements, (hostElement: c.DirectiveDefinitionElement) => {
+			if (this.processedHostElements.indexOf(hostElement) < 0 && hostElement.required) {
+				throw new Error(`${this.metadata.name}.${hostElement.property}: required @HostElement was not found.`);
+			}
+		});
+
+		forEach(this.metadata.childDirectives, (childDirective: c.DirectiveDefinitionChildDirective) => {
+			if (this.processedChildDirectives.indexOf(childDirective) < 0 && childDirective.required) {
+				throw new Error(`${this.metadata.name}.${childDirective.property}: required @ChildDirective ${childDirective.metadata.name} was not found.`);
+			}
+		});
+	}
+
+
 	public onProcessElement(element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): _.ASTHTMLNodeElement
 	{
 		forEach(this.metadata.elements, (hostElement: c.DirectiveDefinitionElement) => {
@@ -48,6 +68,8 @@ export class SlickyEnginePlugin extends EnginePlugin
 			arg.element.setup.add(
 				b.createComponentSetHostElement(hostElement.property)
 			);
+
+			this.processedHostElements.push(hostElement);
 		});
 
 		forEach(this.metadata.directives, (directive: c.DirectiveDefinitionDirective) => {
@@ -84,16 +106,14 @@ export class SlickyEnginePlugin extends EnginePlugin
 						;
 
 						if (!exists(property) && input.required) {
-							// todo: error
+							throw new Error(`${directive.metadata.name}.${input.property}: required input is not set in <${element.name}> tag.`);
 						}
 
 						if (!exists(property)) {
 							return;
 						}
 
-						if (isProperty) {
-							element.properties.splice(element.properties.indexOf(property), 1);
-
+						if (isProperty || property instanceof _.ASTHTMLNodeExpressionAttribute) {
 							let watchOnParent = directive.metadata.type === c.DirectiveDefinitionType.Component;
 
 							this.expressionInParent = true;
@@ -117,7 +137,6 @@ export class SlickyEnginePlugin extends EnginePlugin
 							this.expressionInParent = false;
 
 						} else {
-							element.attributes.splice(element.attributes.indexOf(property), 1);
 							setup.setup.add(
 								b.createDirectivePropertyWrite(input.property, `"${property.value}"`)
 							);
@@ -127,6 +146,12 @@ export class SlickyEnginePlugin extends EnginePlugin
 									b.createDirectiveMethodCall('onUpdate', [`"${input.property}"`, `"${property.value}"`])
 								);
 							}
+						}
+
+						if (isProperty) {
+							element.properties.splice(element.properties.indexOf(property), 1);
+						} else {
+							element.attributes.splice(element.attributes.indexOf(property), 1);
 						}
 					});
 
@@ -144,33 +169,22 @@ export class SlickyEnginePlugin extends EnginePlugin
 						);
 					});
 
-					let removeChildDirectives = [];
 					forEach(this.metadata.childDirectives, (childDirective: c.DirectiveDefinitionChildDirective, i: number) => {
 						if (childDirective.directiveType === directive.directiveType && !arg.progress.inTemplate) {
-							removeChildDirectives.push(i);
+							this.processedChildDirectives.push(childDirective);
 							setup.setup.add(
 								b.createDirectivePropertyWrite(childDirective.property, 'directive', true)
 							);
 						}
 					});
 
-					forEach(removeChildDirectives, (i: number) => {
-						this.metadata.childDirectives.splice(i, 1);
-					});
-
-					let removeChildrenDirectives = [];
 					forEach(this.metadata.childrenDirectives, (childrenDirectives: c.DirectiveDefinitionChildrenDirective, i: number) => {
 						if (childrenDirectives.directiveType === directive.directiveType) {
 							onTemplateDestroy.push(tb.createCode(`root.getProvider("component").${childrenDirectives.property}.remove.emit(directive);`));
-							removeChildrenDirectives.push(i);
 							setup.setup.add(
 								b.createDirectiveMethodCall(`${childrenDirectives.property}.add.emit`, ['directive'], true)
 							);
 						}
-					});
-
-					forEach(removeChildrenDirectives, (i: number) => {
-						this.metadata.childrenDirectives.splice(i, 1);
 					});
 
 					if (directive.metadata.onDestroy) {

@@ -13,6 +13,13 @@ export declare interface OnBeforeCompileArgument
 }
 
 
+export declare interface OnAfterCompileArgument
+{
+	progress: EngineProgress,
+	engine: Engine,
+}
+
+
 export declare interface OnBeforeProcessElementArgument
 {
 	progress: EngineProgress;
@@ -53,6 +60,11 @@ export abstract class EnginePlugin
 
 
 	public onBeforeCompile(arg: OnBeforeCompileArgument): void
+	{
+	}
+
+
+	public onAfterCompile(arg: OnAfterCompileArgument): void
 	{
 	}
 

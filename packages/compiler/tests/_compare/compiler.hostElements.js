@@ -1,0 +1,23 @@
+return function(_super) {
+	_super.childTemplateExtend(Template73490630);
+	function Template73490630(application, parent)
+	{
+		_super.call(this, application, parent);
+	}
+	Template73490630.prototype.main = function(parent)
+	{
+		var root = this;
+		var tmpl = this;
+		tmpl._appendElement(parent, "test-directive", {}, function(parent) {
+			root.getProvider("directivesProvider").create(2518409384, parent, root.getProvider("container"), [], function(directive) {
+
+			});
+			tmpl._appendElement(parent, "span");
+		});
+		tmpl._appendElement(parent, "i", {}, function(parent) {
+			root.getProvider("component").el = parent;
+		});
+		tmpl.init();
+	};
+	return Template73490630;
+}

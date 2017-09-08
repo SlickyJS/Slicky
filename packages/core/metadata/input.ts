@@ -16,11 +16,4 @@ export class InputDefinition
 }
 
 
-export class RequiredInputDefinition
-{
-
-}
-
-
 export let Input = makePropertyDecorator(InputDefinition);
-export let Required = makePropertyDecorator(RequiredInputDefinition);

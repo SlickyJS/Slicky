@@ -107,7 +107,7 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			inputs: [
 				{
 					property: 'notRequired',
-					name: 'notRequired',
+					name: 'not-required',
 					required: false,
 				},
 				{
@@ -205,10 +205,12 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			elements: [
 				{
 					property: 'me',
+					required: false,
 				},
 				{
 					property: 'innerSpan',
 					selector: 'span',
+					required: false,
 				},
 			],
 			events: [],
