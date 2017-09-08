@@ -112,6 +112,33 @@ describe('#Compiler', () => {
 			]);
 		});
 
+		it('should throw an error when required @HostElement inside of @Directive is missing', () => {
+			@Directive({
+				selector: 'directive',
+			})
+			class TestDirective
+			{
+
+				@HostElement('i')
+				@Required()
+				public el;
+
+			}
+
+			@Component({
+				selector: '',
+				template: '<directive></directive>',
+				directives: [TestDirective],
+			})
+			class TestComponent {}
+
+			const metadata = metadataLoader.load(TestComponent);
+
+			expect(() => {
+				compiler.compile(metadata);
+			}).to.throw(Error, 'TestDirective.el: required @HostElement was not found.');
+		});
+
 		it('should throw an error when required @HostElement is missing', () => {
 			@Component({
 				selector: '',

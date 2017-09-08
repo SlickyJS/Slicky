@@ -10,6 +10,7 @@ return function(_super) {
 		var tmpl = this;
 		tmpl._appendElement(parent, "directive-child", {}, function(parent) {
 			root.getProvider("directivesProvider").create(3055171198, parent, root.getProvider("container"), [], function(directive) {
+				tmpl.addProvider("directiveInstance-0", directive);
 				directive.output.subscribe(function($value) {
 					root.run(function() {
 						root.getProvider('component').do();
@@ -19,6 +20,9 @@ return function(_super) {
 					root.run(function() {
 						root.getProvider('component').doOther();
 					});
+				});
+				tmpl.onDestroy(function() {
+					tmpl.removeProvider("directiveInstance-0");
 				});
 			});
 		});

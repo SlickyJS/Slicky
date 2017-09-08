@@ -32,6 +32,38 @@ export class BuilderComponentSetHostElement implements b.BuilderNodeInterface
 }
 
 
+/***************** DIRECTIVE SET HOST_ELEMENT *****************/
+
+
+export function createDirectiveSetHostElement(directiveId: number, property: string): BuilderDirectiveSetHostElement
+{
+	return new BuilderDirectiveSetHostElement(directiveId, property);
+}
+
+export class BuilderDirectiveSetHostElement implements b.BuilderNodeInterface
+{
+
+
+	public directiveId: number;
+
+	public property: string;
+
+
+	constructor(directiveId: number, property: string)
+	{
+		this.directiveId = directiveId;
+		this.property = property;
+	}
+
+
+	public render(): string
+	{
+		return `tmpl.getProvider("directiveInstance-${this.directiveId}").${this.property} = parent;`;
+	}
+
+}
+
+
 /***************** CREATE DIRECTIVE *****************/
 
 

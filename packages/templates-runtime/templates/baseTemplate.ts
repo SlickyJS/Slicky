@@ -97,6 +97,12 @@ export abstract class BaseTemplate
 	}
 
 
+	public removeProvider(name: string): void
+	{
+		delete this.providers[name];
+	}
+
+
 	public getProvider(name: string): any
 	{
 		if (exists(this.providers[name])) {

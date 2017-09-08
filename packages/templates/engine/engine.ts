@@ -194,6 +194,12 @@ export class Engine
 				});
 
 				this.processTree(builder, el.setup, progress, matcher, element);
+
+				this.plugins.onAfterProcessElement(element, {
+					progress: progress,
+					engine: this,
+					matcher: matcher,
+				});
 			})
 		);
 	}

@@ -1,11 +1,20 @@
-import {forEach, find, exists} from '@slicky/utils';
-import {EnginePlugin, OnProcessElementArgument, OnExpressionVariableHookArgument} from '@slicky/templates';
+import {forEach, find, exists, filter} from '@slicky/utils';
+import {EnginePlugin, OnProcessElementArgument, OnExpressionVariableHookArgument, OnAfterProcessElementArgument} from '@slicky/templates';
 import * as tb from '@slicky/templates/builder';
 import * as c from '@slicky/core/metadata';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
 import * as b from './nodes';
 import {Compiler} from './compiler';
+
+
+declare interface ProcessingDirective
+{
+	id: number;
+	directive: c.DirectiveDefinitionDirective;
+	element: _.ASTHTMLNodeElement;
+	processedHostElements: Array<c.DirectiveDefinitionElement>;
+}
 
 
 export class SlickyEnginePlugin extends EnginePlugin
@@ -21,6 +30,10 @@ export class SlickyEnginePlugin extends EnginePlugin
 	private processedHostElements: Array<c.DirectiveDefinitionElement> = [];
 
 	private processedChildDirectives: Array<c.DirectiveDefinitionChildDirective> = [];
+
+	private processingDirectives: Array<ProcessingDirective> = [];
+
+	private processedDirectivesCount: number = 0;
 
 
 	constructor(compiler: Compiler, metadata: c.DirectiveDefinition)
@@ -72,18 +85,51 @@ export class SlickyEnginePlugin extends EnginePlugin
 			this.processedHostElements.push(hostElement);
 		});
 
+		forEach(this.processingDirectives, (directive: ProcessingDirective) => {
+			forEach(directive.directive.metadata.elements, (hostElement: c.DirectiveDefinitionElement) => {
+				if (directive.processedHostElements.indexOf(hostElement) >= 0) {
+					return;
+				}
+
+				if (!arg.matcher.matches(element, hostElement.selector, directive.element)) {
+					return;
+				}
+
+				arg.element.setup.add(
+					b.createDirectiveSetHostElement(directive.id, hostElement.property)
+				);
+
+				directive.processedHostElements.push(hostElement);
+			});
+		});
+
 		forEach(this.metadata.directives, (directive: c.DirectiveDefinitionDirective) => {
+			const directiveId = this.processedDirectivesCount++;
+
 			if (!arg.matcher.matches(element, directive.metadata.selector)) {
 				return;
 			}
 
 			if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
 				this.compiler.compile(directive.metadata);
+
+			} else {
+				this.processingDirectives.push({
+					id: directiveId,
+					element: element,
+					directive: directive,
+					processedHostElements: [],
+				});
 			}
 
 			arg.element.setup.add(
 				b.createCreateDirective(directive.metadata.hash, directive.metadata.type, (setup) => {
 					let onTemplateDestroy: Array<tb.BuilderNodeInterface> = [];
+
+					if (directive.metadata.type === c.DirectiveDefinitionType.Directive) {
+						setup.setup.add(`tmpl.addProvider("directiveInstance-${directiveId}", directive);`);
+						onTemplateDestroy.push(tb.createCode(`tmpl.removeProvider("directiveInstance-${directiveId}");`));
+					}
 
 					forEach(directive.metadata.inputs, (input: c.DirectiveDefinitionInput) => {
 						let property: _.ASTHTMLNodeAttribute;
@@ -213,6 +259,24 @@ export class SlickyEnginePlugin extends EnginePlugin
 		});
 
 		return element;
+	}
+
+
+	public onAfterProcessElement(element: _.ASTHTMLNodeElement, arg: OnAfterProcessElementArgument): void
+	{
+		this.processingDirectives = filter(this.processingDirectives, (directive: ProcessingDirective) => {
+			if (directive.element === element) {
+				forEach(directive.directive.metadata.elements, (hostElement: c.DirectiveDefinitionElement) => {
+					if (hostElement.required && directive.processedHostElements.indexOf(hostElement) < 0) {
+						throw new Error(`${directive.directive.metadata.name}.${hostElement.property}: required @HostElement was not found.`);
+					}
+				});
+
+				return false;
+			}
+
+			return true;
+		});
 	}
 
 

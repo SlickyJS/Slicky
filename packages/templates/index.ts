@@ -1,4 +1,4 @@
 export {
-	Engine, EnginePlugin, OnBeforeProcessElementArgument, OnProcessElementArgument, OnProcessTemplateArgument,
-	OnExpressionVariableHookArgument,
+	Engine, EnginePlugin, OnBeforeProcessElementArgument, OnProcessElementArgument, OnAfterProcessElementArgument,
+	OnProcessTemplateArgument, OnExpressionVariableHookArgument,
 } from './engine';

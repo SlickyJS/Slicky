@@ -1,7 +1,7 @@
 import {forEach, exists} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
-import {EnginePlugin, OnBeforeCompileArgument, OnAfterCompileArgument, OnBeforeProcessElementArgument, OnExpressionVariableHookArgument, OnProcessTemplateArgument, OnProcessElementArgument} from './enginePlugin';
+import {EnginePlugin, OnBeforeCompileArgument, OnAfterCompileArgument, OnBeforeProcessElementArgument, OnAfterProcessElementArgument, OnExpressionVariableHookArgument, OnProcessTemplateArgument, OnProcessElementArgument} from './enginePlugin';
 
 
 export class EnginePluginManager
@@ -37,13 +37,19 @@ export class EnginePluginManager
 
 	public onProcessElement(element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): void
 	{
-		return this.hook('onProcessElement', element, arg);
+		this.hook('onProcessElement', element, arg);
+	}
+
+
+	public onAfterProcessElement(element: _.ASTHTMLNodeElement, arg: OnAfterProcessElementArgument): void
+	{
+		this.hook('onAfterProcessElement', element, arg);
 	}
 
 
 	public onProcessTemplate(arg: OnProcessTemplateArgument): void
 	{
-		return this.hook('onProcessTemplate', arg);
+		this.hook('onProcessTemplate', arg);
 	}
 
 

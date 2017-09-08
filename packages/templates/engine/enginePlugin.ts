@@ -20,19 +20,19 @@ export declare interface OnAfterCompileArgument
 }
 
 
-export declare interface OnBeforeProcessElementArgument
-{
-	progress: EngineProgress;
-	engine: Engine;
-	matcher: Matcher;
-}
-
-
 export declare interface OnExpressionVariableHookArgument
 {
 	declaration: tjs.ParserVariableDeclaration;
 	progress: EngineProgress;
 	engine: Engine;
+}
+
+
+export declare interface OnBeforeProcessElementArgument
+{
+	progress: EngineProgress;
+	engine: Engine;
+	matcher: Matcher;
 }
 
 
@@ -42,6 +42,14 @@ export declare interface OnProcessElementArgument
 	progress: EngineProgress;
 	matcher: Matcher;
 	engine: Engine;
+}
+
+
+export declare interface OnAfterProcessElementArgument
+{
+	progress: EngineProgress;
+	engine: Engine;
+	matcher: Matcher;
 }
 
 
@@ -76,6 +84,11 @@ export abstract class EnginePlugin
 
 
 	public onProcessElement(element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): void
+	{
+	}
+
+
+	public onAfterProcessElement(element: _.ASTHTMLNodeElement, arg: OnAfterProcessElementArgument): void
 	{
 	}
 
