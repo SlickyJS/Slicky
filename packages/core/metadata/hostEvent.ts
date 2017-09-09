@@ -1,24 +1,19 @@
 import {makePropertyDecorator} from '@slicky/reflection';
-import {exists} from '@slicky/utils';
 
 
 export class HostEventDefinition
 {
 
 
-	public selector: string;
-
 	public event: string;
 
+	public selector: string;
 
-	constructor(selectorOrEvent: string, event?: string)
+
+	constructor(event: string, selector?: string)
 	{
-		if (exists(event)) {
-			this.selector = selectorOrEvent;
-			this.event = event;
-		} else {
-			this.event = selectorOrEvent;
-		}
+		this.event = event;
+		this.selector = selector;
 	}
 
 }

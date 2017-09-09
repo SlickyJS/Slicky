@@ -27,14 +27,14 @@ export class CounterDirective implements OnInit
 	}
 
 
-	@HostEvent('@btnIncrease', 'click')
+	@HostEvent('click', '@btnIncrease')
 	public onBtnIncreaseClick(): void
 	{
 		this.counter.innerText = (++this.num) + '';
 	}
 
 
-	@HostEvent('@btnDecrease', 'click')
+	@HostEvent('click', '@btnDecrease')
 	public onBtnDecreaseClick(): void
 	{
 		this.counter.innerText = (--this.num) + '';

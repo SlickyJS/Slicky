@@ -116,7 +116,7 @@ class MyDirective
 	}
 	
 	
-	@HostEvent('button', 'click')
+	@HostEvent('click', 'button')
 	public onClickButton(e: Event): void
 	{
 		console.log('Event: click on button');

@@ -223,11 +223,11 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			onMyEvent() {}
 
 
-			@HostEvent('span', 'hover')
+			@HostEvent('hover', 'span')
 			onChildEvent() {}
 
 
-			@HostEvent('@note', 'click')
+			@HostEvent('click', '@note')
 			onHostElementEvent() {}
 
 		}
