@@ -77,6 +77,10 @@ export class RootDirectiveRunner
 				)
 			;
 
+			if (!eventEl) {
+				throw new Error(`${metadata.name}.${event.method}: @HostEvent for "${event.selector}" was not found.`);
+			}
+
 			eventEl.addEventListener(event.event, (e) => directive[event.method](e, eventEl));
 		});
 

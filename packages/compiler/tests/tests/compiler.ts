@@ -1,6 +1,6 @@
 import '../bootstrap';
 
-import {Directive, Component, HostElement, Input, Required, Output, ChildDirective, ChildrenDirective, OnInit, OnDestroy} from '@slicky/core';
+import {Directive, Component, HostElement, HostEvent, Input, Required, Output, ChildDirective, ChildrenDirective, OnInit, OnDestroy} from '@slicky/core';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {readFileSync} from 'fs';
@@ -461,6 +461,54 @@ describe('#Compiler', () => {
 			class TestComponent {}
 
 			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.lifeCycleEvents'));
+		});
+
+		it('should throw an error when element for @HostEvent in directive does not exists', () => {
+			@Directive({
+				selector: 'directive',
+			})
+			class TestDirective
+			{
+
+				@HostEvent('click', 'button')
+				public onClickButton() {}
+
+			}
+
+			@Component({
+				selector: '',
+				template: '<directive></directive>',
+				directives: [TestDirective],
+			})
+			class TestComponent {}
+
+			let metadata = metadataLoader.load(TestComponent);
+
+			expect(() => {
+				compiler.compile(metadata);
+			}).to.throw(Error, 'TestDirective.onClickButton: @HostEvent for "button" was not found.');
+		});
+
+		it('should compile @HostEvent in directive', () => {
+			@Directive({
+				selector: 'directive',
+			})
+			class TestDirective
+			{
+
+				@HostEvent('click', 'button')
+				public onClickButton() {}
+
+			}
+
+			@Component({
+				selector: '',
+				template: '<directive><button></button></directive>',
+				directives: [TestDirective],
+			})
+			class TestComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.hostEvents'));
 		});
 
 	});

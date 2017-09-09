@@ -64,6 +64,38 @@ export class BuilderDirectiveSetHostElement implements b.BuilderNodeInterface
 }
 
 
+/***************** DIRECTIVE SET HOST_EVENT *****************/
+
+
+export function createDirectiveSetHostEvent(directiveId: number, method: string): BuilderDirectiveSetHostEvent
+{
+	return new BuilderDirectiveSetHostEvent(directiveId, method);
+}
+
+export class BuilderDirectiveSetHostEvent implements b.BuilderNodeInterface
+{
+
+
+	public directiveId: number;
+
+	public method: string;
+
+
+	constructor(directiveId: number, method: string)
+	{
+		this.directiveId = directiveId;
+		this.method = method;
+	}
+
+
+	public render(): string
+	{
+		return `tmpl.getProvider("directiveInstance-${this.directiveId}").${this.method}($event)`;
+	}
+
+}
+
+
 /***************** CREATE DIRECTIVE *****************/
 
 

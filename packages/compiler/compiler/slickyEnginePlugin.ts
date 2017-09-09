@@ -14,6 +14,7 @@ declare interface ProcessingDirective
 	directive: c.DirectiveDefinitionDirective;
 	element: _.ASTHTMLNodeElement;
 	processedHostElements: Array<c.DirectiveDefinitionElement>;
+	processedHostEvents: Array<c.DirectiveDefinitionEvent>;
 }
 
 
@@ -101,6 +102,25 @@ export class SlickyEnginePlugin extends EnginePlugin
 
 				directive.processedHostElements.push(hostElement);
 			});
+
+			forEach(directive.directive.metadata.events, (hostEvent: c.DirectiveDefinitionEvent) => {
+				if (directive.processedHostEvents.indexOf(hostEvent) >= 0) {
+					return;
+				}
+
+				if (!arg.matcher.matches(element, hostEvent.selector, directive.element)) {
+					return;
+				}
+
+				arg.element.setup.add(
+					tb.createElementEventListener(
+						hostEvent.event,
+						b.createDirectiveSetHostEvent(directive.id, hostEvent.method).render()
+					)
+				);
+
+				directive.processedHostEvents.push(hostEvent);
+			});
 		});
 
 		forEach(this.metadata.directives, (directive: c.DirectiveDefinitionDirective) => {
@@ -119,6 +139,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 					element: element,
 					directive: directive,
 					processedHostElements: [],
+					processedHostEvents: [],
 				});
 			}
 
@@ -269,6 +290,12 @@ export class SlickyEnginePlugin extends EnginePlugin
 				forEach(directive.directive.metadata.elements, (hostElement: c.DirectiveDefinitionElement) => {
 					if (hostElement.required && directive.processedHostElements.indexOf(hostElement) < 0) {
 						throw new Error(`${directive.directive.metadata.name}.${hostElement.property}: required @HostElement was not found.`);
+					}
+				});
+
+				forEach(directive.directive.metadata.events, (hostEvent: c.DirectiveDefinitionEvent) => {
+					if (directive.processedHostEvents.indexOf(hostEvent) < 0) {
+						throw new Error(`${directive.directive.metadata.name}.${hostEvent.method}: @HostEvent for "${hostEvent.selector}" was not found.`);
 					}
 				});
 
