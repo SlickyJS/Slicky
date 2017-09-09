@@ -8,7 +8,7 @@ export class HostElementDefinition
 	public selector: string;
 
 
-	constructor(selector?: string)
+	constructor(selector: string)
 	{
 		this.selector = selector;
 	}

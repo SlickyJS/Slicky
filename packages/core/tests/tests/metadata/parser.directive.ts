@@ -182,9 +182,6 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 		class TestDirective
 		{
 
-
-			@HostElement() me;
-
 			@HostElement('span') innerSpan;
 
 		}
@@ -203,10 +200,6 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			inputs: [],
 			outputs: [],
 			elements: [
-				{
-					property: 'me',
-					required: false,
-				},
 				{
 					property: 'innerSpan',
 					selector: 'span',

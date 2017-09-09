@@ -226,11 +226,8 @@ export class DirectiveMetadataLoader
 					element = {
 						property: property,
 						required: false,
+						selector: metadata.selector
 					};
-
-					if (metadata.selector) {
-						element.selector = metadata.selector;
-					}
 
 				} else if (metadata instanceof HostEventDefinition) {
 					let event: DirectiveDefinitionEvent = {
