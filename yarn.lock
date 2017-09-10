@@ -2,57 +2,11 @@
 # yarn lockfile v1
 
 
-"@slicky/application@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@slicky/application/-/application-0.0.1.tgz#c77dcb8fdbac9d2586f98d1d614734998c97dd56"
-  dependencies:
-    "@slicky/core" "^0.0.1"
-    "@slicky/di" "^1.0.1"
-    "@slicky/lang" "^1.0.0"
-    "@slicky/templates-runtime" "^0.0.1"
-    "@slicky/utils" "^1.0.11"
-
 "@slicky/ast-query-selector@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@slicky/ast-query-selector/-/ast-query-selector-1.0.0.tgz#ee35e615956044aba8a48fd1330ecebcd2c52651"
   dependencies:
     "@slicky/tokenizer" "^1.0.6"
-    "@slicky/utils" "^1.0.11"
-
-"@slicky/compiler-cli@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@slicky/compiler-cli/-/compiler-cli-0.0.1.tgz#3a8eebba103f45086a2dc2796c5bc46df9fdd9f4"
-  dependencies:
-    "@slicky/application" "^0.0.1"
-    "@slicky/compiler" "^0.0.1"
-    "@slicky/core" "^0.0.1"
-    "@slicky/lang" "^1.0.0"
-    "@slicky/utils" "^1.0.11"
-    colors "^1.1.2"
-    reflect-metadata "^0.1.10"
-    ts-node "^3.3.0"
-    yargs "^8.0.2"
-
-"@slicky/compiler@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@slicky/compiler/-/compiler-0.0.1.tgz#3fba2998fbac7f54306f8147079113d79782aea5"
-  dependencies:
-    "@slicky/core" "^0.0.1"
-    "@slicky/html-parser" "^0.0.1"
-    "@slicky/query-selector" "^1.0.1"
-    "@slicky/templates" "^0.0.1"
-    "@slicky/tiny-js" "^1.0.2"
-    "@slicky/utils" "^1.0.11"
-
-"@slicky/core@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@slicky/core/-/core-0.0.1.tgz#1fe8bae80a4eb830834642c79341c14767451064"
-  dependencies:
-    "@slicky/di" "^1.0.1"
-    "@slicky/event-emitter" "^1.0.1"
-    "@slicky/lang" "^1.0.0"
-    "@slicky/reflection" "^1.0.3"
-    "@slicky/templates-runtime" "^0.0.1"
     "@slicky/utils" "^1.0.11"
 
 "@slicky/di@^1.0.1":
@@ -69,13 +23,6 @@
   resolved "https://registry.yarnpkg.com/@slicky/event-emitter/-/event-emitter-1.0.1.tgz#24daa03a1c82445490eccb7505b23969b8984618"
   dependencies:
     rxjs "^5.4.3"
-
-"@slicky/html-parser@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@slicky/html-parser/-/html-parser-0.0.1.tgz#9e055e29a66670fa20aecb4c905a34d5898f2c61"
-  dependencies:
-    "@slicky/utils" "^1.0.11"
-    parse5 "^3.0.2"
 
 "@slicky/lang@^1.0.0":
   version "1.0.0"
@@ -97,26 +44,6 @@
 "@slicky/reflection@^1.0.2", "@slicky/reflection@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@slicky/reflection/-/reflection-1.0.3.tgz#9229aa54ad94b5ac9b661e1abc06b50c1db2cead"
-
-"@slicky/templates-runtime@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@slicky/templates-runtime/-/templates-runtime-0.0.1.tgz#8786d204bf3f1982d905865a87f9cf05ab8bc3ca"
-  dependencies:
-    "@slicky/change-detection" "^1.0.1"
-    "@slicky/realm" "^1.0.1"
-    "@slicky/utils" "^1.0.11"
-
-"@slicky/templates@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@slicky/templates/-/templates-0.0.1.tgz#6bf985d2871cfc5fb5f0263078d72f4b11c94721"
-  dependencies:
-    "@slicky/event-emitter" "^1.0.1"
-    "@slicky/html-parser" "^0.0.1"
-    "@slicky/query-selector" "^1.0.1"
-    "@slicky/tiny-js" "^1.0.2"
-    "@slicky/tokenizer" "^1.0.6"
-    "@slicky/utils" "^1.0.11"
-    parse5 "^3.0.2"
 
 "@slicky/tokenizer@^1.0.6":
   version "1.0.6"
@@ -177,12 +104,12 @@
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.1.tgz#b683eb60be358304ef146f5775db4c0e3696a550"
 
 "@types/mocha@^2.2.41":
-  version "2.2.42"
-  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.42.tgz#ab769f51d37646b6fe8d4a086a98c285b1fab3f5"
+  version "2.2.43"
+  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.43.tgz#03c54589c43ad048cbcbfd63999b55d0424eec27"
 
 "@types/node@*", "@types/node@^8.0.20", "@types/node@^8.0.21", "@types/node@^8.0.22":
-  version "8.0.27"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.27.tgz#13fbe7e92afeecebb843d7cea6c15b521e0000e1"
+  version "8.0.28"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.28.tgz#86206716f8d9251cf41692e384264cbd7058ad60"
 
 "@types/node@^6.0.46":
   version "6.0.88"
@@ -1088,6 +1015,13 @@ crypto-browserify@^3.11.0:
     pbkdf2 "^3.0.3"
     public-encrypt "^4.0.0"
     randombytes "^2.0.0"
+
+css-tree@^1.0.0-alpha22:
+  version "1.0.0-alpha22"
+  resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.0.0-alpha22.tgz#338a006e331c7b4f9dab7b6af539ece56ff78af2"
+  dependencies:
+    mdn-data "^1.0.0"
+    source-map "^0.5.3"
 
 currently-unhandled@^0.4.1:
   version "0.4.1"
@@ -2039,6 +1973,10 @@ hawk@~3.1.3:
     hoek "2.x.x"
     sntp "1.x.x"
 
+he@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/he/-/he-1.1.1.tgz#93410fd21b009735151f8868c2f271f3427e23fd"
+
 hmac-drbg@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/hmac-drbg/-/hmac-drbg-1.0.1.tgz#d2745701025a6c775a6c545793ed502fc0c649a1"
@@ -2074,8 +2012,8 @@ https-browserify@0.0.1:
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-0.0.1.tgz#3f91365cabe60b77ed0ebba24b454e3e09d95a82"
 
 iconv-lite@^0.4.17:
-  version "0.4.18"
-  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.18.tgz#23d8656b16aae6742ac29732ea8f0336a4789cf2"
+  version "0.4.19"
+  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
 
 ieee754@^1.1.4:
   version "1.1.8"
@@ -2365,8 +2303,8 @@ jquery@^3.2.1:
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.2.1.tgz#5c4d9de652af6cd0a770154a631bba12b015c787"
 
 js-base64@^2.1.8:
-  version "2.1.9"
-  resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.1.9.tgz#f0e80ae039a4bd654b5f281fc93f04a914a7fcce"
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.2.0.tgz#5e8a8d193a908198dd23d1704826d207b0e5a8f6"
 
 jsbn@~0.1.0:
   version "0.1.1"
@@ -2783,6 +2721,10 @@ md5.js@^1.3.4:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
+mdn-data@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/mdn-data/-/mdn-data-1.0.0.tgz#a69d9da76847b4d5834c1465ea25c0653a1fbf66"
+
 mem@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/mem/-/mem-1.1.0.tgz#5edd52b485ca1d900fe64895505399a0dfa45f76"
@@ -2818,8 +2760,8 @@ merge-stream@^1.0.0:
     readable-stream "^2.0.1"
 
 merge2@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/merge2/-/merge2-1.1.0.tgz#99fb32b35e9fad840146004e13a56b7549a524db"
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/merge2/-/merge2-1.2.0.tgz#0f882151d988b1f3d0758945404fa73ee5923d3f"
 
 micromatch@^2.1.5, micromatch@^2.3.7:
   version "2.3.11"
@@ -2897,8 +2839,8 @@ mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0:
     minimist "0.0.8"
 
 mocha@^3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/mocha/-/mocha-3.5.0.tgz#1328567d2717f997030f8006234bce9b8cd72465"
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/mocha/-/mocha-3.5.1.tgz#9b6d13ac1ccf957edd16f2e439055734b1b60391"
   dependencies:
     browser-stdout "1.3.0"
     commander "2.9.0"
@@ -2907,6 +2849,7 @@ mocha@^3.5.0:
     escape-string-regexp "1.0.5"
     glob "7.1.1"
     growl "1.9.2"
+    he "1.1.1"
     json3 "3.3.2"
     lodash.create "3.1.1"
     mkdirp "0.5.1"
@@ -3317,8 +3260,8 @@ pathval@^1.0.0:
   resolved "https://registry.yarnpkg.com/pathval/-/pathval-1.1.0.tgz#b942e6d4bde653005ef6b71361def8727d0645e0"
 
 pbkdf2@^3.0.3:
-  version "3.0.13"
-  resolved "https://registry.yarnpkg.com/pbkdf2/-/pbkdf2-3.0.13.tgz#c37d295531e786b1da3e3eadc840426accb0ae25"
+  version "3.0.14"
+  resolved "https://registry.yarnpkg.com/pbkdf2/-/pbkdf2-3.0.14.tgz#a35e13c64799b06ce15320f459c230e68e73bade"
   dependencies:
     create-hash "^1.1.2"
     create-hmac "^1.1.4"
@@ -3747,8 +3690,8 @@ source-list-map@^2.0.0:
   resolved "https://registry.yarnpkg.com/source-list-map/-/source-list-map-2.0.0.tgz#aaa47403f7b245a92fbc97ea08f250d6087ed085"
 
 source-map-support@^0.4.0:
-  version "0.4.17"
-  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.17.tgz#6f2150553e6375375d0ccb3180502b78c18ba430"
+  version "0.4.18"
+  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.18.tgz#0286a6de8be42641338594e97ccea75f0a2c585f"
   dependencies:
     source-map "^0.5.6"
 

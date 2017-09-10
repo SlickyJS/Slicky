@@ -101,6 +101,7 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 					},
 				},
 			],
+			styles: [],
 		});
 	});
 
@@ -185,6 +186,7 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 				},
 			],
 			filters: [],
+			styles: [],
 		});
 	});
 
@@ -253,6 +255,7 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 				},
 			],
 			filters: [],
+			styles: [],
 		});
 	});
 

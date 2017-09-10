@@ -7,9 +7,15 @@ import {EventEmitter} from '@slicky/event-emitter';
 import {DocumentWalker} from '../querySelector';
 import {EnginePluginManager} from './enginePluginManager';
 import {EnginePlugin} from './enginePlugin';
-import {IfEnginePlugin, ForEnginePlugin} from '../plugins';
+import {IfEnginePlugin, ForEnginePlugin, StylesPlugin} from '../plugins';
 import {EngineProgress} from './engineProgress';
 import * as b from '../builder';
+
+
+export class EngineCompileOptions
+{
+	styles?: Array<string>;
+}
 
 
 export class Engine
@@ -27,6 +33,7 @@ export class Engine
 
 		this.addPlugin(new IfEnginePlugin);
 		this.addPlugin(new ForEnginePlugin);
+		this.addPlugin(new StylesPlugin);
 	}
 
 
@@ -36,7 +43,7 @@ export class Engine
 	}
 
 
-	public compile(name: string|number, template: string): string
+	public compile(name: string|number, template: string, options: EngineCompileOptions = {}): string
 	{
 		let progress = new EngineProgress;
 		let matcher = new Matcher(new DocumentWalker);
@@ -46,6 +53,8 @@ export class Engine
 		this.plugins.onBeforeCompile({
 			progress: progress,
 			engine: this,
+			builder: builder,
+			options: options,
 		});
 
 		this.processTree(builder, builder.getMainMethod().body, progress, matcher, tree);
@@ -53,6 +62,8 @@ export class Engine
 		this.plugins.onAfterCompile({
 			progress: progress,
 			engine: this,
+			builder: builder,
+			options: options,
 		});
 
 		let code = builder.render();
@@ -119,11 +130,21 @@ export class Engine
 
 	private processElement(builder: b.TemplateBuilder, parent: b.BuilderNodesContainer<b.BuilderNodeInterface>, progress: EngineProgress, matcher: Matcher, element: _.ASTHTMLNodeElement, insertBefore: boolean = false): void
 	{
+		let stopProcessing = false;
+
 		element = this.plugins.onBeforeProcessElement(element, {
 			progress: progress,
 			matcher: matcher,
 			engine: this,
+			builder: builder,
+			stopProcessing: () => {
+				stopProcessing = true;
+			},
 		});
+
+		if (stopProcessing) {
+			return;
+		}
 
 		if (element.name === 'include') {
 			return this.processElementInclude(builder, parent, progress, element, insertBefore);
@@ -140,6 +161,7 @@ export class Engine
 					progress: progress,
 					matcher: matcher,
 					engine: this,
+					builder: builder,
 				});
 
 				forEach(element.events, (event: _.ASTHTMLNodeExpressionAttributeEvent) => {
@@ -199,6 +221,7 @@ export class Engine
 					progress: progress,
 					engine: this,
 					matcher: matcher,
+					builder: builder,
 				});
 			})
 		);
@@ -269,6 +292,7 @@ export class Engine
 						comment: comment,
 						progress: innerProgress,
 						engine: this,
+						builder: builder,
 					});
 				})
 			);

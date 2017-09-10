@@ -1,4 +1,4 @@
-import {map, indent, forEach, isFunction, isString} from '@slicky/utils';
+import {map, indent, forEach, isFunction, isString, filter} from '@slicky/utils';
 
 
 function applyReplacements(code: string, replacements: {[name: string]: string}): string
@@ -295,6 +295,8 @@ export class BuilderMethod implements BuilderNodeInterface
 
 	public args: Array<string>;
 
+	public beginning = new BuilderNodesContainer;
+
 	public body = new BuilderNodesContainer;
 
 	public end = new BuilderNodesContainer;
@@ -310,11 +312,18 @@ export class BuilderMethod implements BuilderNodeInterface
 
 	public render(): string
 	{
+		const body = filter([
+			this.beginning.render(),
+			this.body.render(),
+			this.end.render(),
+		], (code) => {
+			return code !== '';
+		});
+
 		return (
 			`${this.parent.name}.prototype.${this.name} = function(${this.args.join(', ')})\n` +
 			`{\n` +
-			`${indent(this.body.render())}\n` +
-			`${indent(this.end.render())}\n` +
+			`${indent(body.join('\n'))}\n` +
 			`};`
 		);
 	}
@@ -937,6 +946,49 @@ export class BuilderClassHelper implements BuilderNodeInterface
 			`tmpl.getProvider("classHelperFactory")(parent, "${this.className}", function(helper) {\n` +
 			`${indent(watcher.render())}\n` +
 			`});\n`
+		);
+	}
+
+}
+
+
+/***************** INSERT STYLE RULE *****************/
+
+
+export function createInsertStyleRule(selector: string, rules: Array<string> = []): BuilderInsertStyleRule
+{
+	return new BuilderInsertStyleRule(selector, rules);
+}
+
+export class BuilderInsertStyleRule implements BuilderNodeInterface
+{
+
+
+	public selector: string;
+
+	public rules: Array<string>;
+
+
+	constructor(selector: string, rules: Array<string> = [])
+	{
+		this.selector = selector;
+		this.rules = rules;
+	}
+
+
+	public render(): string
+	{
+		const rules = map(this.rules, (rule: string) => {
+			return `"${rule}"`;
+		});
+
+		return (
+			`root.insertStyleRule(\n` +
+			`	"${this.selector}",\n` +
+			`	[\n` +
+			`${indent(rules.join(',\n'), 2)}\n` +
+			`	]\n` +
+			`);`
 		);
 	}
 

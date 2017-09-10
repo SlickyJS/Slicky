@@ -1,7 +1,7 @@
 import {Matcher} from '@slicky/query-selector';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
-import {Engine} from './';
+import {Engine, EngineCompileOptions} from './';
 import {EngineProgress} from './engineProgress';
 import * as b from '../builder';
 
@@ -10,6 +10,8 @@ export declare interface OnBeforeCompileArgument
 {
 	progress: EngineProgress,
 	engine: Engine,
+	options: EngineCompileOptions,
+	builder: b.TemplateBuilder,
 }
 
 
@@ -17,6 +19,8 @@ export declare interface OnAfterCompileArgument
 {
 	progress: EngineProgress,
 	engine: Engine,
+	options: EngineCompileOptions,
+	builder: b.TemplateBuilder,
 }
 
 
@@ -33,6 +37,8 @@ export declare interface OnBeforeProcessElementArgument
 	progress: EngineProgress;
 	engine: Engine;
 	matcher: Matcher;
+	builder: b.TemplateBuilder,
+	stopProcessing: () => void;
 }
 
 
@@ -42,6 +48,7 @@ export declare interface OnProcessElementArgument
 	progress: EngineProgress;
 	matcher: Matcher;
 	engine: Engine;
+	builder: b.TemplateBuilder,
 }
 
 
@@ -50,6 +57,7 @@ export declare interface OnAfterProcessElementArgument
 	progress: EngineProgress;
 	engine: Engine;
 	matcher: Matcher;
+	builder: b.TemplateBuilder,
 }
 
 
@@ -60,6 +68,7 @@ export declare interface OnProcessTemplateArgument
 	comment: b.BuilderAddComment;
 	progress: EngineProgress;
 	engine: Engine;
+	builder: b.TemplateBuilder,
 }
 
 

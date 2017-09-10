@@ -143,6 +143,7 @@ export declare interface DirectiveDefinition {
 	directives?: DirectiveDefinitionDirectivesList,
 	precompileDirectives?: DirectiveDefinitionDirectivesList,
 	filters?: DirectiveDefinitionFiltersList,
+	styles?: Array<string>,
 	[name: string]: any,
 }
 
@@ -313,6 +314,7 @@ export class DirectiveMetadataLoader
 			definition.template = annotation.template;
 			definition.childDirectives = childDirectives;
 			definition.childrenDirectives = childrenDirectives;
+			definition.styles = exists(annotation.styles) ? annotation.styles : [];
 
 			let filters = unique(merge(this.filters, annotation.filters));
 

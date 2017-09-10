@@ -511,6 +511,19 @@ describe('#Compiler', () => {
 			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.hostEvents'));
 		});
 
+		it('should include styles in template', () => {
+			@Component({
+				selector: '',
+				template: '<style>.parent-template {color: red;}</style>',
+				styles: [
+					'.parent-override {color: green;}',
+				],
+			})
+			class TestComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.styles'));
+		});
+
 	});
 
 });

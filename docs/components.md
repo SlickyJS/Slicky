@@ -9,6 +9,9 @@ import {Component} from '@slicky/core';
 @Component({
 	selector: 'my-component',
 	template: '{{ text }}',
+	styles: [
+		'button {color: red;}',
+	],
 })
 export class TextComponent
 {

@@ -36,8 +36,8 @@ export class TemplateBuilder
 			cls.body.add('_super.call(this, application, parent);');
 
 			this.templateMainMethod = b.createMethod(cls, 'main', ['parent'], (main) => {
-				main.body.add('var root = this;');
-				main.body.add('var tmpl = this;');
+				main.beginning.add('var root = this;');
+				main.beginning.add('var tmpl = this;');
 
 				main.end.add('tmpl.init();');
 			});

@@ -1,7 +1,7 @@
 {
-	"name": "@slicky/templates",
-	"description": "Templates engine",
-	"version": "0.1.0",
+	"name": "@slicky/css-parser",
+	"description": "CSS parser for slicky framework",
+	"version": "0.0.1",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -14,19 +14,13 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/event-emitter": "^1.0.1",
-		"@slicky/css-parser": "^0.0.1",
-		"@slicky/html-parser": "^0.0.3",
-		"@slicky/query-selector": "^1.0.1",
-		"@slicky/tiny-js": "^1.0.4",
-		"@slicky/tokenizer": "^1.0.6",
 		"@slicky/utils": "^1.0.11",
-		"parse5": "^3.0.2"
+		"css-tree": "^1.0.0-alpha22"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",
 		"@types/mocha": "^2.2.41",
-		"@types/node": "^8.0.21",
+		"@types/node": "^8.0.20",
 		"chai": "^4.1.1",
 		"mocha": "^3.5.0"
 	},

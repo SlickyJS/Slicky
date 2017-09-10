@@ -11,6 +11,7 @@ export declare interface ComponentOptions extends DirectiveOptions
 	precompileDirectives?: Array<ClassType<any>>,
 	directives?: Array<ClassType<any>>,
 	filters?: Array<ClassType<FilterInterface>>,
+	styles?: Array<string>,
 }
 
 
@@ -25,6 +26,8 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 	public directives: Array<ClassType<any>> = [];
 
 	public filters: Array<ClassType<FilterInterface>> = [];
+
+	public styles: Array<string> = [];
 
 
 	constructor(options: ComponentOptions)
@@ -43,6 +46,10 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 
 		if (exists(options.filters)) {
 			this.filters = options.filters;
+		}
+
+		if (exists(options.styles)) {
+			this.styles = options.styles;
 		}
 	}
 

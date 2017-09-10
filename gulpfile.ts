@@ -27,6 +27,7 @@ const config: Config = {
 		{name: 'changeDetection', root: path.join(__dirname, 'packages', 'change-detection')},
 		{name: 'tinyJS', root: path.join(__dirname, 'packages', 'tiny-js')},
 		{name: 'htmlParser', root: path.join(__dirname, 'packages', 'html-parser')},
+		{name: 'cssParser', root: path.join(__dirname, 'packages', 'css-parser')},
 		{name: 'templatesRuntime', root: path.join(__dirname, 'packages', 'templates-runtime')},
 		{name: 'core', root: path.join(__dirname, 'packages', 'core')},
 		{name: 'extensionTranslator', root: path.join(__dirname, 'packages', 'extension-translator')},

@@ -1,12 +1,16 @@
-import {extend, isFunction} from '@slicky/utils';
+import {extend, forEach, isFunction} from '@slicky/utils';
 import {BaseTemplate} from './baseTemplate';
 import {RenderableTemplate} from './renderableTemplate';
 import {ApplicationTemplate} from './applicationTemplate';
 import {EmbeddedTemplatesContainer, EmbeddedTemplateFactory} from './embeddedTemplatesContainer';
+import {StyleWriter} from '../styles';
 
 
 export abstract class Template extends RenderableTemplate
 {
+
+
+	private styleWriter: StyleWriter;
 
 
 	constructor(application: ApplicationTemplate, parent: BaseTemplate)
@@ -14,6 +18,7 @@ export abstract class Template extends RenderableTemplate
 		super(application, parent);
 
 		this.allowRefreshFromParent = false;
+		this.styleWriter = new StyleWriter;
 	}
 
 
@@ -24,6 +29,16 @@ export abstract class Template extends RenderableTemplate
 
 
 	public abstract main(el: HTMLElement): void;
+
+
+	public destroy(): void
+	{
+		super.destroy();
+
+		this.styleWriter.destroy();
+
+		delete this.styleWriter;
+	}
 
 
 	public render(el: HTMLElement): void
@@ -43,6 +58,12 @@ export abstract class Template extends RenderableTemplate
 		}
 
 		return container;
+	}
+
+
+	protected insertStyleRule(selector: string, rules: Array<string>): void
+	{
+		this.styleWriter.insertRule(selector, rules);
 	}
 
 }

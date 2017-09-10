@@ -1,14 +1,28 @@
+<style>
+	.todos-filter-container {
+		margin-top: 0;
+	}
+
+	.remove-done-link {
+		margin-top: 7px;
+	}
+
+	.max-width {
+		width: 100%;
+	}
+</style>
+
 <div class="uk-card uk-card-secondary uk-card-hover uk-card-body">
 	<div class="uk-clearfix">
 		<h3 class="uk-card-title uk-float-left">{{ 'title' | translate }} <small *s:if="todos.size">({{ todos.count((todo) => todo.done) }}/{{ todos.size }}<template [s:if]="todos.count((todo) => todo.done) === todos.size"> 😎</template>)</small></h3>
 
-		<ul [hidden]="!todos.size" class="uk-subnav uk-subnav-pill uk-float-right" uk-switcher style="margin-top: 0;">
+		<ul [hidden]="!todos.size" class="uk-subnav uk-subnav-pill uk-float-right todos-filter-container" uk-switcher>
 			<li><a (click)="showAllTodos()" href="#">{{ 'filter.all' | translate }}</a></li>
 			<li><a (click)="showOnlyActiveTodos()" href="#">{{ 'filter.active' | translate }}</a></li>
 			<li><a (click)="showOnlyDoneTodos()" href="#">{{ 'filter.done' | translate }}</a></li>
 		</ul>
 
-		<small [hidden]="!todos.count((todo) => todo.done)" class="uk-float-right uk-margin-right" style="margin-top: 7px;">
+		<small [hidden]="!todos.count((todo) => todo.done)" class="uk-float-right uk-margin-right remove-done-link">
 			<a (click.prevent)="removeDone()" href="#">{{ 'removeDone' | translate }}</a>
 		</small>
 	</div>
@@ -19,7 +33,7 @@
 
 	<form (submit.prevent)="saveTodo()" class="uk-grid-collapse" uk-grid>
 		<div class="uk-width-5-6">
-			<div class="uk-inline" style="width: 100%;">
+			<div class="uk-inline max-width">
 				<a [hidden]="!currentText.length" (click.prevent)="saveTodo()" class="uk-form-icon uk-form-icon-flip" href="#" [icon]="updating ? 'check' : 'plus'"></a>
 				<input (input)="currentText = $this.value" [value]="currentText" placeholder="{{ 'addNew' | translate }}" class="uk-input" type="text" />
 			</div>
