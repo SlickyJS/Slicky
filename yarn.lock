@@ -1016,9 +1016,9 @@ crypto-browserify@^3.11.0:
     public-encrypt "^4.0.0"
     randombytes "^2.0.0"
 
-css-tree@^1.0.0-alpha22:
-  version "1.0.0-alpha22"
-  resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.0.0-alpha22.tgz#338a006e331c7b4f9dab7b6af539ece56ff78af2"
+css-tree@^1.0.0-alpha23:
+  version "1.0.0-alpha23"
+  resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.0.0-alpha23.tgz#5129518def61e99931d9a3397c3d6758af2ff0c5"
   dependencies:
     mdn-data "^1.0.0"
     source-map "^0.5.3"

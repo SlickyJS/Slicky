@@ -25,7 +25,7 @@
 		"@slicky/reflection": "^1.0.3",
 		"@slicky/tokenizer": "^1.0.6",
 		"@slicky/translator": "^1.0.2",
-		"css-tree": "^1.0.0-alpha22"
+		"css-tree": "^1.0.0-alpha23"
 	},
 	"devDependencies": {
 		"@slicky/compiler-cli": "^0.0.5",

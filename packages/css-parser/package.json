@@ -15,7 +15,7 @@
 	"types": "./index.d.ts",
 	"dependencies": {
 		"@slicky/utils": "^1.0.11",
-		"css-tree": "^1.0.0-alpha22"
+		"css-tree": "^1.0.0-alpha23"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",
