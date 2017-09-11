@@ -1,17 +1,17 @@
 return function(_super) {
-	_super.childTemplateExtend(Template472405405);
-	function Template472405405(application, parent)
+	_super.childTemplateExtend(Template1191991785);
+	function Template1191991785(application, parent)
 	{
 		_super.call(this, application, parent);
 	}
-	Template472405405.prototype.main = function(parent)
+	Template1191991785.prototype.main = function(parent)
 	{
 		var root = this;
 		var tmpl = this;
 		tmpl._appendComment(parent, "slicky-template");
 		tmpl.init();
 	};
-	Template472405405.prototype.template0 = function(tmpl, parent, setup)
+	Template1191991785.prototype.template0 = function(tmpl, parent, setup)
 	{
 		var root = this;
 		if (setup) {
@@ -28,5 +28,5 @@ return function(_super) {
 		tmpl.init();
 		return tmpl;
 	};
-	return Template472405405;
+	return Template1191991785;
 }

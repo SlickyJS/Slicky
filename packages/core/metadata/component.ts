@@ -1,19 +1,22 @@
 import {makeClassDecorator} from '@slicky/reflection';
-import {exists} from '@slicky/utils';
+import {exists, merge} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {TemplateEncapsulation} from '@slicky/templates-runtime/templates';
-import {DirectiveOptions, DirectiveAnnotationDefinition} from './directive';
+import {DirectiveAnnotationDefinition} from './directive';
 import {FilterInterface} from '../filters';
 
 
-export declare interface ComponentOptions extends DirectiveOptions
+export declare interface ComponentOptions
 {
+	name: string,
 	template: string,
+	exportAs?: string,
 	precompileDirectives?: Array<ClassType<any>>,
 	directives?: Array<ClassType<any>>,
 	filters?: Array<ClassType<FilterInterface>>,
 	styles?: Array<string>,
 	encapsulation?: TemplateEncapsulation,
+	[name: string]: any,
 }
 
 
@@ -36,7 +39,11 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 
 	constructor(options: ComponentOptions)
 	{
-		super(options);
+		super(merge(options, {selector: options.name}));
+
+		if (!/^[a-z][a-z0-9-]*[a-z0-9]$/.test(options.name) || options.name.indexOf('-') < 0) {
+			throw new Error(`Component element name "${options.name}" is not valid. Name must contain a dash and be all lowercased.`);
+		}
 
 		this.template = options.template;
 

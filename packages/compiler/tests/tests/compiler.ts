@@ -40,7 +40,7 @@ describe('#Compiler', () => {
 
 		it('should compile simple component', () => {
 			@Component({
-				selector: 'component',
+				name: 'my-component',
 				template: '',
 			})
 			class TestComponent {}
@@ -50,13 +50,13 @@ describe('#Compiler', () => {
 
 		it('should return all templates', () => {
 			@Component({
-				selector: 'component1',
+				name: 'my-component1',
 				template: '',
 			})
 			class TestComponent1 {}
 
 			@Component({
-				selector: 'component2',
+				name: 'my-component2',
 				template: '',
 			})
 			class TestComponent2 {}
@@ -75,7 +75,7 @@ describe('#Compiler', () => {
 
 		it('should return compiled template by hash', () => {
 			@Component({
-				selector: 'component1',
+				name: 'my-component1',
 				template: '',
 			})
 			class TestComponent {}
@@ -89,13 +89,13 @@ describe('#Compiler', () => {
 
 		it('should compile components in @Component.precompileDirectives', () => {
 			@Component({
-				selector: 'precompiled-component',
+				name: 'precompiled-component',
 				template: '',
 			})
 			class TestComponentPrecompiled {}
 
 			@Component({
-				selector: 'component',
+				name: 'my-component',
 				template: '',
 				precompileDirectives: [TestComponentPrecompiled],
 			})
@@ -126,7 +126,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				selector: '',
+				name: 'my-component',
 				template: '<directive></directive>',
 				directives: [TestDirective],
 			})
@@ -141,7 +141,7 @@ describe('#Compiler', () => {
 
 		it('should throw an error when required @HostElement is missing', () => {
 			@Component({
-				selector: '',
+				name: 'my-component',
 				template: '',
 			})
 			class TestComponent
@@ -173,7 +173,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				selector: 'test-component',
+				name: 'test-component',
 				template: '<test-directive><span></span></test-directive><i></i>',
 				directives: [TestDirective],
 			})
@@ -190,13 +190,13 @@ describe('#Compiler', () => {
 
 		it('should compile inner component', () => {
 			@Component({
-				selector: 'child-component',
+				name: 'child-component',
 				template: '',
 			})
 			class TestComponentChild {}
 
 			@Component({
-				selector: 'parent-component',
+				name: 'parent-component',
 				template: '<child-component></child-component>',
 				directives: [TestComponentChild],
 			})
@@ -227,7 +227,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				selector: '',
+				name: 'test-component',
 				template: '<directive></directive>',
 				directives: [TestDirective],
 			})
@@ -264,7 +264,7 @@ describe('#Compiler', () => {
 
 			}
 			@Component({
-				selector: 'component-child',
+				name: 'component-child',
 				template: '',
 			})
 			class TestComponentChild
@@ -288,7 +288,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				selector: '',
+				name: 'test-component',
 				template: [
 					'<directive-child attribute-input="attr" attribute-custom="custom" attribute-watch="{{ null }}" [property-input]="true" [property-custom]="false"></directive-child>',
 					'<component-child attribute-input="attr" attribute-custom="custom" attribute-watch="{{ null }}" [property-input]="true" [property-custom]="false"></component-child>',
@@ -316,7 +316,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				selector: 'component-child',
+				name: 'component-child',
 				template: '',
 			})
 			class TestComponentChild
@@ -331,7 +331,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				selector: '',
+				name: 'test-component',
 				template: [
 					'<directive-child (output)="do()" (output-custom)="doOther()"></directive-child>',
 					'<component-child (output)="do()" (output-custom)="doOther()"></component-child>',
@@ -350,7 +350,7 @@ describe('#Compiler', () => {
 			class TestDirective {}
 
 			@Component({
-				selector: '',
+				name: 'test-component',
 				template: '<template><directive></directive></template>',
 				directives: [TestDirective],
 			})
@@ -372,7 +372,7 @@ describe('#Compiler', () => {
 			class TestDirective {}
 
 			@Component({
-				selector: '',
+				name: 'test-component',
 				template: '',
 				directives: [TestDirective],
 			})
@@ -399,7 +399,7 @@ describe('#Compiler', () => {
 			class TestDirective {}
 
 			@Component({
-				selector: '',
+				name: 'test-component',
 				template: '<directive></directive>',
 				directives: [TestDirective],
 			})
@@ -421,7 +421,7 @@ describe('#Compiler', () => {
 			class TestDirective {}
 
 			@Component({
-				selector: '',
+				name: 'test-component',
 				template: '<directive></directive>',
 				directives: [TestDirective],
 			})
@@ -454,7 +454,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				selector: '',
+				name: 'test-component',
 				template: '<directive></directive>',
 				directives: [TestDirective],
 			})
@@ -476,7 +476,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				selector: '',
+				name: 'test-component',
 				template: '<directive></directive>',
 				directives: [TestDirective],
 			})
@@ -502,7 +502,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				selector: '',
+				name: 'test-component',
 				template: '<directive><button></button></directive>',
 				directives: [TestDirective],
 			})
@@ -513,7 +513,7 @@ describe('#Compiler', () => {
 
 		it('should include styles in template', () => {
 			@Component({
-				selector: '',
+				name: 'test-component',
 				template: '<style>.parent-template {color: red;}</style>',
 				styles: [
 					'.parent-override {color: green;}',
@@ -526,35 +526,13 @@ describe('#Compiler', () => {
 
 		it('should compile component with native encapsulation', () => {
 			@Component({
-				selector: '',
+				name: 'test-component',
 				template: '',
 				encapsulation: TemplateEncapsulation.Native,
 			})
 			class TestComponent {}
 
 			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.encapsulation.native'));
-		});
-
-		it('should throw an error when child component with native encapsulation is attached to non safe element', () => {
-			@Component({
-				selector: 'li',
-				template: '',
-				encapsulation: TemplateEncapsulation.Native,
-			})
-			class TestComponentChild {}
-
-			@Component({
-				selector: '',
-				template: '<li></li>',
-				directives: [TestComponentChild],
-			})
-			class TestComponentParent {}
-
-			const metadata = metadataLoader.load(TestComponentParent);
-
-			expect(() => {
-				compiler.compile(metadata);
-			}).to.throw(Error, 'TemplateEncapsulation.Native is not supported for element <li>. Only article, aside, blockquote, body, div, footer, h1, h2, h3, h4, h5, h6, header, nav, p, section, span and custom elements with dash in the name are allowed.');
 		});
 
 	});

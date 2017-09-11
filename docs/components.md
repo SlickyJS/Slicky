@@ -3,11 +3,16 @@
 Just like with angular, components are [directives](./directives.md) with [templates](./templates.md) and some other 
 small changes. For example, `HostEvent` and `HostElement` does not work here.
 
+Also `@Component` does not have the `selector` option like [directive](./directives.md) has. Instead there is `name` 
+option for your custom tag name (in example below `<my-component></my-component>`).
+
+**Name must be lowercased, start with letter and contain at least one dash. Numbers are also allowed.**
+
 ```typescript
 import {Component} from '@slicky/core';
 
 @Component({
-	selector: 'my-component',
+	name: 'my-component',
 	template: '{{ text }}',
 	styles: [
 		'button {color: red;}',

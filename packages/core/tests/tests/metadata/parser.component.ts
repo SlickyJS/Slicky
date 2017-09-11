@@ -15,11 +15,20 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 		loader = new DirectiveMetadataLoader(new ExtensionsManager);
 	});
 
+	it('should throw an error when using invalid component name', () => {
+		expect(() => {
+			@Component({
+				name: 'button',
+			})
+			class TestComponent {}
+		}).to.throw(Error, 'Component element name "button" is not valid. Name must contain a dash and be all lowercased.');
+	});
+
 	it('should throw an error when using invalid filter', () => {
 		class TestFilter {}
 
 		@Component({
-			selector: 'box',
+			name: 'my-box',
 			filters: [TestFilter],
 		})
 		class TestComponent {}
@@ -41,7 +50,7 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 		class TestChildDirective {}
 
 		@Component({
-			selector: 'button',
+			name: 'my-button',
 			template: '<a>{{ title }}</a>',
 			directives: [
 				TestChildDirective,
@@ -57,9 +66,9 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 		expect(definition).to.be.eql({
 			type: DirectiveDefinitionType.Component,
 			name: 'TestComponent',
-			uniqueName: 'TestComponent_170994680',
-			hash: 170994680,
-			selector: 'button',
+			uniqueName: 'TestComponent_1374550497',
+			hash: 1374550497,
+			selector: 'my-button',
 			onInit: false,
 			onDestroy: false,
 			onUpdate: false,
@@ -113,7 +122,7 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 		class TestDirective {}
 
 		@Component({
-			selector: 'button',
+			name: 'my-button',
 			directives: [TestDirective],
 			template: '',
 		})
@@ -130,9 +139,9 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 		expect(definition).to.be.eql({
 			type: DirectiveDefinitionType.Component,
 			name: 'TestComponent',
-			uniqueName: 'TestComponent_1521399531',
-			hash: 1521399531,
-			selector: 'button',
+			uniqueName: 'TestComponent_4274089426',
+			hash: 4274089426,
+			selector: 'my-button',
 			onInit: false,
 			onDestroy: false,
 			onUpdate: false,
@@ -199,7 +208,7 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 		class TestDirective {}
 
 		@Component({
-			selector: 'button',
+			name: 'my-button',
 			directives: [TestDirective],
 			template: '',
 		})
@@ -216,9 +225,9 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 		expect(definition).to.be.eql({
 			type: DirectiveDefinitionType.Component,
 			name: 'TestComponent',
-			uniqueName: 'TestComponent_1521399531',
-			hash: 1521399531,
-			selector: 'button',
+			uniqueName: 'TestComponent_4274089426',
+			hash: 4274089426,
+			selector: 'my-button',
 			onInit: false,
 			onDestroy: false,
 			onUpdate: false,

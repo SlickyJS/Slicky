@@ -2,7 +2,7 @@ import {Component} from '@slicky/core';
 
 
 @Component({
-	selector: 'app',
+	name: 'app-templates',
 	template: require('./templatesComponentTemplate.html'),
 })
 export class TemplatesComponent

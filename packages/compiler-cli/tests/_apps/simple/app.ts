@@ -4,7 +4,7 @@ import {Component} from '@slicky/core';
 
 
 @Component({
-	selector: '',
+	name: 'test-component',
 	template: '',
 })
 class TestComponent {}

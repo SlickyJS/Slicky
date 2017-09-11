@@ -88,7 +88,7 @@ export abstract class Template extends RenderableTemplate
 }
 
 
-export function assertElementNameAllowedForNativeEncapsulation(name: string): void
+function assertElementNameAllowedForNativeEncapsulation(name: string): void
 {
 	name = name.toLowerCase();
 
