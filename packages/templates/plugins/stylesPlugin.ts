@@ -101,13 +101,11 @@ export class StylesPlugin extends EnginePlugin
 				this.selectors[buffer.selector.value] = `${STYLE_ATTRIBUTE_PREFIX}_${this.name}_${keys(this.selectors).length}`;
 			}
 
-			if (this.encapsulation === TemplateEncapsulation.Emulated) {
-				forEach(buffer.rule.selectors, (selector: css.CSSNodeSelector) => {
-					if (!exists(this.selectors[selector.value])) {
-						this.selectors[selector.value] = this.selectors[buffer.selector.value];
-					}
-				});
-			}
+			forEach(buffer.rule.selectors, (selector: css.CSSNodeSelector) => {
+				if (!exists(this.selectors[selector.value])) {
+					this.selectors[selector.value] = this.selectors[buffer.selector.value];
+				}
+			});
 
 			element.attributes.push(new ASTHTMLNodeTextAttribute(this.selectors[buffer.selector.value], ''));
 		});
