@@ -14,7 +14,8 @@ return function(_super) {
 				"color: red;"
 			]
 		);
-		tmpl._appendElement(parent, "div", {"__slicky_style__0": ""});
+		tmpl._appendElement(parent, "button", {"__slicky_style__0": ""});
+		tmpl._appendElement(parent, "a", {"__slicky_style__0": ""});
 		tmpl.init();
 	};
 	return Template;

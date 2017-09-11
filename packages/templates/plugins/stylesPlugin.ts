@@ -10,6 +10,13 @@ import {createInsertStyleRule, BuilderMethod} from '../builder';
 const STYLE_ATTRIBUTE_PREFIX = '__slicky_style';
 
 
+declare interface CSSRuleBuffer
+{
+	rule: css.CSSNodeRule;
+	selector: css.CSSNodeSelector;
+}
+
+
 export class StylesPlugin extends EnginePlugin
 {
 
@@ -22,7 +29,7 @@ export class StylesPlugin extends EnginePlugin
 
 	private processedNonStyleTag: boolean = false;
 
-	private styles: Array<Array<css.CSSNodeSelector>> = [];
+	private styles: Array<Array<css.CSSNodeRule>> = [];
 
 	private selectors: {[selector: string]: string} = {};
 
@@ -51,7 +58,7 @@ export class StylesPlugin extends EnginePlugin
 		if (this.styles.length) {
 			const main = arg.builder.getMainMethod();
 
-			forEach(this.styles, (styles: Array<css.CSSNodeSelector>) => {
+			forEach(this.styles, (styles: Array<css.CSSNodeRule>) => {
 				this.addStyles(main, styles);
 			});
 		}
@@ -89,46 +96,76 @@ export class StylesPlugin extends EnginePlugin
 
 		let styles = this.findStylesForElement(element, arg.matcher);
 
-		forEach(styles, (style: css.CSSNodeSelector) => {
-			if (!exists(this.selectors[style.selector])) {
-				this.selectors[style.selector] = `${STYLE_ATTRIBUTE_PREFIX}_${this.name}_${keys(this.selectors).length}`;
+		forEach(styles, (buffer: CSSRuleBuffer) => {
+			if (!exists(this.selectors[buffer.selector.value])) {
+				this.selectors[buffer.selector.value] = `${STYLE_ATTRIBUTE_PREFIX}_${this.name}_${keys(this.selectors).length}`;
 			}
 
-			element.attributes.push(new ASTHTMLNodeTextAttribute(this.selectors[style.selector], ''));
+			if (this.encapsulation === TemplateEncapsulation.Emulated) {
+				forEach(buffer.rule.selectors, (selector: css.CSSNodeSelector) => {
+					if (!exists(this.selectors[selector.value])) {
+						this.selectors[selector.value] = this.selectors[buffer.selector.value];
+					}
+				});
+			}
+
+			element.attributes.push(new ASTHTMLNodeTextAttribute(this.selectors[buffer.selector.value], ''));
 		});
 	}
 
 
-	private addStyles(builderMethod: BuilderMethod, stylesheet: Array<css.CSSNodeSelector>): void
+	private addStyles(builderMethod: BuilderMethod, styles: Array<css.CSSNodeRule>): void
 	{
-		forEach(stylesheet, (selector: css.CSSNodeSelector) => {
-			let selectorPath = selector.selector;
+		forEach(styles, (rule: css.CSSNodeRule) => {
+			let selectors: Array<string> = [];
 
-			if (this.encapsulation === TemplateEncapsulation.Emulated) {
-				if (!exists(this.selectors[selectorPath])) {
-					return;
+			forEach(rule.selectors, (selector: css.CSSNodeSelector) => {
+				if (this.encapsulation === TemplateEncapsulation.Emulated) {
+					if (!exists(this.selectors[selector.value])) {
+						return;
+					}
+
+					if (selectors.indexOf(`[${this.selectors[selector.value]}]`) < 0) {
+						selectors.push(`[${this.selectors[selector.value]}]`);
+					}
+
+				} else {
+					selectors.push(selector.value);
 				}
+			});
 
-				selectorPath = `[${this.selectors[selectorPath]}]`;
+			if (!selectors.length) {
+				return;
 			}
 
 			builderMethod.beginning.add(
-				createInsertStyleRule(selectorPath, map(selector.rules, (rule: css.CSSNodeRule) => {
-					return rule.render();
+				createInsertStyleRule(selectors, map(rule.declarations, (declaration: css.CSSNodeDeclaration) => {
+					return declaration.render();
 				}))
 			);
 		});
 	}
 
 
-	private findStylesForElement(el: ASTHTMLNodeElement, matcher: Matcher): Array<css.CSSNodeSelector>
+	private findStylesForElement(el: ASTHTMLNodeElement, matcher: Matcher): Array<CSSRuleBuffer>
 	{
-		let result: Array<css.CSSNodeSelector> = [];
+		let result: Array<CSSRuleBuffer> = [];
 
-		forEach(this.styles, (styles: Array<css.CSSNodeSelector>) => {
-			forEach(styles, (style: css.CSSNodeSelector) => {
-				if (matcher.matches(el, style.selector)) {
-					result.push(style);
+		forEach(this.styles, (rules: Array<css.CSSNodeRule>) => {
+			forEach(rules, (rule: css.CSSNodeRule) => {
+				let currentRule: CSSRuleBuffer = {
+					rule: rule,
+					selector: null,
+				};
+
+				forEach(rule.selectors, (selector: css.CSSNodeSelector) => {
+					if (matcher.matches(el, selector.value)) {
+						currentRule.selector = selector;
+					}
+				});
+
+				if (currentRule.selector !== null) {
+					result.push(currentRule);
 				}
 			});
 		});

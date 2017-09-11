@@ -1,3 +1,4 @@
+import {map} from '@slicky/utils';
 import * as csstree from 'css-tree';
 import * as n from './nodes';
 
@@ -6,23 +7,26 @@ export class CSSParser
 {
 
 
-	public parse(code: string): Array<n.CSSNodeSelector>
+	public parse(code: string): Array<n.CSSNodeRule>
 	{
 		const ast = csstree.parse(code, {
-			parseSelector: false,
 			parseValue: false,
 		});
 
-		let result: Array<n.CSSNodeSelector> = [];
+		let result: Array<n.CSSNodeRule> = [];
 
 		csstree.walkRules(ast, (node) => {
-			const current = new n.CSSNodeSelector(node.selector.value.trim());
-
-			csstree.walkDeclarations(node.block, (rule) => {
-				current.rules.push(new n.CSSNodeRule(rule.property.trim(), rule.value.value.trim(), rule.important));
+			const selectors = map(node.selector.children.toArray(), (selector) => {
+				return new n.CSSNodeSelector(csstree.translate(selector));
 			});
 
-			result.push(current);
+			const currentRule = new n.CSSNodeRule(selectors);
+
+			csstree.walkDeclarations(node.block, (rule) => {
+				currentRule.declarations.push(new n.CSSNodeDeclaration(rule.property.trim(), rule.value.value.trim(), rule.important));
+			});
+
+			result.push(currentRule);
 		});
 
 		return result;

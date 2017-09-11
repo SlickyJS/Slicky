@@ -63,7 +63,7 @@ describe('#Engine', () => {
 		});
 
 		it('should import styles from template with emulated encapsulation', () => {
-			let template = engine.compile('<style>div {color: red}</style><div></div>');
+			let template = engine.compile('<style>button, a {color: red}</style><button></button><a></a>');
 
 			expect(template).to.be.equal(compareWith('engine.compile.styles.emulated'));
 		});

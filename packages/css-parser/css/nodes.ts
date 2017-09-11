@@ -1,35 +1,39 @@
 import {indent, map} from '@slicky/utils';
 
 
-export class CSSNodeSelector
+export class CSSNodeRule
 {
 
 
-	public selector: string;
+	public selectors: Array<CSSNodeSelector>;
 
-	public rules: Array<CSSNodeRule>;
+	public declarations: Array<CSSNodeDeclaration>;
 
 
-	constructor(selector: string, rules: Array<CSSNodeRule> = [])
+	constructor(selectors: Array<CSSNodeSelector>, declarations: Array<CSSNodeDeclaration> = [])
 	{
-		this.selector = selector;
-		this.rules = rules;
+		this.selectors = selectors;
+		this.declarations = declarations;
 	}
 
 
 	public render(): string
 	{
-		if (!this.rules.length) {
+		if (!this.declarations.length) {
 			return '';
 		}
 
-		const rules = map(this.rules, (rule: CSSNodeRule) => {
+		const selectors = map(this.selectors, (selector: CSSNodeSelector) => {
+			return selector.render();
+		});
+
+		const declarations = map(this.declarations, (rule: CSSNodeDeclaration) => {
 			return rule.render();
 		});
 
 		return (
-			`${this.selector} {\n` +
-			`${indent(rules.join('\n'))}\n` +
+			`${selectors.join(', ')} {\n` +
+			`${indent(declarations.join('\n'))}\n` +
 			`}`
 		);
 	}
@@ -37,7 +41,28 @@ export class CSSNodeSelector
 }
 
 
-export class CSSNodeRule
+export class CSSNodeSelector
+{
+
+
+	public value: string;
+
+
+	constructor(value: string)
+	{
+		this.value = value;
+	}
+
+
+	public render(): string
+	{
+		return this.value;
+	}
+
+}
+
+
+export class CSSNodeDeclaration
 {
 
 

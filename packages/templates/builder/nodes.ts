@@ -955,23 +955,23 @@ export class BuilderClassHelper implements BuilderNodeInterface
 /***************** INSERT STYLE RULE *****************/
 
 
-export function createInsertStyleRule(selector: string, rules: Array<string> = []): BuilderInsertStyleRule
+export function createInsertStyleRule(selectors: Array<string>, rules: Array<string> = []): BuilderInsertStyleRule
 {
-	return new BuilderInsertStyleRule(selector, rules);
+	return new BuilderInsertStyleRule(selectors, rules);
 }
 
 export class BuilderInsertStyleRule implements BuilderNodeInterface
 {
 
 
-	public selector: string;
+	public selectors: Array<string>;
 
 	public rules: Array<string>;
 
 
-	constructor(selector: string, rules: Array<string> = [])
+	constructor(selectors: Array<string>, rules: Array<string> = [])
 	{
-		this.selector = selector;
+		this.selectors = selectors;
 		this.rules = rules;
 	}
 
@@ -984,7 +984,7 @@ export class BuilderInsertStyleRule implements BuilderNodeInterface
 
 		return (
 			`root.insertStyleRule(\n` +
-			`	"${this.selector}",\n` +
+			`	"${this.selectors.join(', ')}",\n` +
 			`	[\n` +
 			`${indent(rules.join(',\n'), 2)}\n` +
 			`	]\n` +

@@ -15,12 +15,15 @@ describe('#CSSParser', () => {
 	describe('parse()', () => {
 
 		it('should parse simple CSS', () => {
-			const ast = parser.parse('button {color: red; background-color: blue !important;}');
+			const ast = parser.parse('button, a {color: red; background-color: blue !important;}');
 
 			expect(ast).to.be.eql([
-				new css.CSSNodeSelector('button', [
-					new css.CSSNodeRule('color', 'red'),
-					new css.CSSNodeRule('background-color', 'blue', true),
+				new css.CSSNodeRule([
+					new css.CSSNodeSelector('button'),
+					new css.CSSNodeSelector('a'),
+				], [
+					new css.CSSNodeDeclaration('color', 'red'),
+					new css.CSSNodeDeclaration('background-color', 'blue', true),
 				]),
 			]);
 		});
