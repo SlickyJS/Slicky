@@ -23,6 +23,7 @@ export class Compiler
 
 		this.createEngine(metadata).compile(metadata.hash, metadata.template, {
 			styles: metadata.styles,
+			encapsulation: metadata.encapsulation,
 		});
 
 		return this.templates[metadata.hash];

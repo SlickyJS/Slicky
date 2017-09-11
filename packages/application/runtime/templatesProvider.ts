@@ -33,7 +33,7 @@ export class TemplatesProvider
 	public createComponentTemplate(container: Container, parentTemplate: BaseTemplate, metadata: DirectiveDefinition, component: any): Template
 	{
 		let templateType = this.platform.compileComponentTemplate(metadata);
-		let template: Template = new templateType(this.applicationTemplate, parentTemplate);
+		let template: Template = new templateType(this.applicationTemplate, parentTemplate, metadata.encapsulation);
 
 		template.disableProvidersFromParent();
 		template.disableParametersFromParent();

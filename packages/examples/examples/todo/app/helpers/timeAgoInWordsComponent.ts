@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@slicky/core';
+import {Component, Input, OnInit, TemplateEncapsulation} from '@slicky/core';
 import {TimeAgoInWords} from '../filters';
 
 
@@ -6,6 +6,7 @@ import {TimeAgoInWords} from '../filters';
 	selector: 'time-ago-in-words',
 	template: '{{ date | timeAgoInWords }}',
 	filters: [TimeAgoInWords],
+	encapsulation: TemplateEncapsulation.Native,
 })
 export class TimeAgoInWordsComponent implements OnInit
 {

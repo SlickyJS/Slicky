@@ -2,11 +2,29 @@ export class StyleWriter
 {
 
 
+	private parent: HTMLElement|ShadowRoot;
+
 	private style: HTMLStyleElement;
 
 	private sheet: CSSStyleSheet;
 
 	private initialized: boolean = false;
+
+
+	constructor(parent: HTMLElement|ShadowRoot)
+	{
+		this.parent = parent;
+	}
+
+
+	public changeParent(parent: HTMLElement|ShadowRoot): void
+	{
+		if (this.initialized) {
+			throw new Error('StyleWriter: can not change parent when styleWriter is already initialized.');
+		}
+
+		this.parent = parent;
+	}
 
 
 	public insertRule(selector: string, rules: Array<string>): void
@@ -44,7 +62,7 @@ export class StyleWriter
 		this.style = document.createElement('style');
 		this.style.appendChild(document.createTextNode(''));
 
-		document.head.appendChild(this.style);
+		this.parent.appendChild(this.style);
 
 		this.sheet = <CSSStyleSheet>this.style.sheet;
 

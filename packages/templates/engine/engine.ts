@@ -1,9 +1,10 @@
 import {Matcher} from '@slicky/query-selector';
-import {forEach, map, hyphensToCamelCase, find, merge, startsWith} from '@slicky/utils';
+import {forEach, map, hyphensToCamelCase, find, merge, startsWith, exists} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
 import {InputStream} from '@slicky/tokenizer';
 import {EventEmitter} from '@slicky/event-emitter';
+import {TemplateEncapsulation} from '@slicky/templates-runtime/templates';
 import {DocumentWalker} from '../querySelector';
 import {EnginePluginManager} from './enginePluginManager';
 import {EnginePlugin} from './enginePlugin';
@@ -14,6 +15,7 @@ import * as b from '../builder';
 
 export class EngineCompileOptions
 {
+	encapsulation?: TemplateEncapsulation;
 	styles?: Array<string>;
 }
 
@@ -50,6 +52,20 @@ export class Engine
 		let builder = new b.TemplateBuilder(name + '', matcher);
 		let tree = (new _.HTMLParser(template)).parse();
 
+		if (!exists(options.styles)) {
+			options.styles = [];
+		}
+
+		if (!exists(options.encapsulation)) {
+			options.encapsulation = TemplateEncapsulation.None;
+		}
+
+		const main = builder.getMainMethod();
+
+		if (options.encapsulation === TemplateEncapsulation.Native) {
+			main.beginning.add('parent = root.createShadowDOM(parent);');
+		}
+
 		this.plugins.onBeforeCompile({
 			progress: progress,
 			engine: this,
@@ -57,7 +73,7 @@ export class Engine
 			options: options,
 		});
 
-		this.processTree(builder, builder.getMainMethod().body, progress, matcher, tree);
+		this.processTree(builder, main.body, progress, matcher, tree);
 
 		this.plugins.onAfterCompile({
 			progress: progress,

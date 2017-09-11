@@ -1,5 +1,5 @@
 import * as css from '@slicky/css-parser';
-import {exists, map, forEach} from '@slicky/utils';
+import {map, forEach} from '@slicky/utils';
 import {ASTHTMLNodeElement, ASTHTMLNodeText} from '@slicky/html-parser';
 import {EnginePlugin, OnAfterCompileArgument, OnBeforeProcessElementArgument} from '../engine/enginePlugin';
 import {createInsertStyleRule, BuilderMethod} from '../builder';
@@ -9,28 +9,21 @@ export class StylesPlugin extends EnginePlugin
 {
 
 
-	private parser: css.CSSParser;
-
 	private processedNonStyleTag;
 
-
-	constructor()
-	{
-		super();
-
-		this.parser = new css.CSSParser;
-	}
+	private styles: Array<string> = [];
 
 
 	public onAfterCompile(arg: OnAfterCompileArgument): void
 	{
-		if (exists(arg.options.styles)) {
-			const styles = map(arg.options.styles, (style: string) => {
-				return this.parser.parse(style);
-			});
+		this.styles = this.styles.concat(arg.options.styles);
 
-			forEach(styles, (stylesheet: Array<css.CSSNodeSelector>) => {
-				this.addStyles(arg.builder.getMainMethod(), stylesheet);
+		if (this.styles.length) {
+			const parser = new css.CSSParser;
+			const main = arg.builder.getMainMethod();
+
+			forEach(this.styles, (styles: string) => {
+				this.addStyles(main, parser.parse(styles));
 			});
 		}
 	}
@@ -43,9 +36,7 @@ export class StylesPlugin extends EnginePlugin
 				throw new Error(`Templates: "style" tag must be the first element in template.`);
 			}
 
-			const styles = this.parser.parse((<ASTHTMLNodeText>element.childNodes[0]).value);
-
-			this.addStyles(arg.builder.getMainMethod(), styles);
+			this.styles.push((<ASTHTMLNodeText>element.childNodes[0]).value);
 
 			arg.stopProcessing();
 

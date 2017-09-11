@@ -1,5 +1,6 @@
 import {forEach, find, exists, filter} from '@slicky/utils';
 import {EnginePlugin, OnProcessElementArgument, OnExpressionVariableHookArgument, OnAfterProcessElementArgument} from '@slicky/templates';
+import {TemplateEncapsulation, assertElementNameAllowedForNativeEncapsulation} from '@slicky/templates-runtime/templates';
 import * as tb from '@slicky/templates/builder';
 import * as c from '@slicky/core/metadata';
 import * as _ from '@slicky/html-parser';
@@ -131,6 +132,10 @@ export class SlickyEnginePlugin extends EnginePlugin
 			}
 
 			if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
+				if (directive.metadata.encapsulation === TemplateEncapsulation.Native) {
+					assertElementNameAllowedForNativeEncapsulation(element.name);
+				}
+
 				this.compiler.compile(directive.metadata);
 
 			} else {

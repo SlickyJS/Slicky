@@ -1,4 +1,4 @@
-import {Engine} from '../../';
+import {Engine, TemplateEncapsulation} from '../../';
 
 import {expect} from 'chai';
 import {readFileSync} from 'fs';
@@ -67,6 +67,14 @@ describe('#Engine', () => {
 			let template = engine.compile(0, '<style>div {color: red}</style>');
 
 			expect(template).to.be.equal(compareWith('engine.compile.styles.template'));
+		});
+
+		it('should compile template with native encapsulation', () => {
+			let template = engine.compile(0, 'hello world', {
+				encapsulation: TemplateEncapsulation.Native,
+			});
+
+			expect(template).to.be.equal(compareWith('engine.compile.encapsulation.native'));
 		});
 
 	});

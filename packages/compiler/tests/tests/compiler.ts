@@ -1,6 +1,6 @@
 import '../bootstrap';
 
-import {Directive, Component, HostElement, HostEvent, Input, Required, Output, ChildDirective, ChildrenDirective, OnInit, OnDestroy} from '@slicky/core';
+import {Directive, Component, HostElement, HostEvent, Input, Required, Output, ChildDirective, ChildrenDirective, OnInit, OnDestroy, TemplateEncapsulation} from '@slicky/core';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {readFileSync} from 'fs';
@@ -522,6 +522,39 @@ describe('#Compiler', () => {
 			class TestComponent {}
 
 			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.styles'));
+		});
+
+		it('should compile component with native encapsulation', () => {
+			@Component({
+				selector: '',
+				template: '',
+				encapsulation: TemplateEncapsulation.Native,
+			})
+			class TestComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.encapsulation.native'));
+		});
+
+		it('should throw an error when child component with native encapsulation is attached to non safe element', () => {
+			@Component({
+				selector: 'li',
+				template: '',
+				encapsulation: TemplateEncapsulation.Native,
+			})
+			class TestComponentChild {}
+
+			@Component({
+				selector: '',
+				template: '<li></li>',
+				directives: [TestComponentChild],
+			})
+			class TestComponentParent {}
+
+			const metadata = metadataLoader.load(TestComponentParent);
+
+			expect(() => {
+				compiler.compile(metadata);
+			}).to.throw(Error, 'TemplateEncapsulation.Native is not supported for element <li>. Only article, aside, blockquote, body, div, footer, h1, h2, h3, h4, h5, h6, header, nav, p, section, span and custom elements with dash in the name are allowed.');
 		});
 
 	});

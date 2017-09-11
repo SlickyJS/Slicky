@@ -18,6 +18,7 @@
 		"@slicky/html-parser": "^0.0.3",
 		"@slicky/query-selector": "^1.0.1",
 		"@slicky/templates": "^0.1.0",
+		"@slicky/templates-runtime": "^0.0.3",
 		"@slicky/tiny-js": "^1.0.4",
 		"@slicky/utils": "^1.0.11"
 	},

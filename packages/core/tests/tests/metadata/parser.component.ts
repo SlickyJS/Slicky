@@ -1,6 +1,6 @@
 import '../../bootstrap';
 
-import {Component, Directive, Filter, ChildDirective, ChildrenDirective} from '../../../';
+import {Component, Directive, Filter, ChildDirective, ChildrenDirective, TemplateEncapsulation} from '../../../';
 import {DirectiveMetadataLoader, DirectiveDefinitionType} from '../../../metadata';
 import {ExtensionsManager} from '../../../extensions';
 import {expect} from 'chai';
@@ -102,6 +102,7 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 				},
 			],
 			styles: [],
+			encapsulation: TemplateEncapsulation.Emulated,
 		});
 	});
 
@@ -187,6 +188,7 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 			],
 			filters: [],
 			styles: [],
+			encapsulation: TemplateEncapsulation.Emulated,
 		});
 	});
 
@@ -256,6 +258,7 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 			],
 			filters: [],
 			styles: [],
+			encapsulation: TemplateEncapsulation.Emulated,
 		});
 	});
 

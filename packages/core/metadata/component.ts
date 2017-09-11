@@ -1,6 +1,7 @@
 import {makeClassDecorator} from '@slicky/reflection';
 import {exists} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
+import {TemplateEncapsulation} from '@slicky/templates-runtime/templates';
 import {DirectiveOptions, DirectiveAnnotationDefinition} from './directive';
 import {FilterInterface} from '../filters';
 
@@ -12,6 +13,7 @@ export declare interface ComponentOptions extends DirectiveOptions
 	directives?: Array<ClassType<any>>,
 	filters?: Array<ClassType<FilterInterface>>,
 	styles?: Array<string>,
+	encapsulation?: TemplateEncapsulation,
 }
 
 
@@ -28,6 +30,8 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 	public filters: Array<ClassType<FilterInterface>> = [];
 
 	public styles: Array<string> = [];
+
+	public encapsulation: TemplateEncapsulation = TemplateEncapsulation.Emulated;
 
 
 	constructor(options: ComponentOptions)
@@ -50,6 +54,10 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 
 		if (exists(options.styles)) {
 			this.styles = options.styles;
+		}
+
+		if (exists(options.encapsulation)) {
+			this.encapsulation = options.encapsulation;
 		}
 	}
 

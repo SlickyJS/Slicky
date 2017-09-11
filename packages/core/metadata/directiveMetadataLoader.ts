@@ -2,6 +2,7 @@ import {findAnnotation, getPropertiesMetadata} from '@slicky/reflection';
 import {exists, forEach, stringify, hash, map, isFunction, merge, unique, camelCaseToHyphens} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {EventEmitter} from '@slicky/event-emitter';
+import {TemplateEncapsulation} from '@slicky/templates-runtime/templates';
 import {InputDefinition} from './input';
 import {RequiredDefinition} from './required';
 import {OutputDefinition} from './output';
@@ -144,6 +145,7 @@ export declare interface DirectiveDefinition {
 	precompileDirectives?: DirectiveDefinitionDirectivesList,
 	filters?: DirectiveDefinitionFiltersList,
 	styles?: Array<string>,
+	encapsulation?: TemplateEncapsulation,
 	[name: string]: any,
 }
 
@@ -314,7 +316,8 @@ export class DirectiveMetadataLoader
 			definition.template = annotation.template;
 			definition.childDirectives = childDirectives;
 			definition.childrenDirectives = childrenDirectives;
-			definition.styles = exists(annotation.styles) ? annotation.styles : [];
+			definition.styles = annotation.styles;
+			definition.encapsulation = annotation.encapsulation;
 
 			let filters = unique(merge(this.filters, annotation.filters));
 

@@ -5,7 +5,7 @@ import {IconDirective, TimeAgoInWordsComponent} from '../helpers';
 
 
 @Component({
-	selector: 'li[todo]',
+	selector: 'todo-item',
 	template: require('./todoComponentTemplate.html'),
 	directives: [IconDirective, TimeAgoInWordsComponent],
 })
