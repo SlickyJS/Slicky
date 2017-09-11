@@ -134,3 +134,81 @@ class ParentComponent implements OnInit
 	
 }
 ```
+
+## Encapsulation and shadow DOM
+
+Encapsulation mode can be set for each component independently. Default mode is `TemplateEncapsulation.Emulated`.
+
+```typescript
+import {Component, TemplateEncapsulation} from '@slicky/core';
+
+@Component({
+	name: 'my-component',
+	template: '<a class="btn btn-danger">Click</a>',
+	styles: [
+		'.btn .btn-danger {border: 1px solid red}',
+	],
+	encapsulation: TemplateEncapsulation.Native,
+})
+class MyComponent {}
+```
+
+### `TemplateEncapsulation.Native`
+
+Writes the HTML and CSS into [shadow dom](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Shadow_DOM). This 
+method does not change the original CSS and HTML in any way.
+
+**component template:**
+
+```html
+<style>
+	.btn .btn-danger {
+		border: 1px solid red;
+	}
+</style>
+
+<a class="btn btn-danger">Click</a>
+```
+
+### `TemplateEncapsulation.Emulated`
+
+Default mode.
+
+This option takes your styles and put them into `<head></head>`. It also transforms selectors into unique attribute 
+selectors.
+
+**`<head></head>` tag:**
+
+```html
+<style>
+	[__slicky_style_0_0] {
+		border: 1px solid red;
+	}
+</style>
+```
+
+**component template:**
+
+```html
+<a class="btn btn-danger" __slicky_style_0_0>Click</a>
+```
+
+### `TemplateEncapsulation.None`
+
+This one is similar to the previous, but does not change the CSS neither HTML.
+
+**`<head></head>` tag:**
+
+```html
+<style>
+	.btn .btn-danger {
+		border: 1px solid red;
+	}
+</style>
+```
+
+**component template:**
+
+```html
+<a class="btn btn-danger">Click</a>
+```
