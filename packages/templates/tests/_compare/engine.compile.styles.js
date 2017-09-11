@@ -1,10 +1,10 @@
 return function(_super) {
-	_super.childTemplateExtend(Template0);
-	function Template0(application, parent)
+	_super.childTemplateExtend(Template);
+	function Template(application, parent)
 	{
 		_super.call(this, application, parent);
 	}
-	Template0.prototype.main = function(parent)
+	Template.prototype.main = function(parent)
 	{
 		var root = this;
 		var tmpl = this;
@@ -23,5 +23,5 @@ return function(_super) {
 		);
 		tmpl.init();
 	};
-	return Template0;
+	return Template;
 }

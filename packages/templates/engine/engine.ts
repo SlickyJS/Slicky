@@ -15,6 +15,7 @@ import * as b from '../builder';
 
 export class EngineCompileOptions
 {
+	name?: string;
 	encapsulation?: TemplateEncapsulation;
 	styles?: Array<string>;
 }
@@ -45,12 +46,11 @@ export class Engine
 	}
 
 
-	public compile(name: string|number, template: string, options: EngineCompileOptions = {}): string
+	public compile(template: string, options: EngineCompileOptions = {}): string
 	{
-		let progress = new EngineProgress;
-		let matcher = new Matcher(new DocumentWalker);
-		let builder = new b.TemplateBuilder(name + '', matcher);
-		let tree = (new _.HTMLParser(template)).parse();
+		if (!exists(options.name)) {
+			options.name = '';
+		}
 
 		if (!exists(options.styles)) {
 			options.styles = [];
@@ -59,6 +59,11 @@ export class Engine
 		if (!exists(options.encapsulation)) {
 			options.encapsulation = TemplateEncapsulation.None;
 		}
+
+		let progress = new EngineProgress;
+		let matcher = new Matcher(new DocumentWalker);
+		let builder = new b.TemplateBuilder(options.name + '', matcher);
+		let tree = (new _.HTMLParser(template)).parse();
 
 		const main = builder.getMainMethod();
 
@@ -85,7 +90,7 @@ export class Engine
 		let code = builder.render();
 
 		this.compiled.emit({
-			name: name,
+			name: options.name,
 			code: code,
 		});
 

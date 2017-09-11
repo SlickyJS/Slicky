@@ -21,7 +21,8 @@ export class Compiler
 			return;
 		}
 
-		this.createEngine(metadata).compile(metadata.hash, metadata.template, {
+		this.createEngine(metadata).compile(metadata.template, {
+			name: metadata.hash + '',
 			styles: metadata.styles,
 			encapsulation: metadata.encapsulation,
 		});
