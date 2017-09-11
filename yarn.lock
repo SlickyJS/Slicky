@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@slicky/ast-query-selector@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@slicky/ast-query-selector/-/ast-query-selector-1.0.0.tgz#ee35e615956044aba8a48fd1330ecebcd2c52651"
+"@slicky/ast-query-selector@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@slicky/ast-query-selector/-/ast-query-selector-1.1.0.tgz#ce8c22ae6bacbc2e3dfa20de34188333a092541f"
   dependencies:
     "@slicky/tokenizer" "^1.0.6"
     "@slicky/utils" "^1.0.11"
@@ -28,11 +28,11 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@slicky/lang/-/lang-1.0.0.tgz#00591e6d3c764d057a8fe464f625b501259cf425"
 
-"@slicky/query-selector@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@slicky/query-selector/-/query-selector-1.0.1.tgz#80ee018a1a5249e3ff1cf0351366acd490463f2d"
+"@slicky/query-selector@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@slicky/query-selector/-/query-selector-1.1.0.tgz#2985a70913a9cb50afb80b3bb3d23fde1097a051"
   dependencies:
-    "@slicky/ast-query-selector" "^1.0.0"
+    "@slicky/ast-query-selector" "^1.1.0"
     "@slicky/utils" "^1.0.11"
 
 "@slicky/realm@^1.0.1":
@@ -1016,11 +1016,17 @@ crypto-browserify@^3.11.0:
     public-encrypt "^4.0.0"
     randombytes "^2.0.0"
 
-css-tree@1.0.0-alpha23, css-tree@^1.0.0-alpha23:
+css-tree@1.0.0-alpha23:
   version "1.0.0-alpha23"
   resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.0.0-alpha23.tgz#5129518def61e99931d9a3397c3d6758af2ff0c5"
   dependencies:
     mdn-data "^1.0.0"
+    source-map "^0.5.3"
+
+css-tree@^1.0.0-alpha23:
+  version "1.0.0-alpha9"
+  resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.0.0-alpha9.tgz#6ee3e397b569eef32419286c86e3e8b65fcaf3e3"
+  dependencies:
     source-map "^0.5.3"
 
 currently-unhandled@^0.4.1:
@@ -3567,8 +3573,8 @@ right-align@^0.1.1:
     align-text "^0.1.1"
 
 rimraf@2, rimraf@^2.5.1, rimraf@^2.6.1:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.6.1.tgz#c2338ec643df7a1b7fe5c54fa86f57428a55f33d"
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.6.2.tgz#2ed8150d24a16ea8651e6d6ef0f47c4158ce7a36"
   dependencies:
     glob "^7.0.5"
 
