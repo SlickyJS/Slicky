@@ -517,6 +517,7 @@ describe('#Compiler', () => {
 				template: '<style>.parent-template {color: red;}</style><div class="parent-template parent-override"></div>',
 				styles: [
 					'.parent-override {color: green;}',
+					'@media print {.parent-override {display: none;}}',
 				],
 			})
 			class TestComponent {}

@@ -76,6 +76,16 @@ describe('#Engine', () => {
 			expect(template).to.be.equal(compareWith('engine.compile.encapsulation.native'));
 		});
 
+		it('should compile styles with media queries', () => {
+			let template = engine.compile('<span></span>', {
+				styles: [
+					'@media screen { span {color: red;} }',
+				],
+			});
+
+			expect(template).to.be.equal(compareWith('engine.compile.styles.media'));
+		});
+
 	});
 
 });

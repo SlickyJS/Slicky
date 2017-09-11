@@ -8,9 +8,8 @@ return function(_super) {
 	{
 		var root = this;
 		var tmpl = this;
-		root.insertStyleRule("[__slicky_style__0] {color: red;}");
-		tmpl._appendElement(parent, "button", {"__slicky_style__0": ""});
-		tmpl._appendElement(parent, "a", {"__slicky_style__0": ""});
+		root.insertStyleRule("@media screen {[__slicky_style__0] {color: red;}}");
+		tmpl._appendElement(parent, "span", {"__slicky_style__0": ""});
 		tmpl.init();
 	};
 	return Template;

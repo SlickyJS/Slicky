@@ -68,9 +68,9 @@ export abstract class Template extends RenderableTemplate
 	}
 
 
-	protected insertStyleRule(selector: string, rules: Array<string>): void
+	protected insertStyleRule(rule: string): void
 	{
-		this.styleWriter.insertRule(selector, rules);
+		this.styleWriter.insertRule(rule);
 	}
 
 

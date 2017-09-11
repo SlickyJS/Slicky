@@ -1,6 +1,24 @@
 import {indent, map} from '@slicky/utils';
 
 
+export class CSSNodeStylesheet
+{
+
+
+	public rules: Array<CSSNodeRule>;
+
+	public mediaRules: Array<CSSNodeMediaRule>;
+
+
+	constructor(rules: Array<CSSNodeRule> = [], mediaRules: Array<CSSNodeMediaRule> = [])
+	{
+		this.rules = rules;
+		this.mediaRules = mediaRules;
+	}
+
+}
+
+
 export class CSSNodeRule
 {
 
@@ -36,6 +54,24 @@ export class CSSNodeRule
 			`${indent(declarations.join('\n'))}\n` +
 			`}`
 		);
+	}
+
+}
+
+
+export class CSSNodeMediaRule
+{
+
+
+	public prelude: string;
+
+	public rules: Array<CSSNodeRule>;
+
+
+	constructor(prelude: string, rules: Array<CSSNodeRule> = [])
+	{
+		this.prelude = prelude;
+		this.rules = rules;
 	}
 
 }

@@ -17,7 +17,7 @@ describe('#CSSParser', () => {
 		it('should parse simple CSS', () => {
 			const ast = parser.parse('button, a {color: red; background-color: blue !important;}');
 
-			expect(ast).to.be.eql([
+			expect(ast).to.be.eql(new css.CSSNodeStylesheet([
 				new css.CSSNodeRule([
 					new css.CSSNodeSelector('button'),
 					new css.CSSNodeSelector('a'),
@@ -25,7 +25,21 @@ describe('#CSSParser', () => {
 					new css.CSSNodeDeclaration('color', 'red'),
 					new css.CSSNodeDeclaration('background-color', 'blue', true),
 				]),
-			]);
+			]));
+		});
+
+		it('should parse media query', () => {
+			const ast = parser.parse('@media screen { a {color: red;} }');
+
+			expect(ast).to.be.eql(new css.CSSNodeStylesheet([], [
+				new css.CSSNodeMediaRule('screen', [
+					new css.CSSNodeRule([
+						new css.CSSNodeSelector('a'),
+					], [
+						new css.CSSNodeDeclaration('color', 'red'),
+					]),
+				]),
+			]));
 		});
 
 	});

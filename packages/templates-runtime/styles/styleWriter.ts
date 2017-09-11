@@ -1,3 +1,12 @@
+import {map} from '@slicky/utils';
+
+
+export declare interface StyleRulesList
+{
+	[selector: string]: Array<string>;
+}
+
+
 export class StyleWriter
 {
 
@@ -27,10 +36,10 @@ export class StyleWriter
 	}
 
 
-	public insertRule(selector: string, rules: Array<string>): void
+	public insertRule(rule: string): void
 	{
 		this.initialize();
-		this.sheet.insertRule(`${selector} {${rules.join(', ')}}`);
+		this.sheet.insertRule(rule);
 	}
 
 

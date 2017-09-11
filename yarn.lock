@@ -1023,12 +1023,6 @@ css-tree@1.0.0-alpha23:
     mdn-data "^1.0.0"
     source-map "^0.5.3"
 
-css-tree@^1.0.0-alpha23:
-  version "1.0.0-alpha9"
-  resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.0.0-alpha9.tgz#6ee3e397b569eef32419286c86e3e8b65fcaf3e3"
-  dependencies:
-    source-map "^0.5.3"
-
 currently-unhandled@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/currently-unhandled/-/currently-unhandled-0.4.1.tgz#988df33feab191ef799a61369dd76c17adf957ea"

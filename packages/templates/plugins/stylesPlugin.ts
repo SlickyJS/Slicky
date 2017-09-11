@@ -29,7 +29,7 @@ export class StylesPlugin extends EnginePlugin
 
 	private processedNonStyleTag: boolean = false;
 
-	private styles: Array<Array<css.CSSNodeRule>> = [];
+	private styles: Array<css.CSSNodeStylesheet> = [];
 
 	private selectors: {[selector: string]: string} = {};
 
@@ -58,7 +58,7 @@ export class StylesPlugin extends EnginePlugin
 		if (this.styles.length) {
 			const main = arg.builder.getMainMethod();
 
-			forEach(this.styles, (styles: Array<css.CSSNodeRule>) => {
+			forEach(this.styles, (styles: css.CSSNodeStylesheet) => {
 				this.addStyles(main, styles);
 			});
 		}
@@ -114,34 +114,52 @@ export class StylesPlugin extends EnginePlugin
 	}
 
 
-	private addStyles(builderMethod: BuilderMethod, styles: Array<css.CSSNodeRule>): void
+	private addStyles(builderMethod: BuilderMethod, styles: css.CSSNodeStylesheet): void
 	{
-		forEach(styles, (rule: css.CSSNodeRule) => {
-			let selectors: Array<string> = [];
+		const getParsedRules = (rules: Array<css.CSSNodeRule>): Array<string> => {
+			let result: Array<string> = [];
 
-			forEach(rule.selectors, (selector: css.CSSNodeSelector) => {
-				if (this.encapsulation === TemplateEncapsulation.Emulated) {
-					if (!exists(this.selectors[selector.value])) {
-						return;
+			forEach(rules, (rule: css.CSSNodeRule) => {
+				let selectors: Array<string> = [];
+
+				forEach(rule.selectors, (selector: css.CSSNodeSelector) => {
+					if (this.encapsulation === TemplateEncapsulation.Emulated) {
+						if (!exists(this.selectors[selector.value])) {
+							return;
+						}
+
+						if (selectors.indexOf(`[${this.selectors[selector.value]}]`) < 0) {
+							selectors.push(`[${this.selectors[selector.value]}]`);
+						}
+
+					} else {
+						selectors.push(selector.value);
 					}
+				});
 
-					if (selectors.indexOf(`[${this.selectors[selector.value]}]`) < 0) {
-						selectors.push(`[${this.selectors[selector.value]}]`);
-					}
-
-				} else {
-					selectors.push(selector.value);
+				if (!selectors.length) {
+					return;
 				}
+
+				const declarations = map(rule.declarations, (declaration: css.CSSNodeDeclaration) => {
+					return declaration.render();
+				});
+
+				result.push(`${selectors.join(', ')} {${declarations.join('; ')}}`);
 			});
 
-			if (!selectors.length) {
-				return;
-			}
+			return result;
+		};
 
+		forEach(getParsedRules(styles.rules), (rule: string) => {
 			builderMethod.beginning.add(
-				createInsertStyleRule(selectors, map(rule.declarations, (declaration: css.CSSNodeDeclaration) => {
-					return declaration.render();
-				}))
+				createInsertStyleRule(rule)
+			);
+		});
+
+		forEach(styles.mediaRules, (media: css.CSSNodeMediaRule) => {
+			builderMethod.beginning.add(
+				createInsertStyleRule(`@media ${media.prelude} {${getParsedRules(media.rules).join(' ')}}`)
 			);
 		});
 	}
@@ -151,7 +169,7 @@ export class StylesPlugin extends EnginePlugin
 	{
 		let result: Array<CSSRuleBuffer> = [];
 
-		forEach(this.styles, (rules: Array<css.CSSNodeRule>) => {
+		const findInRules = (rules: Array<css.CSSNodeRule>) => {
 			forEach(rules, (rule: css.CSSNodeRule) => {
 				let currentRule: CSSRuleBuffer = {
 					rule: rule,
@@ -167,6 +185,14 @@ export class StylesPlugin extends EnginePlugin
 				if (currentRule.selector !== null) {
 					result.push(currentRule);
 				}
+			});
+		};
+
+		forEach(this.styles, (styles: css.CSSNodeStylesheet) => {
+			findInRules(styles.rules);
+
+			forEach(styles.mediaRules, (media: css.CSSNodeMediaRule) => {
+				findInRules(media.rules);
 			});
 		});
 
