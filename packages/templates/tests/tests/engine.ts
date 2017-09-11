@@ -52,21 +52,20 @@ describe('#Engine', () => {
 			}).to.throw(Error, 'Templates: "style" tag must be the first element in template.');
 		});
 
-		it('should compile template with styles', () => {
+		it('should not include unused styles with emulated encapsulation', () => {
 			let template = engine.compile('', {
 				styles: [
-					'button {color: red; background-color: blue !important;}',
-					'p {line-spacing: 1.6em;}',
+					'div {color: red;}',
 				],
 			});
 
-			expect(template).to.be.equal(compareWith('engine.compile.styles'));
+			expect(template).to.be.equal(compareWith('engine.compile.styles.unused'));
 		});
 
-		it('should import styles from template', () => {
-			let template = engine.compile('<style>div {color: red}</style>');
+		it('should import styles from template with emulated encapsulation', () => {
+			let template = engine.compile('<style>div {color: red}</style><div></div>');
 
-			expect(template).to.be.equal(compareWith('engine.compile.styles.template'));
+			expect(template).to.be.equal(compareWith('engine.compile.styles.emulated'));
 		});
 
 		it('should compile template with native encapsulation', () => {

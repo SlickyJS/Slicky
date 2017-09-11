@@ -57,7 +57,7 @@ export class Engine
 		}
 
 		if (!exists(options.encapsulation)) {
-			options.encapsulation = TemplateEncapsulation.None;
+			options.encapsulation = TemplateEncapsulation.Emulated;
 		}
 
 		let progress = new EngineProgress;

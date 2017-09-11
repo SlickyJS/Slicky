@@ -514,7 +514,7 @@ describe('#Compiler', () => {
 		it('should include styles in template', () => {
 			@Component({
 				name: 'test-component',
-				template: '<style>.parent-template {color: red;}</style>',
+				template: '<style>.parent-template {color: red;}</style><div class="parent-template parent-override"></div>',
 				styles: [
 					'.parent-override {color: green;}',
 				],

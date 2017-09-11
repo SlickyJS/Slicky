@@ -8,12 +8,6 @@ return function(_super) {
 	{
 		var root = this;
 		var tmpl = this;
-		root.insertStyleRule(
-			"div",
-			[
-				"color: red;"
-			]
-		);
 		tmpl.init();
 	};
 	return Template;

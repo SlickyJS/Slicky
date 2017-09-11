@@ -9,18 +9,12 @@ return function(_super) {
 		var root = this;
 		var tmpl = this;
 		root.insertStyleRule(
-			"button",
+			"[__slicky_style__0]",
 			[
-				"color: red;",
-				"background-color: blue !important;"
+				"color: red;"
 			]
 		);
-		root.insertStyleRule(
-			"p",
-			[
-				"line-spacing: 1.6em;"
-			]
-		);
+		tmpl._appendElement(parent, "div", {"__slicky_style__0": ""});
 		tmpl.init();
 	};
 	return Template;
