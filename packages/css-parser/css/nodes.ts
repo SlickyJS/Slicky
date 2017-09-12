@@ -51,7 +51,7 @@ export class CSSNodeRule
 
 		return (
 			`${selectors.join(', ')} {\n` +
-			`${indent(declarations.join('\n'))}\n` +
+			`${indent(declarations.join(';\n'))}\n` +
 			`}`
 		);
 	}
@@ -119,7 +119,7 @@ export class CSSNodeDeclaration
 
 	public render(): string
 	{
-		return `${this.name}: ${this.value}${this.important ? ' !important' : ''};`;
+		return `${this.name}: ${this.value}${this.important ? ' !important' : ''}`;
 	}
 
 }

@@ -8,7 +8,7 @@ return function(_super) {
 	{
 		var root = this;
 		var tmpl = this;
-		root.insertStyleRule("@media screen {[__slicky_style__0] {color: red;}}");
+		root.insertStyleRule("@media screen {[__slicky_style__0] {color: red}}");
 		tmpl._appendElement(parent, "span", {"__slicky_style__0": ""});
 		tmpl.init();
 	};
