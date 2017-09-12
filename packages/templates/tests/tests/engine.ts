@@ -86,6 +86,17 @@ describe('#Engine', () => {
 			expect(template).to.be.equal(compareWith('engine.compile.styles.media'));
 		});
 
+		it('should compile styles with pseudo elements', () => {
+			let template = engine.compile('<span><i></i></span><div></div>', {
+				styles: [
+					'span i::before {font-weight: bold;}',
+					'span::after, div::before {color: blue}',
+				],
+			});
+
+			expect(template).to.be.equal(compareWith('engine.compile.styles.pseudoElements'));
+		});
+
 	});
 
 });

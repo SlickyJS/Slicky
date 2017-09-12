@@ -42,6 +42,18 @@ describe('#CSSParser', () => {
 			]));
 		});
 
+		it('should parse selector with pseudo element', () => {
+			const ast = parser.parse('a::after {color: red;}');
+
+			expect(ast).to.be.eql(new css.CSSNodeStylesheet([
+				new css.CSSNodeRule([
+					new css.CSSNodeSelector('a::after'),
+				], [
+					new css.CSSNodeDeclaration('color', 'red'),
+				]),
+			]));
+		});
+
 	});
 
 });

@@ -17,15 +17,6 @@
 	"workspaces": [
 		"packages/*"
 	],
-	"dependencies": {
-		"@slicky/di": "^1.0.1",
-		"@slicky/event-emitter": "^1.0.1",
-		"@slicky/lang": "^1.0.0",
-		"@slicky/query-selector": "^1.1.0",
-		"@slicky/reflection": "^1.0.3",
-		"@slicky/tokenizer": "^1.0.6",
-		"@slicky/translator": "^1.0.2"
-	},
 	"devDependencies": {
 		"@slicky/compiler-cli": "^0.0.6",
 		"@slicky/utils": "^1.0.11",

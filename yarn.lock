@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@slicky/ast-query-selector@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@slicky/ast-query-selector/-/ast-query-selector-1.1.0.tgz#ce8c22ae6bacbc2e3dfa20de34188333a092541f"
+"@slicky/ast-query-selector@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@slicky/ast-query-selector/-/ast-query-selector-1.2.0.tgz#9d439c07fdab367c913f9d7ef138c45ab95e8fcd"
   dependencies:
     "@slicky/tokenizer" "^1.0.6"
     "@slicky/utils" "^1.0.11"
@@ -28,11 +28,11 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@slicky/lang/-/lang-1.0.0.tgz#00591e6d3c764d057a8fe464f625b501259cf425"
 
-"@slicky/query-selector@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@slicky/query-selector/-/query-selector-1.1.0.tgz#2985a70913a9cb50afb80b3bb3d23fde1097a051"
+"@slicky/query-selector@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@slicky/query-selector/-/query-selector-1.2.0.tgz#7cfaa7709b1dfed019875ca43ab69d79d4fc0323"
   dependencies:
-    "@slicky/ast-query-selector" "^1.1.0"
+    "@slicky/ast-query-selector" "^1.2.0"
     "@slicky/utils" "^1.0.11"
 
 "@slicky/realm@^1.0.1":
@@ -2839,8 +2839,8 @@ mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0:
     minimist "0.0.8"
 
 mocha@^3.5.0:
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/mocha/-/mocha-3.5.2.tgz#3d5585cc6bd9e43a7c0bd251631abc0fbea0f032"
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/mocha/-/mocha-3.5.3.tgz#1e0480fe36d2da5858d1eb6acc38418b26eaa20d"
   dependencies:
     browser-stdout "1.3.0"
     commander "2.9.0"

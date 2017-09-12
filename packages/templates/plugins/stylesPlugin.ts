@@ -31,7 +31,7 @@ export class StylesPlugin extends EnginePlugin
 
 	private styles: Array<css.CSSNodeStylesheet> = [];
 
-	private selectors: {[selector: string]: string} = {};
+	private selectors: {[simpleSelector: string]: string} = {};
 
 
 	constructor()
@@ -97,17 +97,7 @@ export class StylesPlugin extends EnginePlugin
 		let styles = this.findStylesForElement(element, arg.matcher);
 
 		forEach(styles, (buffer: CSSRuleBuffer) => {
-			if (!exists(this.selectors[buffer.selector.value])) {
-				this.selectors[buffer.selector.value] = `${STYLE_ATTRIBUTE_PREFIX}_${this.name}_${keys(this.selectors).length}`;
-			}
-
-			forEach(buffer.rule.selectors, (selector: css.CSSNodeSelector) => {
-				if (!exists(this.selectors[selector.value])) {
-					this.selectors[selector.value] = this.selectors[buffer.selector.value];
-				}
-			});
-
-			element.attributes.push(new ASTHTMLNodeTextAttribute(this.selectors[buffer.selector.value], ''));
+			element.attributes.push(new ASTHTMLNodeTextAttribute(this.getSelectorReplacement(buffer), ''));
 		});
 	}
 
@@ -122,12 +112,16 @@ export class StylesPlugin extends EnginePlugin
 
 				forEach(rule.selectors, (selector: css.CSSNodeSelector) => {
 					if (this.encapsulation === TemplateEncapsulation.Emulated) {
-						if (!exists(this.selectors[selector.value])) {
+						const selectorParts = this.splitSelector(selector.value);
+
+						if (!exists(this.selectors[selectorParts.selector])) {
 							return;
 						}
 
-						if (selectors.indexOf(`[${this.selectors[selector.value]}]`) < 0) {
-							selectors.push(`[${this.selectors[selector.value]}]`);
+						const realSelector = `[${this.selectors[selectorParts.selector]}]` + (selectorParts.pseudoElement ? `::${selectorParts.pseudoElement}` : '');
+
+						if (selectors.indexOf(realSelector) < 0) {
+							selectors.push(realSelector);
 						}
 
 					} else {
@@ -195,6 +189,41 @@ export class StylesPlugin extends EnginePlugin
 		});
 
 		return result;
+	}
+
+
+	private getSelectorReplacement(buffer: CSSRuleBuffer): string
+	{
+		const selector = this.splitSelector(buffer.selector.value);
+
+		if (!exists(this.selectors[selector.selector])) {
+			const replacement = this.createSelectorReplacementName();
+
+			forEach(buffer.rule.selectors, (selector: css.CSSNodeSelector) => {
+				const sibling = this.splitSelector(selector.value);
+
+				this.selectors[sibling.selector] = replacement;
+			});
+		}
+
+		return this.selectors[selector.selector];
+	}
+
+
+	private splitSelector(selector: string): {selector: string, pseudoElement: string}
+	{
+		const parts = selector.split('::');
+
+		return {
+			selector: parts[0],
+			pseudoElement: exists(parts[1]) ? parts[1] : null,
+		};
+	}
+
+
+	private createSelectorReplacementName(): string
+	{
+		return `${STYLE_ATTRIBUTE_PREFIX}_${this.name}_${keys(this.selectors).length}`;
 	}
 
 }

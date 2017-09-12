@@ -16,7 +16,7 @@
 	"dependencies": {
 		"@slicky/core": "^0.2.0",
 		"@slicky/html-parser": "^0.0.4",
-		"@slicky/query-selector": "^1.1.0",
+		"@slicky/query-selector": "^1.2.0",
 		"@slicky/templates": "^0.2.0",
 		"@slicky/tiny-js": "^1.0.5",
 		"@slicky/utils": "^1.0.11"
