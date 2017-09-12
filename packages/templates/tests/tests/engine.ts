@@ -97,6 +97,16 @@ describe('#Engine', () => {
 			expect(template).to.be.equal(compareWith('engine.compile.styles.pseudoElements'));
 		});
 
+		it('should escape styles correctly', () => {
+			let template = engine.compile('<div></div>', {
+				styles: [
+					'div {font-family: "Helvetica"}',
+				],
+			});
+
+			expect(template).to.be.equal(compareWith('engine.compile.styles.escape'));
+		});
+
 	});
 
 });

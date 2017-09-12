@@ -975,7 +975,9 @@ export class BuilderInsertStyleRule implements BuilderNodeInterface
 
 	public render(): string
 	{
-		return `root.insertStyleRule("${this.rule}");`;
+		const rule = this.rule.replace(/(")/g, '\\"');
+
+		return `root.insertStyleRule("${rule}");`;
 	}
 
 }
