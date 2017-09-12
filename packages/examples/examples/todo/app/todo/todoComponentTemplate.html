@@ -1,9 +1,3 @@
-<style>
-	.todo-check-container {
-		width: 30px;
-	}
-</style>
-
 <div [class.uk-text-muted]="todo.done">
 	<div (mouseenter)="hoveringDone = true" (mouseleave)="hoveringDone = false" [style.background-color]="todo.color" class="uk-float-left uk-margin-right uk-text-center todo-check-container">
 		<a (click.prevent)="toggle()" [style.color]="todo.textColor" [style.visibility]="todo.done || hoveringDone ? 'visible' : 'hidden'" href="#" class="uk-icon-link" icon="check"></a>

@@ -27,6 +27,10 @@ require.extensions['.html'] = (module, filename) => {
 	module.exports = readFileSync(filename, 'utf8');
 };
 
+require.extensions['.css'] = (module, filename) => {
+	module.exports = readFileSync(filename, 'utf8');
+};
+
 
 require('ts-node').register({
 	project: tsconfigPath,

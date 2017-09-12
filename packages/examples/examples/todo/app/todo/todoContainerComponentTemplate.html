@@ -1,17 +1,3 @@
-<style>
-	.todos-filter-container {
-		margin-top: 0;
-	}
-
-	.remove-done-link {
-		margin-top: 7px;
-	}
-
-	.max-width {
-		width: 100%;
-	}
-</style>
-
 <div class="uk-card uk-card-secondary uk-card-hover uk-card-body">
 	<div class="uk-clearfix">
 		<h3 class="uk-card-title uk-float-left">{{ 'title' | translate }} <small *s:if="todos.size">({{ todos.count((todo) => todo.done) }}/{{ todos.size }}<template [s:if]="todos.count((todo) => todo.done) === todos.size"> 😎</template>)</small></h3>

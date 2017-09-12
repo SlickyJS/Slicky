@@ -70,8 +70,9 @@ function getExampleWebpackConfig(project: ConfigProject): any
 
 		module: {
 			rules: [
-				{test: /\.ts$/, loader: 'ts-loader'},
-				{test: /\.html$/, loader: 'raw-loader'},
+				{test: /\.ts$/, use: 'ts-loader'},
+				{test: /\.html$/, use: 'raw-loader'},
+				{test: /\.css$/, use: 'raw-loader'},
 			],
 		},
 	};

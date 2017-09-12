@@ -7,6 +7,9 @@ import {IconDirective, TimeAgoInWordsComponent} from '../helpers';
 @Component({
 	name: 'todo-item',
 	template: require('./todoComponentTemplate.html'),
+	styles: [
+		require('./todoComponentStyles.css'),
+	],
 	directives: [IconDirective, TimeAgoInWordsComponent],
 })
 export class TodoComponent

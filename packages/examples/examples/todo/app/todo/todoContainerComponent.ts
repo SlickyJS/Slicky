@@ -9,6 +9,9 @@ import {IconDirective} from '../helpers';
 @Component({
 	name: 'todo-container',
 	template: require('./todoContainerComponentTemplate.html'),
+	styles: [
+		require('./todoContainerComponentStyles.css'),
+	],
 	directives: [TodoComponent, IconDirective],
 	translations: TODOS_CONTAINER_TRANSLATIONS,
 })
