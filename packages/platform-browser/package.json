@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/platform-browser",
 	"description": "",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -15,7 +15,7 @@
 	"types": "./index.d.ts",
 	"dependencies": {
 		"@slicky/application": "^0.1.2",
-		"@slicky/compiler": "^0.0.7",
+		"@slicky/compiler": "^0.0.8",
 		"@slicky/core": "^0.2.1",
 		"@slicky/lang": "^1.0.0",
 		"@slicky/templates-runtime": "^0.1.1",
