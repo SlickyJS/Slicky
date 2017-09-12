@@ -1,14 +1,14 @@
 import {Component, Input, Output, ElementRef} from '@slicky/core';
 import {EventEmitter} from '@slicky/event-emitter';
-import {Todo} from './todo';
-import {IconDirective, TimeAgoInWordsComponent} from '../helpers';
+import {Todo} from '../todo';
+import {IconDirective, TimeAgoInWordsComponent} from '../../helpers';
 
 
 @Component({
 	name: 'todo-item',
-	template: require('./todoComponentTemplate.html'),
+	template: require('./template.html'),
 	styles: [
-		require('./todoComponentStyles.css'),
+		require('./styles.css'),
 	],
 	directives: [IconDirective, TimeAgoInWordsComponent],
 })

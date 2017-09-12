@@ -1,16 +1,16 @@
 import {Component, HostElement, OnInit} from '@slicky/core';
 import {List} from 'immutable';
-import {Todo, DEFAULT_TODO_COLOR} from './todo';
-import {TodoComponent, } from './todoComponent';
-import {TODOS_CONTAINER_TRANSLATIONS} from './todosContainerTranslations';
-import {IconDirective} from '../helpers';
+import {Todo, DEFAULT_TODO_COLOR} from '../todo';
+import {TodoComponent, } from '../item/todoComponent';
+import {TODOS_CONTAINER_TRANSLATIONS} from './translations';
+import {IconDirective} from '../../helpers';
 
 
 @Component({
 	name: 'todo-container',
-	template: require('./todoContainerComponentTemplate.html'),
+	template: require('./template.html'),
 	styles: [
-		require('./todoContainerComponentStyles.css'),
+		require('./style.css'),
 	],
 	directives: [TodoComponent, IconDirective],
 	translations: TODOS_CONTAINER_TRANSLATIONS,

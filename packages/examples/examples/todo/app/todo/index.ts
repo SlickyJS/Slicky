@@ -1,2 +1,2 @@
 export * from './todo';
-export * from './todoContainerComponent';
+export * from './container';
