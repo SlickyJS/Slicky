@@ -1,4 +1,4 @@
-import {Template} from '@slicky/templates-runtime/templates';
+import {Template} from '@slicky/templates/templates';
 
 
 function _factory574069480()

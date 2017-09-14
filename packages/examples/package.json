@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/examples",
 	"description": "Slicky examples",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"license": "MIT",
 	"private": true,
 	"repository": {
@@ -15,14 +15,14 @@
 	"main": "./lib/index.js",
 	"types": "./lib/index.d.ts",
 	"dependencies": {
-		"@slicky/application": "^0.1.2",
-		"@slicky/core": "^0.2.1",
+		"@slicky/application": "^0.1.4",
+		"@slicky/core": "^0.2.3",
 		"@slicky/di": "^1.0.1",
 		"@slicky/event-emitter": "^1.0.1",
-		"@slicky/extension-translator": "^0.0.6",
+		"@slicky/extension-translator": "^0.0.8",
 		"@slicky/lang": "^1.0.0",
-		"@slicky/platform-browser": "^0.0.8",
-		"@slicky/platform-server": "^0.0.6",
+		"@slicky/platform-browser": "^0.0.10",
+		"@slicky/platform-server": "^0.0.8",
 		"immutable": "^3.8.1",
 		"jquery": "^3.2.1",
 		"moment": "^2.18.1",

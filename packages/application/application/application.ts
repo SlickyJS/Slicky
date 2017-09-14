@@ -4,8 +4,8 @@ import {ClassType} from '@slicky/lang';
 import {AbstractExtension} from '@slicky/core';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {ExtensionsManager} from '@slicky/core/extensions';
-import {CommonTemplateHelpers} from '@slicky/templates-runtime';
-import {ApplicationTemplate} from '@slicky/templates-runtime/templates';
+import {CommonTemplateHelpers} from '@slicky/templates';
+import {ApplicationTemplate} from '@slicky/templates/templates';
 import {RootDirectiveRunner} from '../runtime';
 import {PlatformInterface} from '../platform';
 

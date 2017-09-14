@@ -4,7 +4,7 @@ import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
 import {InputStream} from '@slicky/tokenizer';
 import {EventEmitter} from '@slicky/event-emitter';
-import {TemplateEncapsulation} from '@slicky/templates-runtime/templates';
+import {TemplateEncapsulation} from '@slicky/templates/templates';
 import {DocumentWalker} from '../querySelector';
 import {EnginePluginManager} from './enginePluginManager';
 import {EnginePlugin} from './enginePlugin';

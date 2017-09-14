@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/compiler-cli",
 	"description": "CLI compiler for Slicky",
-	"version": "0.0.9",
+	"version": "0.0.11",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -17,9 +17,9 @@
 		"scc": "./bin/scc.js"
 	},
 	"dependencies": {
-		"@slicky/application": "^0.1.2",
-		"@slicky/compiler": "^0.0.8",
-		"@slicky/core": "^0.2.1",
+		"@slicky/application": "^0.1.4",
+		"@slicky/compiler": "^0.0.10",
+		"@slicky/core": "^0.2.3",
 		"@slicky/lang": "^1.0.0",
 		"@slicky/utils": "^1.0.11",
 		"colors": "^1.1.2",

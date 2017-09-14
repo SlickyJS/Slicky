@@ -1,6 +1,6 @@
 import {DirectiveDefinition} from '@slicky/core/metadata';
 import {ClassType} from '@slicky/lang';
-import {Template} from '@slicky/templates-runtime/templates';
+import {Template} from '@slicky/templates/templates';
 import {Application, PlatformInterface} from '@slicky/application';
 
 

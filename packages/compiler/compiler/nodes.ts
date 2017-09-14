@@ -1,4 +1,4 @@
-import * as b from '@slicky/templates/builder';
+import * as b from '@slicky/templates-compiler/builder';
 import {DirectiveDefinitionType} from '@slicky/core/metadata';
 import {indent, isFunction} from '@slicky/utils';
 

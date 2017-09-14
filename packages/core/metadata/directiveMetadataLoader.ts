@@ -2,7 +2,7 @@ import {findAnnotation, getPropertiesMetadata} from '@slicky/reflection';
 import {exists, forEach, stringify, hash, map, isFunction, merge, unique, camelCaseToHyphens} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {EventEmitter} from '@slicky/event-emitter';
-import {TemplateEncapsulation} from '@slicky/templates-runtime/templates';
+import {TemplateEncapsulation} from '@slicky/templates/templates';
 import {InputDefinition} from './input';
 import {RequiredDefinition} from './required';
 import {OutputDefinition} from './output';

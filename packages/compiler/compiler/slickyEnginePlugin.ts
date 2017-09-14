@@ -1,6 +1,6 @@
 import {forEach, find, exists, filter} from '@slicky/utils';
-import {EnginePlugin, OnProcessElementArgument, OnExpressionVariableHookArgument, OnAfterProcessElementArgument} from '@slicky/templates';
-import * as tb from '@slicky/templates/builder';
+import {EnginePlugin, OnProcessElementArgument, OnExpressionVariableHookArgument, OnAfterProcessElementArgument} from '@slicky/templates-compiler';
+import * as tb from '@slicky/templates-compiler/builder';
 import * as c from '@slicky/core/metadata';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';

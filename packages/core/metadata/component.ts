@@ -1,7 +1,7 @@
 import {makeClassDecorator} from '@slicky/reflection';
 import {exists, merge} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
-import {TemplateEncapsulation} from '@slicky/templates-runtime/templates';
+import {TemplateEncapsulation} from '@slicky/templates/templates';
 import {DirectiveAnnotationDefinition} from './directive';
 import {FilterInterface} from '../filters';
 

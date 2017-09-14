@@ -91,7 +91,7 @@ export class Compiler
 		});
 
 		return (
-			`import {Template} from '@slicky/templates-runtime/templates';\n\n\n` +
+			`import {Template} from '@slicky/templates/templates';\n\n\n` +
 			`${templateFactories.join('\n\n')}\n\n` +
 			`const _mapping = {\n` +
 			`${indent(templateMappings.join(',\n'))}\n` +

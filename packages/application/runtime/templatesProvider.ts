@@ -2,7 +2,7 @@ import {FilterInterface} from '@slicky/core';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {DirectiveDefinitionFilter, DirectiveDefinition} from '@slicky/core/metadata';
 import {Container} from '@slicky/di';
-import {ApplicationTemplate, BaseTemplate, Template} from '@slicky/templates-runtime/templates';
+import {ApplicationTemplate, BaseTemplate, Template} from '@slicky/templates/templates';
 import {forEach, isFunction} from '@slicky/utils';
 import {DirectivesProvider} from './directivesProvider';
 import {PlatformInterface} from '../platform';

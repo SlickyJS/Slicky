@@ -1,7 +1,7 @@
 import {DirectiveDefinition} from '@slicky/core/metadata';
 import {ClassType} from '@slicky/lang';
 import {Compiler} from '@slicky/compiler';
-import {Template} from '@slicky/templates-runtime/templates';
+import {Template} from '@slicky/templates/templates';
 import {evalCode} from '@slicky/utils';
 import {Application, PlatformInterface} from '@slicky/application';
 

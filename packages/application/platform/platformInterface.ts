@@ -1,5 +1,5 @@
 import {ClassType} from '@slicky/lang';
-import {Template} from '@slicky/templates-runtime/templates';
+import {Template} from '@slicky/templates/templates';
 import {DirectiveDefinition} from '@slicky/core/metadata';
 import {Application} from '../application';
 

@@ -6,4 +6,4 @@ export {
 	Directive, Component, Filter, HostElement, HostEvent, ChildDirective, ChildrenDirective, Input, Output, Required,
 	ParentComponent,
 } from './metadata';
-export {TemplateEncapsulation} from '@slicky/templates-runtime/templates';
+export {TemplateEncapsulation} from '@slicky/templates/templates';

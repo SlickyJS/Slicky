@@ -4,7 +4,7 @@ import {DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType, D
 import {forEach, isFunction, exists} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {Container, ProviderOptions} from '@slicky/di';
-import {ApplicationTemplate} from '@slicky/templates-runtime/templates';
+import {ApplicationTemplate} from '@slicky/templates/templates';
 import {DirectivesProvider} from './directivesProvider';
 import {TemplatesProvider} from './templatesProvider';
 import {PlatformInterface} from '../platform';

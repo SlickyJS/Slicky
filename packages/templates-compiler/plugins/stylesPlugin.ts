@@ -2,7 +2,7 @@ import * as css from '@slicky/css-parser';
 import {map, forEach, exists, keys} from '@slicky/utils';
 import {ASTHTMLNodeElement, ASTHTMLNodeText, ASTHTMLNodeTextAttribute} from '@slicky/html-parser';
 import {Matcher} from '@slicky/query-selector';
-import {TemplateEncapsulation} from '@slicky/templates-runtime/templates';
+import {TemplateEncapsulation} from '@slicky/templates/templates';
 import {EnginePlugin, OnBeforeCompileArgument, OnAfterCompileArgument, OnProcessElementArgument, OnBeforeProcessElementArgument} from '../engine/enginePlugin';
 import {createInsertStyleRule, BuilderMethod} from '../builder';
 
