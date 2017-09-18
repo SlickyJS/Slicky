@@ -1,47 +1,30 @@
-return function(_super) {
-	_super.childTemplateExtend(Template988020108);
-	function Template988020108(application, parent)
-	{
-		_super.call(this, application, parent);
-	}
-	Template988020108.prototype.main = function(parent)
-	{
-		var root = this;
-		var tmpl = this;
-		tmpl._appendElement(parent, "directive-child", {}, function(parent) {
-			root.getProvider("directivesProvider").create(3055171198, parent, root.getProvider("container"), [], function(directive) {
-				tmpl.addProvider("directiveInstance-0", directive);
-				directive.output.subscribe(function($value) {
-					root.run(function() {
-						root.getProvider('component').do();
-					});
+return function(template, el, component) {
+	el.addElement("directive-child", {}, function(el) {
+		template.root.createDirective(template, el, "@directive_0", 3055171198, function(directive) {
+			directive.output.subscribe(function($value) {
+				template.run(function() {
+					component.do();
 				});
-				directive.outputCustom.subscribe(function($value) {
-					root.run(function() {
-						root.getProvider('component').doOther();
-					});
-				});
-				tmpl.onDestroy(function() {
-					tmpl.removeProvider("directiveInstance-0");
+			});
+			directive.outputCustom.subscribe(function($value) {
+				template.run(function() {
+					component.doOther();
 				});
 			});
 		});
-		tmpl._appendElement(parent, "component-child", {}, function(parent) {
-			root.getProvider("templatesProvider").createFrom(3385287998, parent, tmpl, function(tmpl, directive) {
-				directive.output.subscribe(function($value) {
-					root.run(function() {
-						root.getProvider('component').do();
-					});
+	});
+	el.addElement("component-child", {}, function(el) {
+		template.root.createComponent(template, el, "@directive_1", 3385287998, function(directive, template, outer) {
+			directive.output.subscribe(function($value) {
+				outer.run(function() {
+					component.do();
 				});
-				directive.outputCustomName.subscribe(function($value) {
-					root.run(function() {
-						root.getProvider('component').doOther();
-					});
+			});
+			directive.outputCustomName.subscribe(function($value) {
+				outer.run(function() {
+					component.doOther();
 				});
-				tmpl.render(parent);
 			});
 		});
-		tmpl.init();
-	};
-	return Template988020108;
+	});
 }

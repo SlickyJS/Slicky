@@ -3,6 +3,7 @@ import {exists, forEach, stringify, hash, map, isFunction, merge, unique, camelC
 import {ClassType} from '@slicky/lang';
 import {EventEmitter} from '@slicky/event-emitter';
 import {TemplateEncapsulation} from '@slicky/templates/templates';
+import {RenderableTemplateFactory} from '@slicky/templates/templates';
 import {InputDefinition} from './input';
 import {RequiredDefinition} from './required';
 import {OutputDefinition} from './output';
@@ -141,6 +142,7 @@ export declare interface DirectiveDefinition {
 	childDirectives?: DirectiveDefinitionChildDirectivesList,
 	childrenDirectives?: DirectiveDefinitionChildrenDirectivesList,
 	template?: string,
+	render?: RenderableTemplateFactory,
 	directives?: DirectiveDefinitionDirectivesList,
 	precompileDirectives?: DirectiveDefinitionDirectivesList,
 	filters?: DirectiveDefinitionFiltersList,
@@ -158,7 +160,7 @@ export class DirectiveMetadataLoader
 
 	private extensions: ExtensionsManager;
 
-	private definitions: {[uniqueName: string]: DirectiveDefinition} = {};
+	private definitions: {[hash: number]: DirectiveDefinition} = {};
 
 	private filters: Array<ClassType<FilterInterface>> = [];
 
@@ -175,6 +177,12 @@ export class DirectiveMetadataLoader
 	}
 
 
+	public getLoadedByHash(hash: number): DirectiveDefinition
+	{
+		return this.definitions[hash];
+	}
+
+
 	public load(directiveType: ClassType<any>): DirectiveDefinition
 	{
 		let annotation: DirectiveAnnotationDefinition;
@@ -187,11 +195,12 @@ export class DirectiveMetadataLoader
 
 		let name = stringify(directiveType);
 		let directiveHash = this.getDirectiveHash(name, annotation);
-		let uniqueName = name + '_' + directiveHash;
 
-		if (exists(this.definitions[uniqueName])) {
-			return this.definitions[uniqueName];
+		if (exists(this.definitions[directiveHash])) {
+			return this.definitions[directiveHash];
 		}
+
+		let uniqueName = name + '_' + directiveHash;
 
 		let inputs: DirectiveDefinitionInputsList = [];
 		let outputs: DirectiveDefinitionOutputsList = [];
@@ -314,6 +323,7 @@ export class DirectiveMetadataLoader
 		if (annotation instanceof ComponentAnnotationDefinition) {
 			definition.type = DirectiveDefinitionType.Component;
 			definition.template = annotation.template;
+			definition.render = annotation.render;
 			definition.childDirectives = childDirectives;
 			definition.childrenDirectives = childrenDirectives;
 			definition.styles = annotation.styles;
@@ -359,7 +369,7 @@ export class DirectiveMetadataLoader
 			directiveType: directiveType,
 		});
 
-		return this.definitions[uniqueName] = definition;
+		return this.definitions[directiveHash] = definition;
 	}
 
 

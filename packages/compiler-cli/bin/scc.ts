@@ -8,7 +8,7 @@ import {keys} from '@slicky/utils';
 import {Compiler, CompilerTemplatesList} from '../compiler';
 
 
-let args = yargs
+const args = yargs
 	.usage('$0 <cmd> [args]')
 	.command('compile [tsconfig]', 'Compile given app components', {
 		tsconfig: {
@@ -35,6 +35,21 @@ if (args._[0] !== 'compile') {
 console.log(`Using typescript config file ${colors.yellow(path.relative(process.cwd(), args.tsconfig))}`);
 
 
-(new Compiler).compileAndWrite(args.tsconfig, (outDir: string, factory: string, templates: CompilerTemplatesList) => {
+const compiler = new Compiler;
+
+compiler.onFile.subscribe((file) => {
+	console.log('');
+	process.stdout.write(`Processing ${path.relative(process.cwd(), file)} `);
+});
+
+compiler.onTemplate.subscribe(() => {
+	process.stdout.write(colors.yellow('+'));
+});
+
+
+compiler.compileAndWrite(args.tsconfig, (outDir: string, factory: string, templates: CompilerTemplatesList) => {
+	console.log('');
+	console.log('');
+
 	console.log(colors.green(`Successfully generated ${keys(templates).length} templates into ${path.relative(process.cwd(), outDir)}`));
 });

@@ -7,11 +7,11 @@ import {Application} from '@slicky/application';
 import {CounterDirective} from './counter';
 
 
-let platform = new PlatformBrowser;
-let container = new Container;
+const platform = new PlatformBrowser;
+const container = new Container;
 
-let app = new Application(container, {
+const app = new Application(container, {
 	directives: [CounterDirective],
 });
 
-platform.run(app, document.getElementById('app'));
+platform.run(app, '#app');

@@ -4,7 +4,10 @@
 		"removeComments": true,
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
-		"declaration": true
+		"declaration": true,
+		"lib": [
+			"es5", "es2015.promise", "dom"
+		]
 	},
 	"compileOnSave": false
 }

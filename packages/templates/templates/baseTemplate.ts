@@ -1,43 +1,54 @@
+import {exists, forEach} from '@slicky/utils';
 import {Realm} from '@slicky/realm';
-import {forEach, exists} from '@slicky/utils';
+import {Template} from './template';
 import {ApplicationTemplate} from './applicationTemplate';
+import {Watcher} from './watcher';
 
 
-export type TemplateFilterCallback = (obj: any, args: Array<any>) => any;
+export type TemplateParametersList = {[name: string]: any};
+export type TemplateFilterCallback = (obj: any, ...args: Array<any>) => any;
 
 
 export abstract class BaseTemplate
 {
 
 
-	protected parent: BaseTemplate;
+	public root: Template;
 
-	protected children: Array<BaseTemplate> = [];
+	public parent: BaseTemplate;
 
 	protected application: ApplicationTemplate;
 
 	protected realm: Realm;
 
-	private providers: {[name: string]: any} = {};
+	protected children: Array<BaseTemplate> = [];
 
-	private providersFromParent: boolean = true;
+	protected initialized: boolean = false;
 
-	private parameters: {[name: string]: any} = {};
+	protected useParentParameters: boolean = true;
 
-	private parametersFromParent: boolean = true;
+	protected useRefreshFromParent: boolean = true;
+
+	protected useFiltersFromParent: boolean = true;
+
+	private watcher: Watcher;
+
+	private parameters: TemplateParametersList;
 
 	private filters: {[name: string]: TemplateFilterCallback} = {};
-
-	private filtersFromParent: boolean = true;
 
 	private onDestroyed: Array<() => void> = [];
 
 
-	constructor(application: ApplicationTemplate = null, parent: BaseTemplate = null)
+	constructor(application?: ApplicationTemplate, root?: Template, parent?: BaseTemplate, parameters: TemplateParametersList = {})
 	{
 		this.application = application;
+		this.root = root;
 		this.parent = parent;
+		this.parameters = parameters;
+
 		this.realm = new Realm(null, () => this.refresh(), this.parent ? this.parent.realm : null);
+		this.watcher = new Watcher;
 
 		if (this.parent) {
 			this.parent.children.push(this);
@@ -45,11 +56,9 @@ export abstract class BaseTemplate
 	}
 
 
-	public abstract refresh(): void;
-
-
-	public init(): void
+	public onDestroy(fn: () => void): void
 	{
+		this.onDestroyed.push(fn);
 	}
 
 
@@ -63,13 +72,30 @@ export abstract class BaseTemplate
 			fn();
 		});
 
-		if (this.parent) {
-			this.parent.children.splice(this.parent.children.indexOf(this), 1);
-			this.parent = null;
-		}
-
 		this.children = [];
 		this.onDestroyed = [];
+		this.watcher.disable();
+		this.initialized = false;
+	}
+
+
+	public refresh(caller?: BaseTemplate): void
+	{
+		if (!this.initialized) {
+			return;
+		}
+
+		if (!caller && this !== <any>this.root) {
+			return this.root.refresh();
+		}
+
+		this.watcher.check();
+
+		forEach(this.children, (child: BaseTemplate) => {
+			if (child.useRefreshFromParent) {
+				child.refresh(this);
+			}
+		});
 	}
 
 
@@ -79,63 +105,15 @@ export abstract class BaseTemplate
 	}
 
 
-	public onDestroy(fn: () => void): void
+	public watch(getter: () => any, update: (value: any) => void): void
 	{
-		this.onDestroyed.push(fn);
+		this.watcher.watch(getter, update);
 	}
 
 
-	public addProvider(name: string, provider: any): void
+	public eachChild(iterator: (child: BaseTemplate, index: number) => void): void
 	{
-		this.providers[name] = provider;
-	}
-
-
-	public disableProvidersFromParent(): void
-	{
-		this.providersFromParent = false;
-	}
-
-
-	public removeProvider(name: string): void
-	{
-		delete this.providers[name];
-	}
-
-
-	public getProvider(name: string): any
-	{
-		if (exists(this.providers[name])) {
-			return this.providers[name];
-		}
-
-		if (this.providersFromParent && this.parent !== null) {
-			return this.providers[name] = this.parent.getProvider(name);
-		}
-
-		if (this.application) {
-			return this.providers[name] = this.application.getProvider(name);
-		}
-
-		return undefined;
-	}
-
-
-	public disableParametersFromParent(): void
-	{
-		this.parametersFromParent = false;
-	}
-
-
-	public setParameters(parameters: {[name: string]: any}): void
-	{
-		this.parameters = parameters;
-	}
-
-
-	public setParameter(name: string, value: any): void
-	{
-		this.parameters[name] = value;
+		forEach(this.children, iterator);
 	}
 
 
@@ -145,55 +123,82 @@ export abstract class BaseTemplate
 			return this.parameters[name];
 		}
 
-		if (this.parametersFromParent && this.parent !== null) {
+		if (exists(this.parent) && this.useParentParameters) {
 			return this.parent.getParameter(name);
 		}
+	}
 
-		if (this.application !== null) {
-			return this.parameters[name] = this.application.getParameter(name);
+
+	public setParameter(name: string, value: any): void
+	{
+		this.parameters[name] = value;
+	}
+
+
+	public updateParameter(name: string, update: (value: any) => any): void
+	{
+		if (exists(this.parameters[name])) {
+			this.setParameter(name, update(this.getParameter(name)));
+
+		} else if (exists(this.parent) && this.useParentParameters) {
+			this.parent.updateParameter(name, update);
 		}
-
-		return undefined;
 	}
 
 
-	public disableFiltersFromParent(): void
+	public removeParameter(name: string): void
 	{
-		this.filtersFromParent = false;
+		if (exists(this.parameters[name])) {
+			delete this.parameters[name];
+		}
 	}
 
 
-	public addFilter(name: string, fn: TemplateFilterCallback): void
+	public setParameters(parameters: TemplateParametersList): void
 	{
-		this.filters[name] = fn;
+		forEach(parameters, (value: any, name: string) => {
+			this.setParameter(name, value);
+		});
 	}
 
 
-	public getFilter(name: string, need: boolean = true): TemplateFilterCallback
+	public addFilter(name: string, filter: TemplateFilterCallback): void
+	{
+		this.filters[name] = filter;
+	}
+
+
+	public getFilter(name: string, needed: boolean = true): TemplateFilterCallback
 	{
 		if (exists(this.filters[name])) {
 			return this.filters[name];
 		}
 
-		if (this.filtersFromParent && this.parent !== null) {
-			return this.filters[name] = this.parent.getFilter(name, false);
+		if (this.useFiltersFromParent && exists(this.parent)) {
+			let filter = this.parent.getFilter(name, false);
+
+			if (filter) {
+				return this.filters[name] = filter;
+			}
 		}
 
-		if (this.application) {
-			return this.filters[name] = this.application.getFilter(name, false);
+		if (exists(this.application)) {
+			let filter = this.application.getFilter(name, false);
+
+			if (filter) {
+				return this.filters[name] = filter;
+			}
 		}
 
-		if (need) {
-			throw new Error(`Filter "${name}" is not registered.`);
+		if (needed) {
+			throw new Error(`Filter "${name}" does not exists.`);
 		}
-
-		return undefined;
 	}
 
 
-	public callFilter(name: string, modify: any, args: Array<any> = []): any
+	public filter(name: string, modify: any, ...args: Array<any>): any
 	{
-		return this.getFilter(name)(modify, args);
+		return this.getFilter(name)(modify, ...args);
 	}
 
 }

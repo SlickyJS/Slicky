@@ -1,4 +1,5 @@
 import {exists, isFunction, forEach, indent} from '@slicky/utils';
+import {EventEmitter} from '@slicky/event-emitter';
 import {fork} from 'child_process';
 import {writeFileSync} from 'fs';
 import * as path from 'path';
@@ -12,13 +13,19 @@ export declare interface CompilerTemplatesList
 
 export declare interface CompilerSlickyOptions
 {
+	rootDir: string;
 	outDir: string;
-	applicationFile: string;
+	exclude: Array<string>;
 }
 
 
 export class Compiler
 {
+
+
+	public onFile = new EventEmitter<string>();
+
+	public onTemplate = new EventEmitter<{file: string, exportName: string, template: string}>();
 
 
 	public compileAndWrite(tsconfigPath: string, done: (outDir: string, factory: string, templates: CompilerTemplatesList) => void = null): void
@@ -49,12 +56,26 @@ export class Compiler
 				throw new Error(message.error);
 			}
 
+			if (exists(message.log)) {
+				console.log(message.log);
+			}
+
 			if (exists(message.slickyCompilerOptions)) {
 				compilerOptions = message.slickyCompilerOptions;
 			}
 
+			if (exists(message.file)) {
+				this.onFile.emit(message.file);
+			}
+
 			if (exists(message.template)) {
 				templates[message.template.hash] = message.template.template;
+
+				this.onTemplate.emit({
+					file: message.template.file,
+					exportName: message.template.name,
+					template: message.template.template,
+				});
 			}
 		});
 
@@ -81,7 +102,7 @@ export class Compiler
 			templateFactories.push(
 				`function _factory${hash}()\n` +
 				`{\n` +
-				`${indent(template)}(Template);\n` +
+				`${indent(template)};\n` +
 				`}\n`
 			);
 
@@ -91,7 +112,6 @@ export class Compiler
 		});
 
 		return (
-			`import {Template} from '@slicky/templates/templates';\n\n\n` +
 			`${templateFactories.join('\n\n')}\n\n` +
 			`const _mapping = {\n` +
 			`${indent(templateMappings.join(',\n'))}\n` +

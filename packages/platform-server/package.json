@@ -16,7 +16,6 @@
 	"dependencies": {
 		"@slicky/application": "^0.1.4",
 		"@slicky/core": "^0.2.3",
-		"@slicky/lang": "^1.0.0",
 		"@slicky/templates": "^1.0.1"
 	},
 	"devDependencies": {

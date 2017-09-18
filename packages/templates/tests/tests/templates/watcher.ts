@@ -1,15 +1,15 @@
-import {DefaultWatcherProvider} from '../../providers';
+import {Watcher} from '../../../templates';
 
 import {expect} from 'chai';
 
 
-let watcher: DefaultWatcherProvider;
+let watcher: Watcher;
 
 
-describe('#DefaultWatcherProvider', () => {
+describe('#Templates/Watcher', () => {
 
 	beforeEach(() => {
-		watcher = new DefaultWatcherProvider;
+		watcher = new Watcher;
 	});
 
 	describe('check', () => {

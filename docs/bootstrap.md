@@ -1,40 +1,28 @@
 # Bootstrap application
 
-To start using slicky, you'll have to create two files, one for preparing your application and the other for running it. 
+To start using slicky, you'll have to create the `bootstrap.ts` file which will start the application.
 
-The reason why we need to create two files is to be able to precompile your templates on server - this option is 
-described in [ahead of time compilation doc](./aot.md) and is fully optional. If you don't want to use AOT (you should) 
-you can use only one file.
+Example below shows only the basic setup with components rendered on browser. This is not ideal for production where 
+[ahead of time compilation](./aot.md) would be better.
 
-**application.ts:**
+**bootstrap.ts:**
 
 In this file you create two base parts of whole application. Container for dependency injection which is described 
 better [here](./di.md) and application itself.
 
-**You need to export instance of `Application` in `APPLICATION` variable.**
-
 ```typescript
 import {Container} from '@slicky/di';
 import {Application} from '@slicky/application';
+import {PlatformBrowser} from '@slicky/platform-browser';
 
 const container = new Container;
+const platform = new PlatformBrowser;
 const app = new Application(container, {
 	directives: [],			// list of your root directives and components
 });
 
-export const APPLICATION = app;
-```
-
-**bootstrap.ts:**
-
-```typescript
-import {PlatformBrowser} from '@slicky/platform-browser';
-import {APPLICATION} from './application';
-
-const platform = new PlatformBrowser;
-
 // run application in #app element
-platform.run(APPLICATION, document.getElementById('app'));
+platform.run(app, '#app');
 ```
 
 **index.html:**

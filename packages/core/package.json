@@ -19,7 +19,7 @@
 		"@slicky/lang": "^1.0.0",
 		"@slicky/reflection": "^1.0.3",
 		"@slicky/templates": "^1.0.1",
-		"@slicky/utils": "^1.0.11"
+		"@slicky/utils": "^1.1.1"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",

@@ -11,6 +11,4 @@ export class TemplatesComponent
 
 	public greeting: string = 'Hello';
 
-	public name: string = 'David';
-
 }

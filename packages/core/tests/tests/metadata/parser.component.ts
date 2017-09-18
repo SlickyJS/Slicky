@@ -24,11 +24,21 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 		}).to.throw(Error, 'Component element name "button" is not valid. Name must contain a dash and be all lowercased.');
 	});
 
+	it('should throw an error when template and render is missing', () => {
+		expect(() => {
+			@Component({
+				name: 'my-component',
+			})
+			class TestComponent {}
+		}).to.throw(Error, 'Component "my-component": missing template or render function.');
+	});
+
 	it('should throw an error when using invalid filter', () => {
 		class TestFilter {}
 
 		@Component({
 			name: 'my-box',
+			template: '',
 			filters: [TestFilter],
 		})
 		class TestComponent {}
@@ -80,6 +90,7 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 			childDirectives: [],
 			childrenDirectives: [],
 			template: '<a>{{ title }}</a>',
+			render: undefined,
 			precompileDirectives: [],
 			directives: [
 				{
@@ -174,6 +185,7 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 			],
 			childrenDirectives: [],
 			template: '',
+			render: undefined,
 			precompileDirectives: [],
 			directives: [
 				{
@@ -244,6 +256,7 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 				},
 			],
 			template: '',
+			render: undefined,
 			precompileDirectives: [],
 			directives: [
 				{

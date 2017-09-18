@@ -1,15 +1,95 @@
-import {isFunction, forEach, exists} from '@slicky/utils';
-import {DefaultWatcherProvider} from '../providers';
-import {BaseTemplate} from './baseTemplate';
-import {ApplicationTemplate} from './applicationTemplate';
+import {exists, forEach, isFunction, isString} from '@slicky/utils';
+import {ListDiffer, DifferChange, DifferAction} from '@slicky/change-detection';
+import {DifferTrackByFn} from '@slicky/change-detection/differs';
+import {BaseTemplate, TemplateParametersList} from './baseTemplate';
+import {EmbeddedTemplatesContainer} from './embeddedTemplatesContainer';
+import {EmbeddedTemplate} from './embeddedTemplate';
 import {Template} from './template';
+import {ApplicationTemplate} from './applicationTemplate';
+import {Renderer} from '../dom';
+import * as nodes from './nodes';
 
 
-declare interface TemplateListener
+export declare type RenderableTemplateFactory = (template: RenderableTemplate, el: nodes.TemplateElement) => void;
+export declare type RenderableEmbeddedTemplateFactory = (template: EmbeddedTemplate, el: nodes.TemplateElement) => void;
+export declare type RenderableEmbeddedTemplateBeforeRender = (innerTemplate: EmbeddedTemplate, outerTemplate: RenderableTemplate) => void;
+
+declare interface ConditionStorage
 {
-	element: HTMLElement;
-	name: string;
-	callback: EventListenerOrEventListenerObject;
+	onTrueContainer: EmbeddedTemplatesContainer;
+	onFalseContainer?: EmbeddedTemplatesContainer;
+	currentTrue?: EmbeddedTemplate;
+	currentFalse?: EmbeddedTemplate;
+}
+
+declare interface LoopStorage<T>
+{
+	container: EmbeddedTemplatesContainer;
+	getter: () => Array<T>;
+	options: LoopOptions;
+	differ: ListDiffer<T>;
+}
+
+
+export declare interface LoopOptions
+{
+	value?: string;
+	index?: string;
+	iterator?: string;
+}
+
+
+export class LoopIterator
+{
+
+
+	private total: number;
+
+	private index: number;
+
+
+	constructor(total: number, index: number)
+	{
+		this.total = total;
+		this.index = index;
+	}
+
+
+	public getSize(): number
+	{
+		return this.total;
+	}
+
+
+	public getCounter(): number
+	{
+		return this.index;
+	}
+
+
+	public isFirst(): boolean
+	{
+		return this.index === 0;
+	}
+
+
+	public isLast(): boolean
+	{
+		return this.index === (this.total - 1);
+	}
+
+
+	public isOdd(): boolean
+	{
+		return (this.index % 2) === 1;
+	}
+
+
+	public isEven(): boolean
+	{
+		return (this.index % 2) === 0;
+	}
+
 }
 
 
@@ -17,166 +97,286 @@ export abstract class RenderableTemplate extends BaseTemplate
 {
 
 
-	public _refreshing: number = 0;
+	public parent: RenderableTemplate;
 
-	public nodes: Array<Node> = [];
+	protected document: Document;
 
-	protected children: Array<RenderableTemplate> = [];
+	protected renderer: Renderer;
 
-	protected root: Template;
+	protected useParentTemplates: boolean = true;
 
-	protected initialized: boolean = false;
+	protected domNodes: Array<Node> = [];
 
-	protected allowRefreshFromParent: boolean = true;
+	protected lastRenderingParent: nodes.TemplateElement;
 
-	private listeners: Array<TemplateListener> = [];
+	protected lastRenderingChild: nodes.TemplateNode;
+
+	private templates: {[name: string]: RenderableEmbeddedTemplateFactory} = {};
+
+	private conditionsCount: number = 0;
+
+	private loopsCount: number = 0;
 
 
-	constructor(application: ApplicationTemplate, parent: BaseTemplate = null, root: Template = null)
+	constructor(document: Document, renderer: Renderer, application: ApplicationTemplate, root?: Template, parent?: BaseTemplate, parameters: TemplateParametersList = {})
 	{
-		super(application, parent);
+		super(application, root, parent, parameters);
 
-		this.root = root;
-		this.addProvider('watcher', new DefaultWatcherProvider);
+		this.document = document;
+		this.renderer = renderer;
 	}
 
 
-	public refresh(): void
-	{
-		if (!this.initialized) {
-			return;
-		}
-
-		this._refreshing++;
-
-		this.getProvider('watcher').check();
-
-		forEach(this.children, (child: RenderableTemplate) => {
-			if (child.allowRefreshFromParent) {
-				child.refresh();
-			}
-		});
-
-		this._refreshing--;
-	}
-
-
-	public init(): void
-	{
-		super.init();
-
-		this.initialized = true;
-	}
+	/**
+	 * Can not be here directly because of circular imports
+	 */
+	protected abstract createEmbeddedTemplatesContainer(factory: RenderableEmbeddedTemplateFactory, marker: Comment): EmbeddedTemplatesContainer;
 
 
 	public destroy(): void
 	{
 		super.destroy();
 
-		forEach(this.listeners, (listener: TemplateListener) => {
-			listener.element.removeEventListener(listener.name, listener.callback);
-		});
-
-		forEach(this.nodes, (node: Node) => {
-			if (node.parentNode) {
+		forEach(this.domNodes, (node: Node) => {
+			if (exists(node.parentNode)) {
 				node.parentNode.removeChild(node);
 			}
 		});
 
-		this.listeners = [];
-		this.nodes = [];
-
-		this.getProvider('watcher').disable();
+		this.domNodes = [];
 	}
 
 
-	public getFirstNode(): Node
+	public declareTemplate(name: string, factory: RenderableEmbeddedTemplateFactory): void
 	{
-		return exists(this.nodes[0]) ? this.nodes[0] : null;
+		this.templates[name] = factory;
 	}
 
 
-	protected _appendComment(parent: HTMLElement, comment: string, fn: (comment: Comment) => void = null): void
+	public getTemplateFactory(name: string): RenderableEmbeddedTemplateFactory
 	{
-		this.appendChild(parent, parent.ownerDocument.createComment(comment), fn);
-	}
+		if (exists(this.templates[name])) {
+			return this.templates[name];
+		}
 
-
-	protected _insertCommentBefore(before: Node, comment: string, fn: (comment: Comment) => void = null): void
-	{
-		this.insertChildBefore(before, before.ownerDocument.createComment(comment), fn);
-	}
-
-
-	protected _appendText(parent: HTMLElement, text: string, fn: (text: Text) => void = null): void
-	{
-		this.appendChild(parent, parent.ownerDocument.createTextNode(text), fn);
-	}
-
-
-	protected _insertTextBefore(before: Node, text: string, fn: (text: Text) => void = null): void
-	{
-		this.insertChildBefore(before, before.ownerDocument.createTextNode(text), fn);
-	}
-
-
-	protected _appendElement(parent: HTMLElement, elementName: string, attributes: {[name: string]: string} = {}, fn: (parent: HTMLElement) => void = null): void
-	{
-		let node = parent.ownerDocument.createElement(elementName);
-
-		forEach(attributes, (value: string, name: string) => {
-			node.setAttribute(name, value);
-		});
-
-		this.appendChild(parent, node, fn);
-	}
-
-
-	protected _insertElementBefore(before: Node, elementName: string, attributes: {[name: string]: string} = {}, fn: (parent: HTMLElement) => void = null): void
-	{
-		let node = before.ownerDocument.createElement(elementName);
-
-		forEach(attributes, (value: string, name: string) => {
-			node.setAttribute(name, value);
-		});
-
-		this.insertChildBefore(before, node, fn);
-	}
-
-
-	protected _addElementEventListener(element: HTMLElement, eventName: string, callback: EventListenerOrEventListenerObject): void
-	{
-		this.listeners.push({
-			element: element,
-			name: eventName,
-			callback: callback,
-		});
-
-		this.run(() => {
-			element.addEventListener(eventName, callback, false);
-		});
-	}
-
-
-	private appendChild(parent: HTMLElement, child: Node, fn: (node: Node) => void = null): void
-	{
-		parent.appendChild(child);
-		this.nodes.push(child);
-
-		if (isFunction(fn)) {
-			fn(child);
+		if (exists(this.parent) && this.useParentTemplates) {
+			return this.parent.getTemplateFactory(name);
 		}
 	}
 
 
-	private insertChildBefore(before: Node, sibling: Node, fn: (node: Node) => void = null): void
+	public renderTemplate(name: string, parameters: TemplateParametersList = {}, beforeRender?: RenderableEmbeddedTemplateBeforeRender): EmbeddedTemplate
 	{
-		before.parentNode.insertBefore(sibling, before);
-		this.nodes.push(sibling);
+		const container = this.renderEmbeddedTemplatesContainer(name);
+		return container.add(parameters, undefined, beforeRender);
+	}
 
-		if (isFunction(fn)) {
-			fn(sibling);
+
+	public addCondition(condition: () => boolean, onTrue: RenderableEmbeddedTemplateFactory|string, onFalse?: RenderableEmbeddedTemplateFactory|string): void
+	{
+		const name = `@condition_${this.conditionsCount++}`;
+
+		let nameOnTrue: string = `${name}_onTrue`;
+		let nameOnFalse: string = `${name}_onFalse`;
+
+		if (isString(onTrue)) {
+			nameOnTrue = <string>onTrue;
+		} else {
+			this.declareTemplate(nameOnTrue, <RenderableEmbeddedTemplateFactory>onTrue);
+		}
+
+		const storage: ConditionStorage = {
+			onTrueContainer: this.renderEmbeddedTemplatesContainer(nameOnTrue),
+		};
+
+		if (exists(onFalse)) {
+			if (isString(onFalse)) {
+				nameOnFalse = <string>onFalse;
+			} else {
+				this.declareTemplate(nameOnFalse, <RenderableEmbeddedTemplateFactory>onFalse);
+			}
+
+			storage.onFalseContainer = this.renderEmbeddedTemplatesContainer(nameOnFalse);
+		}
+
+		// noinspection PointlessBooleanExpressionJS
+		this.watch(() => !!condition(), (value) => {
+			this.refreshCondition(storage, value);
+		});
+	}
+
+
+	public addLoop<T>(options: LoopOptions, listGetter: () => Array<T>, factory: RenderableEmbeddedTemplateFactory|string, trackBy?: DifferTrackByFn<T>): void
+	{
+		let name = `@loop_${this.loopsCount++}`;
+
+		if (isString(factory)) {
+			name = <string>factory;
+		} else {
+			this.declareTemplate(name, <RenderableEmbeddedTemplateFactory>factory);
+		}
+
+		const storage: LoopStorage<T> = {
+			container: this.renderEmbeddedTemplatesContainer(name),
+			getter: listGetter,
+			options: options,
+			differ: new ListDiffer([], trackBy),
+		};
+
+		this.watch(listGetter, (items) => {
+			this.refreshLoop(storage, items);
+		});
+	}
+
+
+	public _doRender(root: nodes.TemplateElement, fn: RenderableTemplateFactory, ...args: Array<any>): void
+	{
+		this.lastRenderingParent = root;
+
+		root._onRecursiveChildAdded = (parent, child) => {
+			this.lastRenderingParent = parent;
+			this.lastRenderingChild = child;
+
+			child._mount(this, this.renderer);
+
+			if (parent === root) {
+				this.domNodes.push(child._nativeNode);
+			}
+		};
+
+		fn(this, root, ...args);
+
+		this.initialized = true;
+	}
+
+
+	public _doRenderBefore(beforeNode: Node, fn: RenderableTemplateFactory): void
+	{
+		const fakeRoot = new nodes.TemplateElement(this.document, '#template-inner-root', {}, <any>beforeNode.parentNode);
+		fakeRoot._insertChildBefore = beforeNode;
+
+		this._doRender(fakeRoot, fn);
+	}
+
+
+	public _getDOMNodes(): Array<Node>
+	{
+		return this.domNodes;
+	}
+
+
+	public _getFirstDOMNode(): Node
+	{
+		if (this.domNodes.length) {
+			return this.domNodes[0];
 		}
 	}
 
+
+	private renderEmbeddedTemplatesContainer(name: string): EmbeddedTemplatesContainer
+	{
+		const template = this.getTemplateFactory(name);
+
+		if (!exists(template)) {
+			throw new Error(`Template.renderTemplate: inner template "${name}" does not exists.`);
+		}
+
+		const marker = this.lastRenderingParent.addComment(`__tmpl_include_${name}__`);
+
+		return this.createEmbeddedTemplatesContainer(template, marker._nativeNode);
+	}
+
+
+	private refreshCondition(condition: ConditionStorage, value: boolean): void
+	{
+		if (value) {
+			if (exists(condition.currentFalse)) {
+				condition.onFalseContainer.remove(condition.currentFalse);
+			}
+
+			condition.currentTrue = condition.onTrueContainer.add();
+		} else {
+			if (exists(condition.currentTrue)) {
+				condition.onTrueContainer.remove(condition.currentTrue);
+			}
+
+			if (exists(condition.onFalseContainer)) {
+				condition.currentFalse = condition.onFalseContainer.add();
+			}
+		}
+	}
+
+
+	private refreshLoop<T>(loop: LoopStorage<T>, items: Array<T>): void
+	{
+		// support for immutable.js
+		if (isFunction(items['toJS'])) {
+			items = items['toJS']();
+		}
+
+		const updateSiblings = (template: EmbeddedTemplate) => {
+			if (!exists(loop.options.iterator)) {
+				return;
+			}
+
+			loop.container.eachChild((sibling: EmbeddedTemplate, index: number) => {
+				if (sibling === template) {
+					return;
+				}
+
+				sibling.setParameters(createLoopEmbeddedTemplateParameters(loop.options, items, index));
+			});
+		};
+
+		const changes = loop.differ.check(items);
+
+		forEach(changes, (change: DifferChange<T>) => {
+			let parameters: TemplateParametersList;
+			let template: EmbeddedTemplate;
+
+			switch (change.action) {
+				case DifferAction.Add:
+					parameters = createLoopEmbeddedTemplateParameters(loop.options, items, change.currentIndex, change.currentItem);
+					template = loop.container.add(parameters, change.currentIndex);
+					updateSiblings(template);
+					break;
+				case DifferAction.Update:
+					parameters = createLoopEmbeddedTemplateParameters(loop.options, items, change.previousIndex, change.currentItem);
+					template = loop.container.getByIndex(change.previousIndex);
+					template.setParameters(parameters);
+					break;
+				case DifferAction.Remove:
+					template = loop.container.getByIndex(change.previousIndex);
+					loop.container.remove(template);
+					updateSiblings(template);
+				break;
+				case DifferAction.Move:
+					template = loop.container.getByIndex(change.previousIndex);
+					loop.container.move(template, change.currentIndex);
+					updateSiblings(template);
+					break;
+			}
+		});
+	}
+
+}
+
+
+function createLoopEmbeddedTemplateParameters<T>(options: LoopOptions, items: Array<T>, index: number, item?: T): TemplateParametersList
+{
+	const parameters = {};
+
+	if (exists(options.value) && exists(item)) {
+		parameters[options.value] = item;
+	}
+
+	if (exists(options.index)) {
+		parameters[options.index] = index;
+	}
+
+	if (exists(options.iterator)) {
+		parameters[options.iterator] = new LoopIterator(items.length, index);
+	}
+
+	return parameters;
 }

@@ -21,7 +21,7 @@
 		"@slicky/templates": "^1.0.1",
 		"@slicky/tiny-js": "^1.0.5",
 		"@slicky/tokenizer": "^1.0.6",
-		"@slicky/utils": "^1.0.11",
+		"@slicky/utils": "^1.1.1",
 		"parse5": "^3.0.2"
 	},
 	"devDependencies": {
