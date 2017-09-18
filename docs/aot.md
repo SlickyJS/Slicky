@@ -21,24 +21,25 @@ $ npm install --save-prod @slicky/platform-server
 
 ## Configuration
 
-Before starting you need to have your application configuration in independent file, just like it's described in 
-[bootstrap](./bootstrap.md) doc.
-
-Your `application.ts` file can't contain any side-affecting code or code which depends on browser (like using `document` 
-or `window`). This is because we need to be able to run that script on server too.
-
-Now you can update your `bootstrap.ts` file.
+**Your files can't contain any code outside of classes or functions which uses browser API. It wound't work when 
+compiled on server.**
 
 **bootstrap.ts:**
 
 ```typescript
+import {Container} from '@slicky/di';
+import {Application} from '@slicky/application';
 import {PlatformServer} from '@slicky/platform-server';
-import {APPLICATION} from './application';
 import {APP_TEMPLATES_FACTORY} from '../aot/app-templates-factory';
 
+const container = new Container;
 const platform = new PlatformServer(APP_TEMPLATES_FACTORY);
+const app = new Application(container, {
+	directives: [],			// list of your root directives and components
+});
 
-platform.run(APPLICATION, document.getElementById('app'));
+// run application in #app element
+platform.run(app, '#app');
 ```
 
 As you can see, we're including a new file `app-templates-factory.ts` which does not exists yet. This file will be 
@@ -49,14 +50,17 @@ To be able to compile your templates, you also need to update the `tsconfig.json
 ```json
 {
 	"slickyCompilerOptions": {
-		"applicationFile": "./app/application.ts",
-		"outDir": "./aot"
+		"rootDir": ".",
+		"outDir": "./aot",
+		"exclude": [
+			"bootstrap.ts"
+		]
 	}
 }
 ```
 
 * `slickyCompilerOptions`: Options passed into slicky's compiler
-	+ `applicationFile`: Path to your `application.ts` file which exports application in `APPLICATION`
+	+ `rootDir`: Path to base directory which contains all your components
 	+ `outDir`: Path to directory where all the generated templates will be stored
 	
 Now you can run the command for generating templates, just provide path to `tsconfig.json` file:

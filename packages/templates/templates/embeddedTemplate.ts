@@ -1,40 +1,27 @@
-import {RenderableTemplate} from './renderableTemplate';
-import {ApplicationTemplate} from './applicationTemplate';
-import {Template} from './template';
+import {TemplateParametersList} from './baseTemplate';
+import {RenderableTemplate, RenderableEmbeddedTemplateFactory} from './renderableTemplate';
 import {EmbeddedTemplatesContainer} from './embeddedTemplatesContainer';
+import {Template} from './template';
+import {ApplicationTemplate} from './applicationTemplate';
+import {Renderer} from '../dom';
 
 
 export class EmbeddedTemplate extends RenderableTemplate
 {
 
 
-	protected parent: RenderableTemplate;
+	public parent: EmbeddedTemplatesContainer;
 
 
-	constructor(application: ApplicationTemplate, parent: EmbeddedTemplatesContainer, root: Template)
+	constructor(document: Document, renderer: Renderer, application: ApplicationTemplate, root: Template, parent: EmbeddedTemplatesContainer, parameters: TemplateParametersList = {})
 	{
-		super(application, parent, root);
+		super(document, renderer, application, root, parent, parameters);
 	}
 
 
-	public refresh(): void
+	protected createEmbeddedTemplatesContainer(factory: RenderableEmbeddedTemplateFactory, marker: Comment): EmbeddedTemplatesContainer
 	{
-		if (!this.initialized) {
-			return;
-		}
-
-		if (this.parent._refreshing > 0) {
-			this.reload();
-
-		} else {
-			this.root.refresh();
-		}
-	}
-
-
-	public reload(): void
-	{
-		super.refresh();
+		return new EmbeddedTemplatesContainer(this.application, this.root, this, this.document, this.renderer, factory, marker);
 	}
 
 }

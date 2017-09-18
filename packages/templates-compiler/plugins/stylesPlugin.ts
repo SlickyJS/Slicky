@@ -3,8 +3,11 @@ import {map, forEach, exists, keys} from '@slicky/utils';
 import {ASTHTMLNodeElement, ASTHTMLNodeText, ASTHTMLNodeTextAttribute} from '@slicky/html-parser';
 import {Matcher} from '@slicky/query-selector';
 import {TemplateEncapsulation} from '@slicky/templates/templates';
-import {EnginePlugin, OnBeforeCompileArgument, OnAfterCompileArgument, OnProcessElementArgument, OnBeforeProcessElementArgument} from '../engine/enginePlugin';
-import {createInsertStyleRule, BuilderMethod} from '../builder';
+import {BuilderFunction} from '../builder';
+import {
+	EnginePlugin, OnBeforeCompileArgument, OnAfterCompileArgument, OnProcessElementArgument,
+	OnBeforeProcessElementArgument,
+} from '../engine/enginePlugin';
 
 
 const STYLE_ATTRIBUTE_PREFIX = '__slicky_style';
@@ -44,7 +47,7 @@ export class StylesPlugin extends EnginePlugin
 
 	public onBeforeCompile(arg: OnBeforeCompileArgument): void
 	{
-		this.name = arg.options.name;
+		this.name = arg.options.name || '';
 		this.encapsulation = arg.options.encapsulation;
 
 		forEach(arg.options.styles, (styles: string) => {
@@ -56,10 +59,8 @@ export class StylesPlugin extends EnginePlugin
 	public onAfterCompile(arg: OnAfterCompileArgument): void
 	{
 		if (this.styles.length) {
-			const main = arg.builder.getMainMethod();
-
 			forEach(this.styles, (styles: css.CSSNodeStylesheet) => {
-				this.addStyles(main, styles);
+				this.addStyles(arg.render, styles);
 			});
 		}
 	}
@@ -102,7 +103,7 @@ export class StylesPlugin extends EnginePlugin
 	}
 
 
-	private addStyles(builderMethod: BuilderMethod, styles: css.CSSNodeStylesheet): void
+	private addStyles(render: BuilderFunction, styles: css.CSSNodeStylesheet): void
 	{
 		const getParsedRules = (rules: Array<css.CSSNodeRule>): Array<string> => {
 			let result: Array<string> = [];
@@ -134,7 +135,7 @@ export class StylesPlugin extends EnginePlugin
 				}
 
 				const declarations = map(rule.declarations, (declaration: css.CSSNodeDeclaration) => {
-					return declaration.render();
+					return declaration.render().replace(/(")/g, '\\"');
 				});
 
 				result.push(`${selectors.join(', ')} {${declarations.join('; ')}}`);
@@ -144,15 +145,11 @@ export class StylesPlugin extends EnginePlugin
 		};
 
 		forEach(getParsedRules(styles.rules), (rule: string) => {
-			builderMethod.beginning.add(
-				createInsertStyleRule(rule)
-			);
+			render.beginning.add(`template.insertStyleRule("${rule}");`);
 		});
 
 		forEach(styles.mediaRules, (media: css.CSSNodeMediaRule) => {
-			builderMethod.beginning.add(
-				createInsertStyleRule(`@media ${media.prelude} {${getParsedRules(media.rules).join(' ')}}`)
-			);
+			render.beginning.add(`template.insertStyleRule("@media ${media.prelude} {${getParsedRules(media.rules).join(' ')}}");`);
 		});
 	}
 

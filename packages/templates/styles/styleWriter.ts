@@ -1,17 +1,10 @@
-import {map} from '@slicky/utils';
-
-
-export declare interface StyleRulesList
-{
-	[selector: string]: Array<string>;
-}
-
-
 export class StyleWriter
 {
 
 
-	private parent: HTMLElement|ShadowRoot;
+	private document: Document;
+
+	private parent: Element|ShadowRoot;
 
 	private style: HTMLStyleElement;
 
@@ -20,13 +13,14 @@ export class StyleWriter
 	private initialized: boolean = false;
 
 
-	constructor(parent: HTMLElement|ShadowRoot)
+	constructor(document: Document, parent: Element|ShadowRoot)
 	{
+		this.document = document;
 		this.parent = parent;
 	}
 
 
-	public changeParent(parent: HTMLElement|ShadowRoot): void
+	public changeParent(parent: Element|ShadowRoot): void
 	{
 		if (this.initialized) {
 			throw new Error('StyleWriter: can not change parent when styleWriter is already initialized.');
@@ -53,7 +47,7 @@ export class StyleWriter
 			this.sheet.deleteRule(i);
 		}
 
-		this.style.parentElement.removeChild(this.style);
+		this.style.parentNode.removeChild(this.style);
 
 		delete this.style;
 		delete this.sheet;
@@ -68,13 +62,12 @@ export class StyleWriter
 			return;
 		}
 
-		this.style = document.createElement('style');
-		this.style.appendChild(document.createTextNode(''));
+		this.style = this.document.createElement('style');
+		this.style.appendChild(this.document.createTextNode(''));
 
 		this.parent.appendChild(this.style);
 
 		this.sheet = <CSSStyleSheet>this.style.sheet;
-
 		this.initialized = true;
 	}
 

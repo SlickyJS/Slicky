@@ -17,9 +17,8 @@
 		"@slicky/application": "^0.1.4",
 		"@slicky/compiler": "^0.0.10",
 		"@slicky/core": "^0.2.3",
-		"@slicky/lang": "^1.0.0",
 		"@slicky/templates": "^1.0.1",
-		"@slicky/utils": "^1.0.11"
+		"@slicky/utils": "^1.1.1"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",

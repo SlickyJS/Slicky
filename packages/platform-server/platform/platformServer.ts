@@ -1,6 +1,5 @@
 import {DirectiveDefinition} from '@slicky/core/metadata';
-import {ClassType} from '@slicky/lang';
-import {Template} from '@slicky/templates/templates';
+import {TemplateRenderFactory} from '@slicky/templates/templates';
 import {Application, PlatformInterface} from '@slicky/application';
 
 
@@ -8,30 +7,24 @@ export class PlatformServer implements PlatformInterface
 {
 
 
-	private templatesFactory: (hash: number) => ClassType<Template>;
+	private templatesFactory: (hash: number) => TemplateRenderFactory;
 
 
-	constructor(templatesFactory: (hash: number) => ClassType<Template>)
+	constructor(templatesFactory: (hash: number) => TemplateRenderFactory)
 	{
 		this.templatesFactory = templatesFactory;
 	}
 
 
-	public compileComponentTemplate(metadata: DirectiveDefinition): ClassType<Template>
+	public compileComponentTemplate(metadata: DirectiveDefinition): TemplateRenderFactory
 	{
-		return this.getTemplateTypeByHash(metadata.hash);
+		return this.templatesFactory(metadata.hash);
 	}
 
 
-	public getTemplateTypeByHash(hash: number): ClassType<Template>
+	public run(application: Application, elOrSelector: Element|string): void
 	{
-		return this.templatesFactory(hash);
-	}
-
-
-	public run(application: Application, el: HTMLElement): void
-	{
-		application.run(this, el);
+		application.run(this, elOrSelector);
 	}
 
 }

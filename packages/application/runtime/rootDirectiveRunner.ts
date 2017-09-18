@@ -1,13 +1,11 @@
-import {OnInit} from '@slicky/core';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionInput} from '@slicky/core/metadata';
 import {forEach, isFunction, exists} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {Container, ProviderOptions} from '@slicky/di';
 import {ApplicationTemplate} from '@slicky/templates/templates';
-import {DirectivesProvider} from './directivesProvider';
-import {TemplatesProvider} from './templatesProvider';
 import {PlatformInterface} from '../platform';
+import {DirectiveFactory} from './directiveFactory';
 
 
 export class RootDirectiveRunner
@@ -24,14 +22,12 @@ export class RootDirectiveRunner
 
 	private extensions: ExtensionsManager;
 
-	private el: HTMLElement;
+	private el: Element;
 
-	private directivesProvider: DirectivesProvider;
-
-	private templatesProvider: TemplatesProvider;
+	private directiveFactory: DirectiveFactory;
 
 
-	constructor(platform: PlatformInterface, template: ApplicationTemplate, container: Container, metadataLoader: DirectiveMetadataLoader, extensions: ExtensionsManager, el: HTMLElement)
+	constructor(document: Document, platform: PlatformInterface, template: ApplicationTemplate, container: Container, metadataLoader: DirectiveMetadataLoader, extensions: ExtensionsManager, el: Element)
 	{
 		this.platform = platform;
 		this.template = template;
@@ -40,24 +36,23 @@ export class RootDirectiveRunner
 		this.extensions = extensions;
 		this.el = el;
 
-		this.directivesProvider = new DirectivesProvider(this.extensions, this.metadataLoader);
-		this.templatesProvider = new TemplatesProvider(this.platform, this.extensions, this.template, this.directivesProvider);
+		this.directiveFactory = new DirectiveFactory(document, this.platform, this.extensions, this.metadataLoader, this.template);
 	}
 
 
-	public run(directiveType: ClassType<any>): void
+	public run<T>(directiveType: ClassType<T>): void
 	{
-		let metadata = this.metadataLoader.load(directiveType);
-		let els = this.el.querySelectorAll(metadata.selector);
+		const metadata = this.metadataLoader.load(directiveType);
+		const els = this.el.querySelectorAll(metadata.selector);
 
-		forEach(els, (el: HTMLElement) => this.runDirective(metadata, el));
+		forEach(els, (el: Element) => this.runDirective(directiveType, metadata, el));
 	}
 
 
-	public runDirective(metadata: DirectiveDefinition, el: HTMLElement, providers: Array<ProviderOptions> = []): any
+	public runDirective<T>(directiveType: ClassType<T>, metadata: DirectiveDefinition, el: Element, providers: Array<ProviderOptions> = []): any
 	{
-		let container = metadata.type === DirectiveDefinitionType.Component ? this.container.fork() : this.container;
-		let directive = this.directivesProvider.create(metadata.hash, el, container, providers);
+		const container = metadata.type === DirectiveDefinitionType.Component ? this.container.fork() : this.container;
+		const directive = this.directiveFactory.createDirective(container, directiveType, metadata, el, providers);
 
 		forEach(metadata.inputs, (input: DirectiveDefinitionInput) => {
 			directive[input.property] = el.getAttribute(input.name);
@@ -85,23 +80,21 @@ export class RootDirectiveRunner
 		});
 
 		if (metadata.type === DirectiveDefinitionType.Component) {
-			this.extensions.doInitComponentContainer(container, metadata, directive);
 			this.runComponentTemplate(container, metadata, directive, el);
 		}
 
 		if (isFunction(directive['onInit'])) {
-			(<OnInit>directive).onInit();
+			(<any>directive).onInit();
 		}
 
 		return directive;
 	}
 
 
-	private runComponentTemplate(container: Container, metadata: DirectiveDefinition, component: any, el: HTMLElement): void
+	private runComponentTemplate<T>(container: Container, metadata: DirectiveDefinition, component: T, el: Element): void
 	{
-		let template = this.templatesProvider.createComponentTemplate(container, this.template, metadata, component);
-
-		template.render(el);
+		this.extensions.doInitComponentContainer(container, metadata, component);
+		this.directiveFactory.runComponent(container, component, metadata, this.template, el);
 	}
 
 }

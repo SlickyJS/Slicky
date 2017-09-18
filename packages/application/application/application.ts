@@ -1,10 +1,9 @@
 import {Container, ProviderOptions} from '@slicky/di';
-import {exists, forEach} from '@slicky/utils';
+import {exists, forEach, isString} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {AbstractExtension} from '@slicky/core';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {ExtensionsManager} from '@slicky/core/extensions';
-import {CommonTemplateHelpers} from '@slicky/templates';
 import {ApplicationTemplate} from '@slicky/templates/templates';
 import {RootDirectiveRunner} from '../runtime';
 import {PlatformInterface} from '../platform';
@@ -59,19 +58,23 @@ export class Application
 	}
 
 
-	public run(platform: PlatformInterface, el: HTMLElement): void
+	public run(platform: PlatformInterface, elOrSelector: Element|string): void
 	{
-		let applicationTemplate = new ApplicationTemplate;
+		if (typeof window === 'undefined') {
+			return;
+		}
+
+		const doc: Document = document;
+		const el: Element = isString(elOrSelector) ? doc.querySelector(<string>elOrSelector) : <Element>elOrSelector;
+
+		const applicationTemplate = new ApplicationTemplate;
+		const runner = new RootDirectiveRunner(doc, platform, applicationTemplate, this.container, this.metadataLoader, this.extensions, el);
 
 		forEach(this.extensions.getServices(), (provider: ProviderOptions) => {
 			this.container.addService(provider.service, provider.options);
 		});
 
 		this.metadataLoader.addGlobalFilters(this.extensions.getFilters());
-
-		CommonTemplateHelpers.install(applicationTemplate);
-
-		let runner = new RootDirectiveRunner(platform, applicationTemplate, this.container, this.metadataLoader, this.extensions, el);
 
 		this.container.addService(RootDirectiveRunner, {
 			useValue: runner,

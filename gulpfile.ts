@@ -40,11 +40,13 @@ const config: Config = {
 	],
 	aot: [
 		{name: 'templates', root: path.join(__dirname, 'packages', 'examples', 'examples', 'templates')},
+		{name: 'loop', root: path.join(__dirname, 'packages', 'examples', 'examples', 'loop')},
 		{name: 'todo', root: path.join(__dirname, 'packages', 'examples', 'examples', 'todo')},
 	],
 	examples: [
 		{name: 'directive', root: path.join(__dirname, 'packages', 'examples', 'examples', 'directive')},
 		{name: 'templates', root: path.join(__dirname, 'packages', 'examples', 'examples', 'templates')},
+		{name: 'loop', root: path.join(__dirname, 'packages', 'examples', 'examples', 'loop')},
 		{name: 'todo', root: path.join(__dirname, 'packages', 'examples', 'examples', 'todo')},
 	],
 };
@@ -70,7 +72,15 @@ function getExampleWebpackConfig(project: ConfigProject): any
 
 		module: {
 			rules: [
-				{test: /\.ts$/, use: 'ts-loader'},
+				{
+					test: /\.ts$/,
+					use: {
+						loader: 'awesome-typescript-loader',
+						options: {
+							configFileName: path.join(project.root, 'tsconfig.json')
+						},
+					},
+				},
 				{test: /\.html$/, use: 'raw-loader'},
 				{test: /\.css$/, use: 'raw-loader'},
 			],

@@ -17,18 +17,17 @@
 		"scc": "./bin/scc.js"
 	},
 	"dependencies": {
-		"@slicky/application": "^0.1.4",
 		"@slicky/compiler": "^0.0.10",
 		"@slicky/core": "^0.2.3",
-		"@slicky/lang": "^1.0.0",
-		"@slicky/utils": "^1.0.11",
+		"@slicky/event-emitter": "^1.0.1",
+		"@slicky/utils": "^1.1.1",
 		"colors": "^1.1.2",
+		"glob": "^7.1.2",
 		"reflect-metadata": "^0.1.10",
 		"ts-node": "^3.3.0",
 		"yargs": "^8.0.2"
 	},
 	"devDependencies": {
-		"@slicky/di": "^1.0.1",
 		"@types/chai": "^4.0.3",
 		"@types/mocha": "^2.2.41",
 		"@types/node": "^8.0.21",

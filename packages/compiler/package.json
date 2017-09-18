@@ -19,7 +19,7 @@
 		"@slicky/query-selector": "^1.2.0",
 		"@slicky/templates-compiler": "^1.0.1",
 		"@slicky/tiny-js": "^1.0.5",
-		"@slicky/utils": "^1.0.11"
+		"@slicky/utils": "^1.1.1"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",

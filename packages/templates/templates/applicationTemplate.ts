@@ -8,11 +8,8 @@ export class ApplicationTemplate extends BaseTemplate
 	constructor()
 	{
 		super();
-	}
 
-
-	public refresh(): void
-	{
+		this.initialized = true;
 	}
 
 }

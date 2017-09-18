@@ -1,1 +1,1 @@
-export {CommonTemplateHelpers} from './helpers';
+export {Template} from './templates';

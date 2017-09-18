@@ -1,3 +1,4 @@
-export * from './directivesProvider';
+export * from './componentTemplate';
+export * from './directiveFactory';
 export * from './rootDirectiveRunner';
-export * from './templatesProvider';
+export * from './componentTemplate';

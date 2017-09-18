@@ -1,27 +1,22 @@
-import {Template} from '@slicky/templates/templates';
-
-
-function _factory574069480()
+function _factory2377967077()
 {
-	return function(_super) {
-		_super.childTemplateExtend(Template574069480);
-		function Template574069480(application, parent)
-		{
-			_super.call(this, application, parent);
-		}
-		Template574069480.prototype.main = function(parent)
-		{
-			var root = this;
-			var tmpl = this;
-			tmpl.init();
-		};
-		return Template574069480;
-	}(Template);
+	return function(template, el, component) {
+
+	};
+}
+
+
+function _factory2770134629()
+{
+	return function(template, el, component) {
+
+	};
 }
 
 
 const _mapping = {
-	574069480: _factory574069480
+	2377967077: _factory2377967077,
+	2770134629: _factory2770134629
 };
 
 

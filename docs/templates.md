@@ -120,7 +120,7 @@ whole array! You can use use eg. [immutable.js](https://facebook.github.io/immut
 
 ```html
 <ul>
-	<li *s:for="item of items">
+	<li *s:for="item in items">
 		{{ item }}
 	</li>
 </ul>
@@ -130,7 +130,7 @@ or with template:
 
 ```html
 <ul>
-	<template [s:for]="item of items">
+	<template [s:for]="item in items">
 		<li>
 			{{ item }}
 		</li>
@@ -154,7 +154,7 @@ const trackBy = (item: any, index: number) => {
 
 ```html
 <ul>
-	<li *s:for="item of items" *s:for-track-by="trackBy">
+	<li *s:for="item in items" *s:for-track-by="trackBy">
 		{{ item }}
 	</li>
 </ul>
@@ -164,7 +164,7 @@ and with templates:
 
 ```html
 <ul>
-	<template [s:for]="item of items" [s:for-track-by]="trackBy">
+	<template [s:for]="item in items" [s:for-track-by]="trackBy">
 		<li>
 			{{ item }}	
 		</li>

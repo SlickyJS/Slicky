@@ -16,14 +16,17 @@
 	"dependencies": {
 		"@slicky/change-detection": "^1.0.4",
 		"@slicky/realm": "^1.0.1",
-		"@slicky/utils": "^1.0.11"
+		"@slicky/utils": "^1.1.1"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",
+		"@types/jsdom": "^11.0.2",
 		"@types/mocha": "^2.2.41",
 		"@types/node": "^8.0.22",
 		"chai": "^4.1.1",
-		"mocha": "^3.5.0"
+		"jsdom": "^11.2.0",
+		"mocha": "^3.5.0",
+		"zone.js": "^0.8.17"
 	},
 	"scripts": {
 		"test": "TS_NODE_PROJECT='tests/tsconfig.json' mocha -r ts-node/register tests/tests/**/*.ts"

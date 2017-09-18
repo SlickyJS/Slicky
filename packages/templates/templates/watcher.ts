@@ -1,7 +1,7 @@
 import {forEach} from '@slicky/utils';
 
 
-declare interface Watcher
+declare interface WatcherItem
 {
 	current: any;
 	getter: () => any;
@@ -9,26 +9,11 @@ declare interface Watcher
 }
 
 
-export interface IWatcherProvider
+export class Watcher
 {
 
 
-	disable(): void;
-
-
-	check(): boolean;
-
-
-	watch(getter: () => any, update: (value: any) => void): void;
-
-}
-
-
-export class DefaultWatcherProvider implements IWatcherProvider
-{
-
-
-	private watchers: Array<Watcher> = [];
+	private watchers: Array<WatcherItem> = [];
 
 	private enabled: boolean = true;
 
@@ -47,7 +32,7 @@ export class DefaultWatcherProvider implements IWatcherProvider
 
 		let changed = false;
 
-		forEach(this.watchers, (watcher: Watcher) => {
+		forEach(this.watchers, (watcher: WatcherItem) => {
 			let current = watcher.getter();
 
 			if (current !== watcher.current) {

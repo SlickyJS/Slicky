@@ -14,7 +14,7 @@
 	</div>
 
 	<ul *s:if="todos.size" class="uk-list uk-list-divider">
-		<li *s:for="todo of todos.filter(todoFilter).sort(todoSort)" *s:for-track-by="todoTrackByFn">
+		<li *s:for="todo in todos.filter(todoFilter).sort(todoSort)" *s:for-track-by="todoTrackByFn">
 			<todo-item [todo]="todo" (removed)="removeTodo($value)" (updating)="updateTodo($value)" (toggled)="void 0"></todo-item>
 		</li>
 	</ul>

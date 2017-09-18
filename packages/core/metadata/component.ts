@@ -2,6 +2,7 @@ import {makeClassDecorator} from '@slicky/reflection';
 import {exists, merge} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {TemplateEncapsulation} from '@slicky/templates/templates';
+import {RenderableTemplateFactory} from '@slicky/templates/templates';
 import {DirectiveAnnotationDefinition} from './directive';
 import {FilterInterface} from '../filters';
 
@@ -9,7 +10,8 @@ import {FilterInterface} from '../filters';
 export declare interface ComponentOptions
 {
 	name: string,
-	template: string,
+	template?: string,
+	render?: RenderableTemplateFactory,
 	exportAs?: string,
 	precompileDirectives?: Array<ClassType<any>>,
 	directives?: Array<ClassType<any>>,
@@ -25,6 +27,8 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 
 
 	public template: string;
+
+	public render: RenderableTemplateFactory;
 
 	public precompileDirectives: Array<ClassType<any>> = [];
 
@@ -45,7 +49,17 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 			throw new Error(`Component element name "${options.name}" is not valid. Name must contain a dash and be all lowercased.`);
 		}
 
-		this.template = options.template;
+		if (!exists(options.template) && !exists(options.render)) {
+			throw new Error(`Component "${options.name}": missing template or render function.`);
+		}
+
+		if (exists(options.template)) {
+			this.template = options.template;
+		}
+
+		if (exists(options.render)) {
+			this.render = options.render;
+		}
 
 		if (exists(options.precompileDirectives)) {
 			this.precompileDirectives = options.precompileDirectives;

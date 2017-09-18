@@ -1,6 +1,6 @@
 import '../bootstrap';
 
-import {Directive, Component, HostElement, HostEvent, Input, Required, Output, ChildDirective, ChildrenDirective, OnInit, OnDestroy, TemplateEncapsulation} from '@slicky/core';
+import {Directive, Component, HostElement, HostEvent, Input, Required, Output, ChildDirective, ChildrenDirective, OnInit, OnDestroy} from '@slicky/core';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {readFileSync} from 'fs';
@@ -110,6 +110,28 @@ describe('#Compiler', () => {
 				metadata.hash,
 				metadataPrecompiled.hash,
 			]);
+		});
+
+		it('should compile component with directive', () => {
+			@Directive({
+				selector: 'directive',
+			})
+			class TestChildDirective {}
+
+			@Component({
+				name: 'my-child',
+				template: '',
+			})
+			class TestChildComponent {}
+
+			@Component({
+				name: 'my-component',
+				template: '<directive></directive><my-child></my-child>',
+				directives: [TestChildDirective, TestChildComponent],
+			})
+			class TestParentComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestParentComponent))).to.be.equal(compareWith('compiler.directive'));
 		});
 
 		it('should throw an error when required @HostElement inside of @Directive is missing', () => {
@@ -523,17 +545,6 @@ describe('#Compiler', () => {
 			class TestComponent {}
 
 			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.styles'));
-		});
-
-		it('should compile component with native encapsulation', () => {
-			@Component({
-				name: 'test-component',
-				template: '',
-				encapsulation: TemplateEncapsulation.Native,
-			})
-			class TestComponent {}
-
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.encapsulation.native'));
 		});
 
 	});

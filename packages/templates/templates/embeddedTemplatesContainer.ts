@@ -1,11 +1,10 @@
-import {forEach, exists} from '@slicky/utils';
-import {RenderableTemplate} from './renderableTemplate';
+import {exists, isFunction, forEach} from '@slicky/utils';
+import {RenderableTemplate, RenderableEmbeddedTemplateFactory, RenderableEmbeddedTemplateBeforeRender} from './renderableTemplate';
+import {TemplateParametersList} from './baseTemplate';
 import {EmbeddedTemplate} from './embeddedTemplate';
-import {ApplicationTemplate} from './applicationTemplate';
 import {Template} from './template';
-
-
-export type EmbeddedTemplateFactory = (template: EmbeddedTemplate, el: Node, setup: (template: EmbeddedTemplate) => void) => EmbeddedTemplate;
+import {ApplicationTemplate} from './applicationTemplate';
+import {Renderer} from '../dom';
 
 
 export class EmbeddedTemplatesContainer extends RenderableTemplate
@@ -14,58 +13,88 @@ export class EmbeddedTemplatesContainer extends RenderableTemplate
 
 	protected children: Array<EmbeddedTemplate> = [];
 
-	private el: Node;
+	private factory: RenderableEmbeddedTemplateFactory;
 
-	private factory: EmbeddedTemplateFactory;
+	private marker: Comment;
 
 
-	constructor(application: ApplicationTemplate, el: Node, factory: EmbeddedTemplateFactory, parent: RenderableTemplate = null, root: Template = null)
+	constructor(application: ApplicationTemplate, root: Template, parent: RenderableTemplate, document: Document, renderer: Renderer, factory: RenderableEmbeddedTemplateFactory, marker: Comment)
 	{
-		super(application, parent, root);
+		super(document, renderer, application, root, parent);
 
-		this.el = el;
 		this.factory = factory;
+		this.marker = marker;
+		this.initialized = true;
 	}
 
 
-	public add(index: number = null, setup: (template: EmbeddedTemplate) => void = null): EmbeddedTemplate
+	public getByIndex(index: number): EmbeddedTemplate
 	{
-		let before = this.el;
+		return this.children[index];
+	}
 
-		if (index === null) {
+
+	public add(parameters: TemplateParametersList = {}, index?: number, beforeRender?: RenderableEmbeddedTemplateBeforeRender): EmbeddedTemplate
+	{
+		let insertBefore: Node = this.marker;
+
+		if (!exists(index)) {
 			index = this.children.length;
 		} else if (exists(this.children[index])) {
-			before = this.children[index].getFirstNode();
+			insertBefore = this.children[index]._getFirstDOMNode();
 		}
 
-		let template = new EmbeddedTemplate(this.application, this, this.root);
+		const inner = new EmbeddedTemplate(this.document, this.renderer, this.application, this.root, this, parameters);
 
 		// move template to correct index withing children
 		if (index !== (this.children.length - 1)) {
 			this.children.splice(index, 0, this.children.splice(this.children.length - 1, 1)[0]);
 		}
 
-		return this.factory(template, before, setup);
+		if (isFunction(beforeRender)) {
+			beforeRender(inner, this.parent);
+		}
+
+		inner._doRenderBefore(insertBefore, this.factory);
+
+		return inner;
 	}
 
 
 	public remove(template: EmbeddedTemplate): void
 	{
-		let index = this.children.indexOf(template);
+		const index = this.children.indexOf(template);
+
+		if (index < 0) {
+			return;
+		}
+
 		this.children[index].destroy();
+		this.children.splice(index, 1);
 	}
 
 
-	public move(template: EmbeddedTemplate, index: number): void
+	public move(template: EmbeddedTemplate, newIndex: number): void
 	{
-		let previousIndex = this.children.indexOf(template);
-		let sibling = this.children[index].getFirstNode();
+		const previousIndex = this.children.indexOf(template);
 
-		forEach(template.nodes, (node: Node) => {
-			sibling.parentNode.insertBefore(node, sibling);
+		if (previousIndex < 0) {
+			return;
+		}
+
+		const sibling = this.children[newIndex]._getFirstDOMNode();
+
+		forEach(template._getDOMNodes(), (node: Node) => {
+			this.renderer.insertBefore(sibling.parentNode, node, sibling);
 		});
 
-		this.children.splice(index, 0, this.children.splice(previousIndex, 1)[0]);
+		this.children.splice(newIndex, 0, this.children.splice(previousIndex, 1)[0]);
+	}
+
+
+	protected createEmbeddedTemplatesContainer(factory: RenderableEmbeddedTemplateFactory, marker: Comment): EmbeddedTemplatesContainer
+	{
+		return new EmbeddedTemplatesContainer(this.application, this.root, this, this.document, this.renderer, factory, marker);
 	}
 
 }

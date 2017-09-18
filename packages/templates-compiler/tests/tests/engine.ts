@@ -40,10 +40,59 @@ describe('#Engine', () => {
 			expect(template).to.be.equal(compareWith('engine.compile.simpleTree'));
 		});
 
-		it('should compile element with expression attribute', () => {
-			let template = engine.compile('<div class="{{ divClass + \' red\' }} highlighted"></div>');
+		it('should compile element with attributes', () => {
+			let template = engine.compile('<div data-id="5" class="{{ divClass + \' red\' }} highlighted"></div>');
 
-			expect(template).to.be.equal(compareWith('engine.compile.expressionAttribute'));
+			expect(template).to.be.equal(compareWith('engine.compile.attributes'));
+		});
+
+		it('should throw an error if selector is missing in include element', () => {
+			expect(() => {
+				engine.compile('<include></include>');
+			}).to.throw(Error, 'Element <include> must have the "selector" attribute for specific <template>.');
+		});
+
+		it('should throw an error if selector is missing in include element', () => {
+			expect(() => {
+				engine.compile('<include selector="#tmpl"></include>');
+			}).to.throw(Error, 'Element <include> tries to include unknown <template> with "#tmpl" selector.');
+		});
+
+		it('should compile inner templates', () => {
+			let template = engine.compile(
+				'<template id="app-name" inject="firstName, lastName">{{ firstName }} {{ lastName }}</template>' +
+				`<include selector="#app-name" [first-name]="user.david" last-name="K."></include>` +
+				`<include selector="#app-name" [first-name]="user.clare" last-name="F."></include>`
+			);
+
+			expect(template).to.be.equal(compareWith('engine.compile.templates'));
+		});
+
+		it('should compile element events', () => {
+			let template = engine.compile('<button (click)="onClick($event)"></button>');
+
+			expect(template).to.be.equal(compareWith('engine.compile.events'));
+		});
+
+		it('should compile event with preventDefault', () => {
+			let template = engine.compile('<button (click.prevent)="onClick($event)"></button>');
+
+			expect(template).to.be.equal(compareWith('engine.compile.events.prevent'));
+		});
+
+		it('should compile element properties', () => {
+			let template = engine.compile('<div [style]="getStyles()" [class.alert]="isAlert()"></div>');
+
+			expect(template).to.be.equal(compareWith('engine.compile.properties'));
+		});
+
+		it('should export elements', () => {
+			let template = engine.compile(
+				'<div #a></div>' +
+				'<div #b="$this"></div>'
+			);
+
+			expect(template).to.be.equal(compareWith('engine.compile.exports'));
 		});
 
 		it('should throw an error when style tag is not used in the beginning of template', () => {
@@ -105,6 +154,30 @@ describe('#Engine', () => {
 			});
 
 			expect(template).to.be.equal(compareWith('engine.compile.styles.escape'));
+		});
+
+		it('should compile filters', () => {
+			let template = engine.compile('{{ 5 | plus : 4 }}');
+
+			expect(template).to.be.equal(compareWith('engine.compile.filters'));
+		});
+
+		it('should compile condition', () => {
+			let template = engine.compile('<span *s:if="true"></span>');
+
+			expect(template).to.be.equal(compareWith('engine.compile.condition'));
+		});
+
+		it('should compile simple loop', () => {
+			let template = engine.compile('<li *s:for="item in items"></li>');
+
+			expect(template).to.be.equal(compareWith('engine.compile.loop.simple'));
+		});
+
+		it('should compile loop with trackBy', () => {
+			let template = engine.compile('<li *s:for="item in items" *s:for-track-by="trackBy"></li>');
+
+			expect(template).to.be.equal(compareWith('engine.compile.loop.trackBy'));
 		});
 
 	});

@@ -1,5 +1,5 @@
 import {Matcher} from '@slicky/query-selector';
-import {forEach, map, hyphensToCamelCase, find, merge, startsWith, exists} from '@slicky/utils';
+import {forEach, map, hyphensToCamelCase, find, merge, startsWith, exists, indent} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
 import {InputStream} from '@slicky/tokenizer';
@@ -8,14 +8,14 @@ import {TemplateEncapsulation} from '@slicky/templates/templates';
 import {DocumentWalker} from '../querySelector';
 import {EnginePluginManager} from './enginePluginManager';
 import {EnginePlugin} from './enginePlugin';
-import {IfEnginePlugin, ForEnginePlugin, StylesPlugin} from '../plugins';
+import {StylesPlugin, ConditionPlugin, LoopPlugin} from '../plugins';
 import {EngineProgress} from './engineProgress';
 import * as b from '../builder';
 
 
 export class EngineCompileOptions
 {
-	name?: string;
+	name?: string;		// todo: remove
 	encapsulation?: TemplateEncapsulation;
 	styles?: Array<string>;
 }
@@ -25,7 +25,7 @@ export class Engine
 {
 
 
-	public compiled = new EventEmitter<{name: string|number, code: string}>();
+	public compiled = new EventEmitter<{name: string|number, code: string}>();	// todo: remove
 
 	private plugins: EnginePluginManager;
 
@@ -34,9 +34,9 @@ export class Engine
 	{
 		this.plugins = new EnginePluginManager;
 
-		this.addPlugin(new IfEnginePlugin);
-		this.addPlugin(new ForEnginePlugin);
 		this.addPlugin(new StylesPlugin);
+		this.addPlugin(new ConditionPlugin);
+		this.addPlugin(new LoopPlugin);
 	}
 
 
@@ -48,10 +48,6 @@ export class Engine
 
 	public compile(template: string, options: EngineCompileOptions = {}): string
 	{
-		if (!exists(options.name)) {
-			options.name = '';
-		}
-
 		if (!exists(options.styles)) {
 			options.styles = [];
 		}
@@ -60,34 +56,30 @@ export class Engine
 			options.encapsulation = TemplateEncapsulation.Emulated;
 		}
 
-		let progress = new EngineProgress;
-		let matcher = new Matcher(new DocumentWalker);
-		let builder = new b.TemplateBuilder(options.name + '', matcher);
-		let tree = (new _.HTMLParser(template)).parse();
+		const progress = new EngineProgress;
+		const matcher = new Matcher(new DocumentWalker);
+		const builder = new b.TemplateBuilder(matcher);
+		const tree = (new _.HTMLParser(template)).parse();
 
-		const main = builder.getMainMethod();
-
-		if (options.encapsulation === TemplateEncapsulation.Native) {
-			main.beginning.add('parent = root.createShadowDOM(parent);');
-		}
+		const render = builder.getRenderFunction();
 
 		this.plugins.onBeforeCompile({
 			progress: progress,
 			engine: this,
-			builder: builder,
 			options: options,
+			render: render,
 		});
 
-		this.processTree(builder, main.body, progress, matcher, tree);
+		this._processTree(render, progress, matcher, tree);
 
 		this.plugins.onAfterCompile({
 			progress: progress,
 			engine: this,
-			builder: builder,
 			options: options,
+			render: render,
 		});
 
-		let code = builder.render();
+		const code = builder.render();
 
 		this.compiled.emit({
 			name: options.name,
@@ -98,232 +90,23 @@ export class Engine
 	}
 
 
-	private processTree(builder: b.TemplateBuilder, method: b.BuilderNodesContainer<b.BuilderNodeInterface>, progress: EngineProgress, matcher: Matcher, parent: _.ASTHTMLNodeParent, insertBefore: boolean = false): void
+	public _processTree(render: b.BuilderFunction, progress: EngineProgress, matcher: Matcher, parent: _.ASTHTMLNodeParent): void
 	{
 		forEach(parent.childNodes, (child: _.ASTHTMLNode) => {
 			if (child instanceof _.ASTHTMLNodeElement) {
-				this.processElement(builder, method, progress, matcher, child, insertBefore);
+				this.processElement(progress, matcher, render, child);
 
 			} else if (child instanceof _.ASTHTMLNodeExpression) {
-				this.processExpression(method, progress, child, insertBefore);
+				this.processExpression(progress, render, child);
 
 			} else if (child instanceof _.ASTHTMLNodeText) {
-				this.processText(method, child, insertBefore);
+				this.processText(render, child);
 			}
 		});
 	}
 
 
-	private processExpression(parent: b.BuilderNodesContainer<b.BuilderNodeInterface>, progress: EngineProgress, expression: _.ASTHTMLNodeExpression, insertBefore: boolean = false): void
-	{
-		parent.add(
-			b.createAddText('', !insertBefore, (text) => {
-				text.setup.add(
-					b.createWatch(
-						this.compileExpression(expression.value, progress, true),
-						(watcher) => watcher.update.add('text.nodeValue = value;')
-					)
-				);
-			})
-		);
-	}
-
-
-	private processText(parent: b.BuilderNodesContainer<b.BuilderNodeInterface>, text: _.ASTHTMLNodeText, insertBefore: boolean = false): void
-	{
-		let value = text.value;
-
-		// replace non-breaking whitespaces with one whitespace
-		value = value
-			.replace(/[\u000d\u0009\u000a\u0020]/g, '\u0020')
-			.replace(/\u0020{2,}/g, '\u0020')
-		;
-
-		if (value === '') {
-			return;
-		}
-
-		parent.add(
-			b.createAddText(value, !insertBefore)
-		);
-	}
-
-
-	private processElement(builder: b.TemplateBuilder, parent: b.BuilderNodesContainer<b.BuilderNodeInterface>, progress: EngineProgress, matcher: Matcher, element: _.ASTHTMLNodeElement, insertBefore: boolean = false): void
-	{
-		let stopProcessing = false;
-
-		element = this.plugins.onBeforeProcessElement(element, {
-			progress: progress,
-			matcher: matcher,
-			engine: this,
-			builder: builder,
-			stopProcessing: () => {
-				stopProcessing = true;
-			},
-		});
-
-		if (stopProcessing) {
-			return;
-		}
-
-		if (element.name === 'include') {
-			return this.processElementInclude(builder, parent, progress, element, insertBefore);
-		}
-
-		if (element.name === 'template') {
-			return this.processElementTemplate(builder, parent, progress, matcher, element);
-		}
-
-		parent.add(
-			b.createAddElement(element.name, !insertBefore, (el) => {
-				this.plugins.onProcessElement(element, {
-					element: el,
-					progress: progress,
-					matcher: matcher,
-					engine: this,
-					builder: builder,
-				});
-
-				forEach(element.events, (event: _.ASTHTMLNodeExpressionAttributeEvent) => {
-					el.setup.add(
-						b.createElementEventListener(event.name, this.compileExpression(event.value, progress), event.preventDefault)
-					);
-				});
-
-				forEach(element.properties, (property: _.ASTHTMLNodeExpressionAttribute) => {
-					// todo: check if property is valid html property
-
-					if (startsWith(property.name, 'class.')) {
-						let className = property.name.substring(6);
-
-						el.setup.add(
-							b.createClassHelper(className, this.compileExpression(property.value, progress, true))
-						);
-
-					} else {
-						el.setup.add(
-							b.createWatch(
-								this.compileExpression(property.value, progress, true),
-								(watcher) => watcher.update.add(`parent.${hyphensToCamelCase(property.name)} = value;`)
-							)
-						);
-					}
-				});
-
-				forEach(element.exports, (exp: _.ASTHTMLNodeTextAttribute) => {
-					if (exp.value !== '' && exp.value !== '$this') {
-						throw Error(`Can not export "${exp.value}" into "${exp.name}"`);
-					}
-
-					el.setup.add(
-						b.createSetParameter(hyphensToCamelCase(exp.name), 'parent')
-					);
-				});
-
-				forEach(element.attributes, (attribute: _.ASTHTMLNodeAttribute) => {
-					if (attribute instanceof _.ASTHTMLNodeExpressionAttribute) {
-						el.setAttribute(attribute.name, '');
-						el.setup.add(
-							b.createWatch(
-								this.compileExpression(attribute.value, progress, true),
-								(watcher) => watcher.update.add(`parent.setAttribute("${attribute.name}", value);`)
-							)
-						);
-
-					} else {
-						el.setAttribute(attribute.name, attribute.value);
-					}
-				});
-
-				this.processTree(builder, el.setup, progress, matcher, element);
-
-				this.plugins.onAfterProcessElement(element, {
-					progress: progress,
-					engine: this,
-					matcher: matcher,
-					builder: builder,
-				});
-			})
-		);
-	}
-
-
-	private processElementInclude(builder: b.TemplateBuilder, parent: b.BuilderNodesContainer<b.BuilderNodeInterface>, progress: EngineProgress, element: _.ASTHTMLNodeElement, insertBefore: boolean = false): void
-	{
-		parent.add(
-			b.createAddComment('slicky-import', !insertBefore, (comment: b.BuilderAddComment) => {
-				let selector: string = '';
-				let setParameters: Array<_.ASTHTMLNodeTextAttribute> = [];
-
-				forEach(element.attributes, (attribute: _.ASTHTMLNodeTextAttribute) => {
-					if (attribute.name === 'selector') {
-						selector = attribute.value;
-					} else {
-						setParameters.push(attribute);
-					}
-				});
-
-				// todo: check selector
-
-				let template = builder.findTemplate(selector);
-
-				// todo: check template
-
-				comment.setup.add(
-					b.createImportTemplate(template.id, [], (templateImport) => {
-						forEach(setParameters, (parameter: _.ASTHTMLNodeTextAttribute) => {
-							templateImport.factorySetup.add(
-								b.createSetParameter(hyphensToCamelCase(parameter.name), `"${parameter.value}"`)
-							);
-						});
-
-						forEach(element.properties, (property: _.ASTHTMLNodeExpressionAttribute) => {
-							templateImport.factorySetup.add(
-								b.createSetParameter(hyphensToCamelCase(property.name), this.compileExpression(property.value, progress))
-							);
-						});
-
-						// todo: check whether all injects were injected
-					})
-				);
-			})
-		);
-	}
-
-
-	private processElementTemplate(builder: b.TemplateBuilder, parent: b.BuilderNodesContainer<b.BuilderNodeInterface>, progress: EngineProgress, matcher: Matcher, element: _.ASTHTMLNodeElement): void
-	{
-		let injectAttribute: _.ASTHTMLNodeTextAttribute = find(element.attributes, (attribute: _.ASTHTMLNodeTextAttribute) => {
-			return attribute.name === 'inject';
-		});
-
-		let inject = injectAttribute ? map(injectAttribute.value.split(','), (param: string) => param.trim()) : [];
-
-		let innerProgress = progress.fork();
-		innerProgress.localVariables = merge(innerProgress.localVariables, inject);
-		innerProgress.inTemplate = true;
-
-		builder.addTemplate(element, (template) => {
-			parent.add(
-				b.createAddComment('slicky-template', true, (comment) => {
-					this.plugins.onProcessTemplate({
-						element: element,
-						template: template,
-						comment: comment,
-						progress: innerProgress,
-						engine: this,
-						builder: builder,
-					});
-				})
-			);
-
-			this.processTree(builder, template.body, innerProgress, matcher, element, true);
-		});
-	}
-
-
-	public compileExpression(expr: string, progress: EngineProgress, addMissingReturn: boolean = false): string
+	public _compileExpression(expr: string, progress: EngineProgress, addMissingReturn: boolean = false, parametersFromOuterTemplate: boolean = false): string
 	{
 		let parser = new tjs.Parser(new tjs.Tokenizer(new InputStream(expr)), {
 			addMissingReturn: addMissingReturn,
@@ -332,17 +115,22 @@ export class Engine
 					return identifier;
 				}
 
-				if (identifier.name === '$event') {
+				if (identifier.name === '$event' || identifier.name === '$iterator') {
 					return identifier;
 				}
 
 				if (identifier.name === '$this') {
-					return new tjs.ASTIdentifier('parent');
+					return new tjs.ASTMemberExpression(
+						new tjs.ASTIdentifier('el'),
+						new tjs.ASTIdentifier('_nativeNode')
+					);
 				}
+
+				const templateName = parametersFromOuterTemplate ? 'outer' : 'template';
 
 				let call = new tjs.ASTCallExpression(
 					new tjs.ASTMemberExpression(
-						new tjs.ASTIdentifier('tmpl'),
+						new tjs.ASTIdentifier(templateName),
 						new tjs.ASTIdentifier('getParameter')
 					),
 					[
@@ -359,19 +147,257 @@ export class Engine
 			filterExpressionHook: (filter: tjs.ASTFilterExpression) => {
 				return new tjs.ASTCallExpression(
 					new tjs.ASTMemberExpression(
-						new tjs.ASTIdentifier('tmpl'),
-						new tjs.ASTIdentifier('callFilter')
+						new tjs.ASTIdentifier('template'),
+						new tjs.ASTIdentifier('filter')
 					),
 					[
 						new tjs.ASTStringLiteral(filter.name.name),
 						filter.modify,
-						new tjs.ASTArrayExpression(filter.arguments),
-					]
+					].concat(filter.arguments)
 				);
 			},
 		});
 
 		return parser.parse().render();
+	}
+
+
+	private processText(render: b.BuilderFunction, text: _.ASTHTMLNodeText): void
+	{
+		let value = text.value;
+
+		// replace non-breaking whitespaces with one whitespace
+		value = value
+			.replace(/[\u000d\u0009\u000a\u0020]/g, '\u0020')
+			.replace(/\u0020{2,}/g, '\u0020')
+		;
+
+		if (value === '') {
+			return;
+		}
+
+		render.body.add(`el.addText("${value}");`);
+	}
+
+
+	private processExpression(progress: EngineProgress, render: b.BuilderFunction, expression: _.ASTHTMLNodeExpression): void
+	{
+		render.body.add(
+			`el.addExpression(function() {\n` +
+			`	${this._compileExpression(expression.value, progress, true)};\n` +
+			`});`
+		);
+	}
+
+
+	private processElement(progress: EngineProgress, matcher: Matcher, render: b.BuilderFunction, element: _.ASTHTMLNodeElement): void
+	{
+		let stopProcessing = false;
+
+		element = this.plugins.onBeforeProcessElement(element, {
+			progress: progress,
+			matcher: matcher,
+			engine: this,
+			stopProcessing: () => {
+				stopProcessing = true;
+			},
+		});
+
+		if (stopProcessing) {
+			return;
+		}
+
+		if (element.name === 'template') {
+			return this.processElementTemplate(progress, matcher, render, element);
+		}
+
+		if (element.name === 'include') {
+			return this.processElementInclude(progress, matcher, render, element);
+		}
+
+		const attributes = [];
+		const elementSetup = b.createFunction(null, ['el']);
+
+		this.plugins.onProcessElement(element, {
+			progress: progress,
+			matcher: matcher,
+			engine: this,
+			render: elementSetup,
+		});
+
+		forEach(element.attributes, (attribute: _.ASTHTMLNodeAttribute) => {
+			if (attribute instanceof _.ASTHTMLNodeExpressionAttribute) {
+				attributes.push(`"${attribute.name}": ""`);
+
+				elementSetup.body.add(
+					`el.setDynamicAttribute("${attribute.name}", function() {\n` +
+					`	${this._compileExpression(attribute.value, progress, true)};\n` +
+					`});`
+				);
+
+			} else {
+				attributes.push(`"${attribute.name}": "${attribute.value}"`);
+			}
+		});
+
+		forEach(element.properties, (property: _.ASTHTMLNodeExpressionAttribute) => {
+			if (startsWith(property.name, 'class.')) {
+				const className = property.name.split('.')[1];
+
+				elementSetup.body.add(
+					`el.addDynamicClass("${className}", function() {\n` +
+					`	${this._compileExpression(property.value, progress, true)};\n` +
+					`});`
+				);
+
+			} else {
+				elementSetup.body.add(
+					`template.watch(function() {\n` +
+					`	${this._compileExpression(property.value, progress, true)};\n` +
+					`}, function(value) {\n` +
+					`	el._nativeNode.${hyphensToCamelCase(property.name)} = value;\n` +
+					`});`
+				);
+			}
+		});
+
+		forEach(element.events, (event: _.ASTHTMLNodeExpressionAttributeEvent) => {
+			const code = [];
+
+			if (event.preventDefault) {
+				code.push('$event.preventDefault();');
+			}
+
+			code.push(this._compileExpression(event.value, progress, true) + ';');
+
+			elementSetup.body.add(
+				`el.addEvent("${event.name}", function($event) {\n` +
+				`${indent(code.join('\n'))}\n` +
+				`});`
+			);
+		});
+
+		forEach(element.exports, (exportAttr: _.ASTHTMLNodeAttribute) => {
+			const exportType = exportAttr.value === '' ? '$this' : exportAttr.value;
+
+			elementSetup.body.add(
+				`template.setParameter("${hyphensToCamelCase(exportAttr.name)}", ${this._compileExpression(exportType, progress)});`
+			);
+		});
+
+		this._processTree(elementSetup, progress, matcher, element);
+
+		this.plugins.onAfterProcessElement(element, {
+			progress: progress,
+			matcher: matcher,
+			engine: this,
+			render: elementSetup,
+		});
+
+		const elementArguments = [`"${element.name}"`];
+
+		if (attributes.length) {
+			elementArguments.push(`{${attributes.join(', ')}}`);
+		}
+
+		if (!elementSetup.body.isEmpty()) {
+			if (!attributes.length) {
+				elementArguments.push('{}');
+			}
+
+			elementArguments.push(elementSetup.render());
+		}
+
+		render.body.add(`el.addElement(${elementArguments.join(', ')});`);
+	}
+
+
+	private processElementTemplate(progress: EngineProgress, matcher: Matcher, render: b.BuilderFunction, element: _.ASTHTMLNodeElement): void
+	{
+		const injectAttribute: _.ASTHTMLNodeTextAttribute = find(element.attributes, (attribute: _.ASTHTMLNodeTextAttribute) => {
+			return attribute.name === 'inject';
+		});
+
+		const inject = injectAttribute ? map(injectAttribute.value.split(','), (param: string) => param.trim()) : [];
+
+		const innerProgress = progress.fork();
+		const template = progress.addTemplate(element);
+
+		innerProgress.localVariables = merge(innerProgress.localVariables, inject);
+		innerProgress.inTemplate = true;
+
+		const renderTemplate = b.createFunction(null, ['template', 'el']);
+		const renderAfter = b.createFunction(null, []);
+
+		this.plugins.onProcessTemplate({
+			element: element,
+			template: template,
+			progress: innerProgress,
+			engine: this,
+			render: renderAfter,
+			renderTemplate: renderTemplate,
+		});
+
+		this._processTree(renderTemplate, innerProgress, matcher, element);
+
+		render.body.add(
+			`template.declareTemplate("${template.name}", ${renderTemplate.render()});`
+		);
+
+		render.body.append(renderAfter.body);
+	}
+
+
+	private processElementInclude(progress: EngineProgress, matcher: Matcher, render: b.BuilderFunction, element: _.ASTHTMLNodeElement): void
+	{
+		const parameters: Array<string> = [];
+		let selector: string = '';
+
+		forEach(element.attributes, (attribute: _.ASTHTMLNodeTextAttribute) => {
+			if (attribute.name === 'selector') {
+				selector = attribute.value;
+			} else {
+				parameters.push(`"${hyphensToCamelCase(attribute.name)}": "${attribute.value}"`);
+			}
+		});
+
+		if (selector === '') {
+			throw new Error('Element <include> must have the "selector" attribute for specific <template>.');
+		}
+
+		const template = progress.findTemplateBySelector(matcher, selector);
+
+		if (!exists(template)) {
+			throw new Error(`Element <include> tries to include unknown <template> with "${selector}" selector.`);
+		}
+
+		const templateArguments = [
+			`"${template.name}"`,
+		];
+
+		if (parameters.length) {
+			templateArguments.push(`{${parameters.join(', ')}}`);
+		}
+
+		const templateSetup = b.createFunction(null, ['template', 'outer']);
+
+		forEach(element.properties, (property: _.ASTHTMLNodeExpressionAttribute) => {
+			templateSetup.body.add(
+				`outer.watch(function() {\n` +
+				`	${this._compileExpression(property.value, progress, true, true)};\n` +
+				`}, function(value) {\n` +
+				`	template.setParameter("${hyphensToCamelCase(property.name)}", value);\n` +
+				`});`
+			);
+		});
+
+		if (!templateSetup.body.isEmpty()) {
+			templateArguments.push(templateSetup.render());
+		}
+
+		render.body.add(
+			`template.renderTemplate(${templateArguments.join(', ')});`
+		);
 	}
 
 }
