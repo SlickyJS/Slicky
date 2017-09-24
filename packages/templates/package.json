@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/templates",
 	"description": "Slicky templates runtime",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -14,7 +14,7 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/change-detection": "^1.0.4",
+		"@slicky/change-detection": "^1.1.0",
 		"@slicky/realm": "^1.0.1",
 		"@slicky/utils": "^1.1.1"
 	},
