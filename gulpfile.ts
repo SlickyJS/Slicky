@@ -39,15 +39,15 @@ const config: Config = {
 		{name: 'platformServer', root: path.join(__dirname, 'packages', 'platform-server')},
 	],
 	aot: [
-		{name: 'templates', root: path.join(__dirname, 'packages', 'examples', 'examples', 'templates')},
-		{name: 'loop', root: path.join(__dirname, 'packages', 'examples', 'examples', 'loop')},
-		{name: 'todo', root: path.join(__dirname, 'packages', 'examples', 'examples', 'todo')},
+		{name: 'templates', root: path.join(__dirname, 'examples', 'examples', 'templates')},
+		{name: 'loop', root: path.join(__dirname, 'examples', 'examples', 'loop')},
+		{name: 'todo', root: path.join(__dirname, 'examples', 'examples', 'todo')},
 	],
 	examples: [
-		{name: 'directive', root: path.join(__dirname, 'packages', 'examples', 'examples', 'directive')},
-		{name: 'templates', root: path.join(__dirname, 'packages', 'examples', 'examples', 'templates')},
-		{name: 'loop', root: path.join(__dirname, 'packages', 'examples', 'examples', 'loop')},
-		{name: 'todo', root: path.join(__dirname, 'packages', 'examples', 'examples', 'todo')},
+		{name: 'directive', root: path.join(__dirname, 'examples', 'examples', 'directive')},
+		{name: 'templates', root: path.join(__dirname, 'examples', 'examples', 'templates')},
+		{name: 'loop', root: path.join(__dirname, 'examples', 'examples', 'loop')},
+		{name: 'todo', root: path.join(__dirname, 'examples', 'examples', 'todo')},
 	],
 };
 

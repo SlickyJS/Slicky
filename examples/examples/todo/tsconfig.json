@@ -5,6 +5,9 @@
 	},
 	"slickyCompilerOptions": {
 		"rootDir": "./app",
-		"outDir": "./aot"
+		"outDir": "./aot",
+		"exclude": [
+			"bootstrap.ts"
+		]
 	}
 }
