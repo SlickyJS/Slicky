@@ -5,6 +5,7 @@ import {AbstractExtension} from '@slicky/core';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {ApplicationTemplate} from '@slicky/templates/templates';
+import {Renderer} from '@slicky/templates/dom';
 import {RootDirectiveRunner} from '../runtime';
 import {PlatformInterface} from '../platform';
 
@@ -68,13 +69,18 @@ export class Application
 		const el: Element = isString(elOrSelector) ? doc.querySelector(<string>elOrSelector) : <Element>elOrSelector;
 
 		const applicationTemplate = new ApplicationTemplate;
-		const runner = new RootDirectiveRunner(doc, platform, applicationTemplate, this.container, this.metadataLoader, this.extensions, el);
+		const renderer = new Renderer(doc);
+		const runner = new RootDirectiveRunner(doc, platform, applicationTemplate, this.container, this.metadataLoader, this.extensions, renderer, el);
 
 		forEach(this.extensions.getServices(), (provider: ProviderOptions) => {
 			this.container.addService(provider.service, provider.options);
 		});
 
 		this.metadataLoader.addGlobalFilters(this.extensions.getFilters());
+
+		this.container.addService(Renderer, {
+			useValue: renderer,
+		});
 
 		this.container.addService(RootDirectiveRunner, {
 			useValue: runner,

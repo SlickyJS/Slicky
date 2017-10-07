@@ -27,14 +27,13 @@ export class DirectiveFactory
 	private directives: {[hash: number]: DirectiveDefinitionDirective} = {};
 
 
-	constructor(document: Document, platform: PlatformInterface, extensions: ExtensionsManager, metadataLoader: DirectiveMetadataLoader, application: ApplicationTemplate)
+	constructor(document: Document, platform: PlatformInterface, extensions: ExtensionsManager, metadataLoader: DirectiveMetadataLoader, application: ApplicationTemplate, renderer: Renderer)
 	{
 		this.document = document;
 		this.platform = platform;
 		this.extensions = extensions;
 		this.application = application;
-
-		this.renderer = new Renderer(this.document);
+		this.renderer = renderer;
 
 		metadataLoader.loaded.subscribe((directive: DirectiveDefinitionDirective) => {
 			this.directives[directive.metadata.hash] = directive;

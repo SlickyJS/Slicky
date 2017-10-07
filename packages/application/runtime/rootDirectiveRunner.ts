@@ -4,6 +4,7 @@ import {forEach, isFunction, exists} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {Container, ProviderOptions} from '@slicky/di';
 import {ApplicationTemplate} from '@slicky/templates/templates';
+import {Renderer} from '@slicky/templates/dom';
 import {PlatformInterface} from '../platform';
 import {DirectiveFactory} from './directiveFactory';
 
@@ -27,7 +28,7 @@ export class RootDirectiveRunner
 	private directiveFactory: DirectiveFactory;
 
 
-	constructor(document: Document, platform: PlatformInterface, template: ApplicationTemplate, container: Container, metadataLoader: DirectiveMetadataLoader, extensions: ExtensionsManager, el: Element)
+	constructor(document: Document, platform: PlatformInterface, template: ApplicationTemplate, container: Container, metadataLoader: DirectiveMetadataLoader, extensions: ExtensionsManager, renderer: Renderer, el: Element)
 	{
 		this.platform = platform;
 		this.template = template;
@@ -36,7 +37,7 @@ export class RootDirectiveRunner
 		this.extensions = extensions;
 		this.el = el;
 
-		this.directiveFactory = new DirectiveFactory(document, this.platform, this.extensions, this.metadataLoader, this.template);
+		this.directiveFactory = new DirectiveFactory(document, this.platform, this.extensions, this.metadataLoader, this.template, renderer);
 	}
 
 
