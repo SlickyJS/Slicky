@@ -1,12 +1,13 @@
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionInput} from '@slicky/core/metadata';
-import {forEach, isFunction, exists} from '@slicky/utils';
+import {forEach, exists} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {Container, ProviderOptions} from '@slicky/di';
 import {ApplicationTemplate} from '@slicky/templates/templates';
 import {Renderer} from '@slicky/templates/dom';
 import {PlatformInterface} from '../platform';
 import {DirectiveFactory} from './directiveFactory';
+import {ComponentTemplate} from './componentTemplate';
 
 
 export class RootDirectiveRunner
@@ -81,10 +82,12 @@ export class RootDirectiveRunner
 		});
 
 		if (metadata.type === DirectiveDefinitionType.Component) {
-			this.runComponentTemplate(container, metadata, directive, el);
-		}
+			const template = this.runComponentTemplate(container, metadata, directive, el);
 
-		if (isFunction(directive['onInit'])) {
+			if (metadata.onInit) {
+				template.run(() => (<any>directive).onInit());
+			}
+		} else if (metadata.onInit) {
 			(<any>directive).onInit();
 		}
 
@@ -92,10 +95,11 @@ export class RootDirectiveRunner
 	}
 
 
-	private runComponentTemplate<T>(container: Container, metadata: DirectiveDefinition, component: T, el: Element): void
+	private runComponentTemplate<T>(container: Container, metadata: DirectiveDefinition, component: T, el: Element): ComponentTemplate
 	{
 		this.extensions.doInitComponentContainer(container, metadata, component);
-		this.directiveFactory.runComponent(container, component, metadata, this.template, el);
+
+		return this.directiveFactory.runComponent(container, component, metadata, this.template, el);
 	}
 
 }

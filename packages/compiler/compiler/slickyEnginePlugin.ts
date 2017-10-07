@@ -254,7 +254,16 @@ export class SlickyEnginePlugin extends EnginePlugin
 				}
 			});
 
-			if (directive.metadata.onInit) {
+			if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
+				if (directive.metadata.onInit) {
+					directiveSetup.body.add(
+						'template.run(function() {\n' +
+						'	directive.onInit();\n' +
+						'});'
+					);
+				}
+
+			} else if (directive.metadata.onInit) {
 				directiveSetup.body.add('directive.onInit();');
 			}
 
