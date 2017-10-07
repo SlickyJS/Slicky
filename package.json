@@ -15,7 +15,8 @@
 	"main": "./lib/index.js",
 	"types": "./lib/index.d.ts",
 	"workspaces": [
-		"packages/*"
+		"packages/*",
+		"examples/*"
 	],
 	"devDependencies": {
 		"@slicky/compiler-cli": "^0.1.0",
