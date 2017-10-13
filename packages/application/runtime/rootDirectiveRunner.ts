@@ -8,6 +8,7 @@ import {Renderer} from '@slicky/templates/dom';
 import {PlatformInterface} from '../platform';
 import {DirectiveFactory} from './directiveFactory';
 import {ComponentTemplate} from './componentTemplate';
+import {RootDirectiveRef} from './rootDirectiveRef';
 
 
 export class RootDirectiveRunner
@@ -51,7 +52,7 @@ export class RootDirectiveRunner
 	}
 
 
-	public runDirective<T>(directiveType: ClassType<T>, metadata: DirectiveDefinition, el: Element, providers: Array<ProviderOptions> = [], setup?: (directive: T) => void): any
+	public runDirective<T>(directiveType: ClassType<T>, metadata: DirectiveDefinition, el: Element, providers: Array<ProviderOptions> = [], setup?: (directive: T) => void): RootDirectiveRef<T>
 	{
 		const container = metadata.type === DirectiveDefinitionType.Component ? this.container.fork() : this.container;
 		const directive = this.directiveFactory.createDirective(container, directiveType, metadata, el, providers);
@@ -99,7 +100,7 @@ export class RootDirectiveRunner
 			}
 		}
 
-		return directive;
+		return new RootDirectiveRef(el, directive, metadata, template === null ? undefined : template);
 	}
 
 
