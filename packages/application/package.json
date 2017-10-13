@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/application",
 	"description": "Slicky application",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -14,7 +14,7 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/core": "^0.3.0",
+		"@slicky/core": "^0.4.0",
 		"@slicky/di": "^1.0.1",
 		"@slicky/lang": "^1.0.0",
 		"@slicky/templates": "^1.1.0",
