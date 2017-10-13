@@ -1,3 +1,4 @@
+import {ChangeDetectorRef} from '@slicky/core';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionInput} from '@slicky/core/metadata';
 import {forEach, exists, isFunction} from '@slicky/utils';
@@ -54,7 +55,21 @@ export class RootDirectiveRunner
 
 	public runDirective<T>(directiveType: ClassType<T>, metadata: DirectiveDefinition, el: Element, providers: Array<ProviderOptions> = [], setup?: (directive: T) => void): RootDirectiveRef<T>
 	{
+		let changeDetector: ChangeDetectorRef;
+
 		const container = metadata.type === DirectiveDefinitionType.Component ? this.container.fork() : this.container;
+
+		if (metadata.type === DirectiveDefinitionType.Component) {
+			changeDetector = new ChangeDetectorRef;
+
+			providers.push({
+				service: ChangeDetectorRef,
+				options: {
+					useValue: changeDetector,
+				},
+			});
+		}
+
 		const directive = this.directiveFactory.createDirective(container, directiveType, metadata, el, providers);
 
 		forEach(metadata.inputs, (input: DirectiveDefinitionInput) => {
@@ -85,7 +100,7 @@ export class RootDirectiveRunner
 		let template: ComponentTemplate = null;
 
 		if (metadata.type === DirectiveDefinitionType.Component) {
-			template = this.runComponentTemplate(container, metadata, directive, el);
+			template = this.runComponentTemplate(container, metadata, directive, el, changeDetector);
 		}
 
 		if (isFunction(setup)) {
@@ -104,11 +119,11 @@ export class RootDirectiveRunner
 	}
 
 
-	private runComponentTemplate<T>(container: Container, metadata: DirectiveDefinition, component: T, el: Element): ComponentTemplate
+	private runComponentTemplate<T>(container: Container, metadata: DirectiveDefinition, component: T, el: Element, changeDetector: ChangeDetectorRef): ComponentTemplate
 	{
 		this.extensions.doInitComponentContainer(container, metadata, component);
 
-		return this.directiveFactory.runComponent(container, component, metadata, this.template, el);
+		return this.directiveFactory.runComponent(container, component, metadata, this.template, el, changeDetector);
 	}
 
 }
