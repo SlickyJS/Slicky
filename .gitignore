@@ -4,6 +4,9 @@ node_modules/
 packages/**/*.js
 packages/**/*.d.ts
 
+examples/**/*.js
+examples/**/*.d.ts
+
 npm-debug.log
 lerna-debug.log
 yarn-error.log
