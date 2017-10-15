@@ -231,3 +231,53 @@ class MyDirective implements OnInit, OnDestroy, OnUpdate
 	
 }
 ```
+
+## Dynamically created directives
+
+You can dynamically create new directives from within another directive or [component](./components.md). This can be 
+useful eg. for creating modal dialogs.
+
+```typescript
+import {Directive, OnInit} from '@slicky/core';
+import {DirectiveMetadataLoader} from '@slicky/core/metadata';
+import {RootDirectiveRunner} from '@slicky/application/runtime';
+
+@Directive({
+	selector: '[test-directive]',
+})
+class ParentDirective implements OnInit
+{
+	
+	
+	private metadataLoader: DirectiveMetadataLoader;
+	
+	private directiveRunner: RootDirectiveRunner;
+	
+	
+	constructor(metadataLoader: DirectiveMetadataLoader, directiveRunner: RootDirectiveRunner)
+	{
+		this.metadataLoader = metadataLoader;
+		this.directiveRunner = directiveRunner;
+	}
+	
+	
+	public onInit(): void
+	{
+		const el = document.querySelector('#dynamic-directive');
+		
+		const metadata = this.metadataLoader.load(DynamicDirective);
+		const directiveRef = this.directiveRunner.runDirective(DynamicDirective, metadata, el);
+		
+		console.log(directiveRef.getDirective());   // instance of DynamicDirective
+		console.log(directiveRef.getTemplate());    // only for components
+		
+		directiveRef.destroy();    // remove el and destroy directive with template
+	}
+	
+}
+
+@Directive({
+	selector: '[dynamic-directive]',
+})
+class DynamicDirective {}
+```
