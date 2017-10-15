@@ -277,6 +277,31 @@ export function values(obj: any): Array<any>
 }
 
 
+export function flatten<T>(arr: Array<any>): Array<T>
+{
+	if (!isArray(arr)) {
+		throw new Error(`flatten: only arrays are allowed, ${getType(arr)} given.`);
+	}
+
+	const result = [];
+
+	const process = function(arr: Array<any>): void
+	{
+		forEach(arr, (value: any) => {
+			if (isArray(value)) {
+				process(value);
+			} else {
+				result.push(value);
+			}
+		});
+	};
+
+	process(arr);
+
+	return result;
+}
+
+
 // from typescript
 export function extend(child: any, parent: any): any
 {

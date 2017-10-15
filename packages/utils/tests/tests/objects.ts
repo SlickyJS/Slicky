@@ -1,4 +1,4 @@
-import {getType, isString, isNumber, isArray, isObject, isFunction, isIterable, exists, forEach, map, find, filter, unique, clone, merge, toArray, extend, keys, values} from '../..';
+import {getType, isString, isNumber, isArray, isObject, isFunction, isIterable, exists, forEach, map, find, filter, unique, clone, merge, toArray, extend, keys, values, flatten} from '../..';
 import {expect} from 'chai';
 
 
@@ -420,6 +420,20 @@ describe('#objects', () => {
 
 		it('should get keys from object', () => {
 			expect(values({a: 1, b: 2, c: 3})).to.be.eql([1, 2, 3]);
+		});
+
+	});
+
+	describe('flatten()', () => {
+
+		it('should throw an error when flattening non arrays', () => {
+			expect(() => {
+				flatten(<any>5);
+			}).to.throw(Error, 'flatten: only arrays are allowed, [object Number] given.');
+		});
+
+		it('should flatten an array', () => {
+			expect(flatten([1, [2], [3, [[4]]]])).to.be.eql([1, 2, 3, 4]);
 		});
 
 	});
