@@ -226,7 +226,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 				}
 
 				directiveSetup.body.add(
-					`directive.${output.property}.subscribe(function($value) {\n` +
+					`directive.${output.property}.subscribe(function($event) {\n` +
 					`	${isComponent ? 'outer' : 'template'}.run(function() {\n` +
 					`		${arg.engine._compileExpression(event.value, arg.progress)};\n` +
 					`	});\n` +
@@ -333,10 +333,6 @@ export class SlickyEnginePlugin extends EnginePlugin
 	public onExpressionVariableHook(identifier: tjs.ASTCallExpression, arg: OnExpressionVariableHookArgument): tjs.ASTExpression
 	{
 		let parameter: string = (<tjs.ASTStringLiteral>identifier.arguments[0]).value;
-
-		if (parameter === '$value') {
-			return new tjs.ASTIdentifier(parameter);
-		}
 
 		// template.getParameter('variableName')
 		if (arg.progress.localVariables.indexOf(parameter) >= 0) {

@@ -161,12 +161,11 @@ Outputs are similar to inputs, but they work in the opposite way. They can notif
 inside of directive.
 
 ```html
-<div class="my-directive" (generated)="$this.innerText = $value"></div>
+<div class="my-directive" (generated)="$this.innerText = $event"></div>
 ```
 
-*`$this` always refers to current element.*
-
-*`$value` is the value sent from `EventEmitter`.*
+* `$this` always refers to current element.
+* `$event` is the value sent from `EventEmitter`.
 
 ```typescript
 import {Directive, OnInit, Output} from '@slicky/core';
