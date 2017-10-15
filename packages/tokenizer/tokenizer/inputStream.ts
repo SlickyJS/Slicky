@@ -49,9 +49,11 @@ export class InputStream
 	}
 
 
-	public peek(): string
+	public peek(peek: number = 1): string
 	{
-		return this.readCharacter(this.position + ++this.peekPosition);
+		this.peekPosition += peek;
+
+		return this.readCharacter(this.position + this.peekPosition);
 	}
 
 

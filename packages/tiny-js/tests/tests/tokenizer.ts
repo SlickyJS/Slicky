@@ -176,6 +176,15 @@ describe('#Tokenizer', () => {
 			expect(tokenizer.eof()).to.be.equal(true);
 		});
 
+		it('should read interval name', () => {
+			let tokenizer = Tokenizer.createFromString('interval in intervals');
+
+			expectToken(tokenizer.next(), TokenType.Name, 'interval');
+			expectToken(tokenizer.next(), TokenType.Keyword, 'in');
+			expectToken(tokenizer.next(), TokenType.Name, 'intervals');
+			expect(tokenizer.eof()).to.be.equal(true);
+		});
+
 	});
 
 	describe('eof()', () => {

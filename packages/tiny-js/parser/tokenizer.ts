@@ -1,4 +1,5 @@
 import {AbstractTokenizer, InputStream} from '@slicky/tokenizer';
+import {exists} from '@slicky/utils';
 import {KEYWORDS, OPERATORS, PUNCTUATIONS} from './data';
 
 
@@ -78,7 +79,14 @@ export class Tokenizer extends AbstractTokenizer<Token>
 
 		let current = input.current();
 
-		if (input.isSequenceFollowing(...KEYWORDS)) {
+		const maybeKeyword = input.isSequenceFollowing(...KEYWORDS);
+		const peekAfter = exists(maybeKeyword) ? input.peek(maybeKeyword.length) : undefined;
+
+		input.resetPeek();
+
+		if (maybeKeyword && (!exists(peekAfter) || !isName(peekAfter))) {
+			input.resetPeek();
+
 			return {
 				type: TokenType.Keyword,
 				value: input.matchSequence(...KEYWORDS),
@@ -139,6 +147,12 @@ function isDigit(ch: string): boolean
 function isWhitespace(ch: string): boolean
 {
 	return ch === ' ';
+}
+
+
+function isName(ch: string): boolean
+{
+	return /[a-z0-9]/i.test(ch);
 }
 
 
