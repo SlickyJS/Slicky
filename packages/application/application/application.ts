@@ -1,5 +1,5 @@
 import {Container, ProviderOptions} from '@slicky/di';
-import {exists, forEach, isString} from '@slicky/utils';
+import {exists, forEach, isString, flatten} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {AbstractExtension} from '@slicky/core';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
@@ -35,8 +35,8 @@ export class Application
 	constructor(container: Container, options: ApplicationOptions = {})
 	{
 		this.container = container;
-		this.precompile = exists(options.precompile) ? options.precompile : [];
-		this.directives = exists(options.directives) ? options.directives : [];
+		this.precompile = exists(options.precompile) ? flatten<ClassType<any>>(options.precompile) : [];
+		this.directives = exists(options.directives) ? flatten<ClassType<any>>(options.directives) : [];
 
 		this.extensions = new ExtensionsManager;
 		this.metadataLoader = new DirectiveMetadataLoader(this.extensions);
