@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/tokenizer",
 	"description": "Base classes for custom tokenizers and parsers",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -14,7 +14,7 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/utils": "^1.1.1"
+		"@slicky/utils": "^1.2.0"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",
