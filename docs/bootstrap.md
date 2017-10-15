@@ -11,6 +11,9 @@ In this file you create two base parts of whole application. Container for depen
 better [here](./di.md) and application itself.
 
 ```typescript
+import 'zone.js';
+import 'reflect-metadata';
+
 import {Container} from '@slicky/di';
 import {Application} from '@slicky/application';
 import {PlatformBrowser} from '@slicky/platform-browser';
