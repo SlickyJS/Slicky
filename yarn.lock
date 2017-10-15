@@ -51,10 +51,6 @@
   dependencies:
     "@slicky/utils" "^1.0.11"
 
-"@slicky/utils@^1.0.11", "@slicky/utils@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@slicky/utils/-/utils-1.1.1.tgz#234e43046bff6c43ed1bc62b822f87177154facc"
-
 "@types/chai@^4.0.3":
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.0.4.tgz#fe86315d9a66827feeb16f73bc954688ec950e18"
@@ -2604,7 +2600,7 @@ jschardet@^1.4.2:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/jschardet/-/jschardet-1.5.1.tgz#c519f629f86b3a5bedba58a88d311309eec097f9"
 
-jsdom@^11.2.0:
+jsdom@^11.2.0, jsdom@^11.3.0:
   version "11.3.0"
   resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-11.3.0.tgz#7b2dfe6227d014084d80f6b3e98fa1e4cef199e7"
   dependencies:

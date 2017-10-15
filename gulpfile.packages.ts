@@ -26,7 +26,7 @@ const unsortedPackages = fs.readdirSync(ROOT)
 		return {
 			root: directory,
 			name: pckg.name.substr(8),
-			dependencies: Object.keys(pckg.dependencies)
+			dependencies: Object.keys(exists(pckg.dependencies) ? pckg.dependencies : {})
 				.filter((dependency: string) => startsWith(dependency, '@slicky/'))
 				.map((dependency: string) => dependency.substr(8)),
 		};
