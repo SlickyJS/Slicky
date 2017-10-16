@@ -48,45 +48,6 @@ describe('#Compiler', () => {
 			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.simple'));
 		});
 
-		it('should return all templates', () => {
-			@Component({
-				name: 'my-component1',
-				template: '',
-			})
-			class TestComponent1 {}
-
-			@Component({
-				name: 'my-component2',
-				template: '',
-			})
-			class TestComponent2 {}
-
-			const metadata1 = metadataLoader.load(TestComponent1);
-			const metadata2 = metadataLoader.load(TestComponent2);
-
-			compiler.compile(metadata1);
-			compiler.compile(metadata2);
-
-			expect(compiler.getTemplates()).to.have.keys([
-				metadata1.hash,
-				metadata2.hash,
-			]);
-		});
-
-		it('should return compiled template by hash', () => {
-			@Component({
-				name: 'my-component1',
-				template: '',
-			})
-			class TestComponent {}
-
-			const metadata = metadataLoader.load(TestComponent);
-
-			compiler.compile(metadata);
-
-			expect(compiler.getTemplateByHash(metadata.hash)).to.be.a('string');
-		});
-
 		it('should compile component with directive', () => {
 			@Directive({
 				selector: 'directive',
@@ -183,31 +144,6 @@ describe('#Compiler', () => {
 			}
 
 			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.hostElements'));
-		});
-
-		it('should compile inner component', () => {
-			@Component({
-				name: 'child-component',
-				template: '',
-			})
-			class TestComponentChild {}
-
-			@Component({
-				name: 'parent-component',
-				template: '<child-component></child-component>',
-				directives: [TestComponentChild],
-			})
-			class TestComponentParent {}
-
-			const metadataChild = metadataLoader.load(TestComponentChild);
-			const metadataParent = metadataLoader.load(TestComponentParent);
-
-			compiler.compile(metadataParent);
-
-			expect(compiler.getTemplates()).to.have.keys([
-				metadataChild.hash,
-				metadataParent.hash,
-			]);
 		});
 
 		it('should throw an error when required input is missing', () => {

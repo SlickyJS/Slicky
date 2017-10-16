@@ -1,4 +1,4 @@
-import {forEach, find, exists, filter, clone, indent, hyphensToCamelCase} from '@slicky/utils';
+import {forEach, find, exists, filter, indent, hyphensToCamelCase} from '@slicky/utils';
 import {
 	EnginePlugin, OnProcessElementArgument, OnBeforeCompileArgument, OnAfterProcessElementArgument,
 	OnExpressionVariableHookArgument
@@ -25,33 +25,20 @@ export class SlickyEnginePlugin extends EnginePlugin
 
 	private metadata: c.DirectiveDefinition;
 
-	private processedDirectivesCount: number;
+	private processedDirectivesCount: number = 0;
 
-	private compileComponents: Array<c.DirectiveDefinition>;
+	private processedHostElements: Array<c.DirectiveDefinitionElement> = [];
 
-	private processedHostElements: Array<c.DirectiveDefinitionElement>;
+	private processedChildDirectives: Array<c.DirectiveDefinitionChildDirective> = [];
 
-	private processedChildDirectives: Array<c.DirectiveDefinitionChildDirective>;
-
-	private processingDirectives: Array<ProcessingDirective>;
+	private processingDirectives: Array<ProcessingDirective> = [];
 
 
-	public setComponentMetadata(metadata: c.DirectiveDefinition)
+	constructor(metadata: c.DirectiveDefinition)
 	{
+		super();
+
 		this.metadata = metadata;
-		this.processedDirectivesCount = 0;
-		this.compileComponents = [];
-		this.processedHostElements = [];
-		this.processedChildDirectives = [];
-		this.processingDirectives = [];
-	}
-
-
-	public eachCompileComponentRequest(iterator: (componentMetadata: c.DirectiveDefinition) => void): void
-	{
-		forEach(clone(this.compileComponents), (componentMetadata: c.DirectiveDefinition) => {
-			iterator(componentMetadata);
-		});
 	}
 
 
@@ -131,10 +118,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 			const directiveId = this.processedDirectivesCount++;
 			const isComponent = directive.metadata.type === c.DirectiveDefinitionType.Component;
 
-			if (isComponent) {
-				this.compileComponents.push(directive.metadata);
-
-			} else {
+			if (!isComponent) {
 				this.processingDirectives.push({
 					id: directiveId,
 					element: element,

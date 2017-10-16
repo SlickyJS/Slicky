@@ -116,9 +116,7 @@ glob(path.join('**', '*.ts'), {
 
 				processedTemplates.push(metadata.hash);
 
-				const template = compiler.compile(metadata, {
-					recursiveCompile: false,
-				});
+				const template = compiler.compile(metadata);
 
 				process.send({
 					template: {

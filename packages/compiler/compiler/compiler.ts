@@ -4,32 +4,14 @@ import {exists} from '@slicky/utils';
 import {SlickyEnginePlugin} from './slickyEnginePlugin';
 
 
-export declare interface CompilerOptions
-{
-	recursiveCompile?: boolean;
-}
-
-
 export class Compiler
 {
 
 
-	private engine: Engine;
-
-	private plugin: SlickyEnginePlugin;
-
 	private templates: {[hash: number]: string} = {};
 
 
-	constructor()
-	{
-		this.engine = new Engine;
-		this.plugin = new SlickyEnginePlugin;
-		this.engine.addPlugin(this.plugin);
-	}
-
-
-	public compile(metadata: DirectiveDefinition, options: CompilerOptions = {}): string
+	public compile(metadata: DirectiveDefinition): string
 	{
 		if (exists(this.templates[metadata.hash])) {
 			return this.templates[metadata.hash];
@@ -39,35 +21,25 @@ export class Compiler
 			return;
 		}
 
-		const recursiveCompile = exists(options.recursiveCompile) ? options.recursiveCompile : true;
+		const engine = this.createEngine(metadata);
 
-		this.plugin.setComponentMetadata(metadata);
-
-		this.templates[metadata.hash] = this.engine.compile(metadata.template, {
+		this.templates[metadata.hash] = engine.compile(metadata.template, {
 			name: metadata.hash + '',
 			styles: metadata.styles,
 			encapsulation: metadata.encapsulation,
 		});
 
-		if (recursiveCompile) {
-			this.plugin.eachCompileComponentRequest((componentMetadata: DirectiveDefinition) => {
-				this.compile(componentMetadata);
-			});
-		}
-
 		return this.templates[metadata.hash];
 	}
 
 
-	public getTemplates(): {[hash: number]: string}
+	private createEngine(metadata: DirectiveDefinition): Engine
 	{
-		return this.templates;
-	}
+		const engine = new Engine;
 
+		engine.addPlugin(new SlickyEnginePlugin(metadata));
 
-	public getTemplateByHash(hash: number): string
-	{
-		return this.templates[hash];
+		return engine;
 	}
 
 }

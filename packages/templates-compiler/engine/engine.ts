@@ -3,7 +3,6 @@ import {forEach, map, hyphensToCamelCase, find, merge, startsWith, exists, inden
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
 import {InputStream} from '@slicky/tokenizer';
-import {EventEmitter} from '@slicky/event-emitter';
 import {TemplateEncapsulation} from '@slicky/templates/templates';
 import {DocumentWalker} from '../querySelector';
 import {EnginePluginManager} from './enginePluginManager';
@@ -15,7 +14,7 @@ import * as b from '../builder';
 
 export class EngineCompileOptions
 {
-	name?: string;		// todo: remove
+	name?: string;
 	encapsulation?: TemplateEncapsulation;
 	styles?: Array<string>;
 }
@@ -24,8 +23,6 @@ export class EngineCompileOptions
 export class Engine
 {
 
-
-	public compiled = new EventEmitter<{name: string|number, code: string}>();	// todo: remove
 
 	private plugins: EnginePluginManager;
 
@@ -80,14 +77,7 @@ export class Engine
 			render: render,
 		});
 
-		const code = builder.render();
-
-		this.compiled.emit({
-			name: options.name,
-			code: code,
-		});
-
-		return code;
+		return builder.render();
 	}
 
 
