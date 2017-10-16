@@ -281,6 +281,8 @@ export class Engine
 		forEach(element.exports, (exportAttr: _.ASTHTMLNodeAttribute) => {
 			const exportType = exportAttr.value === '' ? '$this' : exportAttr.value;
 
+			progress.localVariables.push(hyphensToCamelCase(exportAttr.name));
+
 			elementSetup.body.add(
 				`template.setParameter("${hyphensToCamelCase(exportAttr.name)}", ${this._compileExpression(exportType, progress)});`
 			);

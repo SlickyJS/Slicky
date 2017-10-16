@@ -547,6 +547,104 @@ describe('#Compiler', () => {
 			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.styles'));
 		});
 
+		it('should export an element if directive is not exportable', () => {
+			@Directive({
+				selector: 'div',
+			})
+			class TestDirective {}
+
+			@Component({
+				name: 'test-component',
+				template: '<div #el></div>{{ el.innerText }}',
+				directives: [TestDirective],
+			})
+			class TestComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.export.element'));
+		});
+
+		it('should export a default directive', () => {
+			@Directive({
+				selector: 'div',
+				exportAs: 'dir',
+			})
+			class TestDirective
+			{
+
+
+				public text = 'Hello world';
+
+			}
+
+			@Component({
+				name: 'test-component',
+				template: '<div #dir></div>{{ dir.text }}',
+				directives: [TestDirective],
+			})
+			class TestComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.export.defaultDirective'));
+		});
+
+		it('should export specific directives and element', () => {
+			@Directive({
+				selector: 'div',
+				exportAs: 'dirA',
+			})
+			class TestDirectiveA
+			{
+
+
+				public name = 'David';
+
+			}
+
+			@Directive({
+				selector: 'div',
+				exportAs: 'dirB',
+			})
+			class TestDirectiveB
+			{
+
+
+				public name = 'Clare';
+
+			}
+
+			@Component({
+				name: 'test-component',
+				template: '<div #el="$this" #dir-a="dirA" #dir-b="dirB"></div>{{ el.innerText }} {{ dirA.name }} {{ dirB.name }}',
+				directives: [TestDirectiveA, TestDirectiveB],
+			})
+			class TestComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.export.specific'));
+		});
+
+		it('should export component', () => {
+			@Component({
+				name: 'child-component',
+				exportAs: 'cmp',
+				template: '',
+			})
+			class TestChildDirective
+			{
+
+
+				public text = 'Hello world';
+
+			}
+
+			@Component({
+				name: 'test-component',
+				template: '<child-component #child></child-component>{{ child.innerText }}',
+				directives: [TestChildDirective],
+			})
+			class TestParentComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestParentComponent))).to.be.equal(compareWith('compiler.export.component'));
+		});
+
 	});
 
 });

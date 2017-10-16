@@ -210,6 +210,78 @@ The code above is expanded into the full form in compile time:
 <photo [size]="photoSize" (sizeChange)="photoSize = $event"></photo>
 ```
 
+## Exports
+
+Exports are another special form of element attributes. They can be used for accessing element or directives inside of 
+templates.
+
+```typescript
+import {Component} from '@slicky/core';
+
+@Component({
+	name: 'media-player',
+	exportAs: 'media-player',
+	template: '...',
+})
+class MediaPlayerComponent
+{
+	
+	
+	public play(): void {}
+	
+	public pause(): void {}
+	
+}
+```
+
+```html
+<media-player #player></media-player>
+<button (click)="player.pause()"></button>
+```
+
+When there is no directive attached to element, the HTML element instance would be exported.
+
+```html
+<div #el>Hello world</div>
+DIV: {{ el.innerText }}
+```
+
+However this only works when you have only one or non directives attached. When you have more of them, you may rather 
+want to specify what exactly you want to export.
+
+```typescript
+import {Directive} from '@slicky/core';
+
+@Directive({
+	selector: 'div',
+	exportAs: 'a',
+})
+class TestDirectiveA
+{
+	
+	
+	public name = 'David';
+	
+}
+
+@Directive({
+	selector: 'div',
+	exportAs: 'b',
+})
+class TestDirectiveB
+{
+	
+	
+	public name = 'Clare';
+	
+}
+```
+
+```html
+<div #el="$this" #directive-a="a" #directive-b="b">Hello</div>
+TEXT: {{ el.innerText }} {{ directiveA.name }} and {{ directiveB.name }}
+```
+
 ## Life cycle events
 
 These are methods on directives which gives you an option to monitor changes.

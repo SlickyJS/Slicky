@@ -88,8 +88,8 @@ describe('#Engine', () => {
 
 		it('should export elements', () => {
 			let template = engine.compile(
-				'<div #a></div>' +
-				'<div #b="$this"></div>'
+				'<div #a></div>{{ a.innerText }}' +
+				'<div #b="$this"></div>{{ b.innerText }}'
 			);
 
 			expect(template).to.be.equal(compareWith('engine.compile.exports'));

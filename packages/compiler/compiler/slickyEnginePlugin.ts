@@ -1,4 +1,4 @@
-import {forEach, find, exists, filter, clone, indent} from '@slicky/utils';
+import {forEach, find, exists, filter, clone, indent, hyphensToCamelCase} from '@slicky/utils';
 import {
 	EnginePlugin, OnProcessElementArgument, OnBeforeCompileArgument, OnAfterProcessElementArgument,
 	OnExpressionVariableHookArgument
@@ -151,6 +151,25 @@ export class SlickyEnginePlugin extends EnginePlugin
 			}
 
 			const directiveSetup = createFunction(null, ['directive']);
+
+			if (exists(directive.metadata.exportAs)) {
+				const exportInto = find(element.exports, (elementExport: _.ASTHTMLNodeTextAttribute) => {
+					if (elementExport.value === '' || elementExport.value === directive.metadata.exportAs) {
+						return true;
+					}
+				});
+
+				if (exists(exportInto)) {
+					const exportIntoTemplate = directive.metadata.type === c.DirectiveDefinitionType.Component ?
+						'outer' :
+						'template'
+					;
+
+					arg.progress.localVariables.push(hyphensToCamelCase(hyphensToCamelCase(exportInto.name)));
+					directiveSetup.body.add(`${exportIntoTemplate}.setParameter("${hyphensToCamelCase(exportInto.name)}", directive);`);
+					element.exports.splice(element.exports.indexOf(exportInto), 1);
+				}
+			}
 
 			forEach(directive.metadata.inputs, (input: c.DirectiveDefinitionInput) => {
 				let property: _.ASTHTMLNodeAttribute;
