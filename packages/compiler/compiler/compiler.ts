@@ -1,7 +1,7 @@
 import {DirectiveDefinitionType, DirectiveDefinition} from '@slicky/core/metadata';
 import {Engine} from '@slicky/templates-compiler';
 import {exists} from '@slicky/utils';
-import {SlickyEnginePlugin} from './slickyEnginePlugin';
+import {SlickyEnginePluginManager} from './slickyEnginePluginManager';
 
 
 export class Compiler
@@ -37,7 +37,7 @@ export class Compiler
 	{
 		const engine = new Engine;
 
-		engine.addPlugin(new SlickyEnginePlugin(metadata));
+		engine.addPlugin(new SlickyEnginePluginManager(metadata));
 
 		return engine;
 	}
