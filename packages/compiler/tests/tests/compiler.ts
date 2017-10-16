@@ -298,6 +298,33 @@ describe('#Compiler', () => {
 			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.childDirective.template'));
 		});
 
+		it('should not set @ChildDirective from <template> for directive', () => {
+			@Directive({
+				selector: 'child-directive',
+			})
+			class TestChildDirective {}
+
+			@Directive({
+				selector: 'parent-directive',
+			})
+			class TestParentDirective
+			{
+
+				@ChildDirective(TestChildDirective)
+				public directive;
+
+			}
+
+			@Component({
+				name: 'test-component',
+				template: '<template><parent-directive></parent-directive></template>',
+				directives: [TestChildDirective, TestParentDirective],
+			})
+			class TestComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.childDirective.directives.template'));
+		});
+
 		it('should throw an error when @ChildDirective is missing', () => {
 			@Directive({
 				selector: 'directive',
@@ -325,6 +352,38 @@ describe('#Compiler', () => {
 			}).to.throw(Error, 'TestComponent.directive: required @ChildDirective TestDirective was not found.');
 		});
 
+		it('should throw an error when @ChildDirective for directive is missing', () => {
+			@Directive({
+				selector: 'child-directive',
+			})
+			class TestChildDirective {}
+
+			@Directive({
+				selector: 'parent-directive',
+			})
+			class TestParentDirective
+			{
+
+				@ChildDirective(TestChildDirective)
+				@Required()
+				public directive;
+
+			}
+
+			@Component({
+				name: 'test-component',
+				template: '<parent-directive></parent-directive>',
+				directives: [TestChildDirective, TestParentDirective],
+			})
+			class TestComponent {}
+
+			const metadata = metadataLoader.load(TestComponent);
+
+			expect(() => {
+				compiler.compile(metadata);
+			}).to.throw(Error, 'TestParentDirective.directive: required @ChildDirective TestChildDirective was not found.');
+		});
+
 		it('should compile @ChildDirective', () => {
 			@Directive({
 				selector: 'directive',
@@ -345,6 +404,61 @@ describe('#Compiler', () => {
 			}
 
 			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.childDirective'));
+		});
+
+		it('should compile @ChildDirective for directives', () => {
+			@Directive({
+				selector: 'child-directive',
+			})
+			class TestChildDirective {}
+
+			@Directive({
+				selector: 'parent-directive',
+			})
+			class TestParentDirective
+			{
+
+				@ChildDirective(TestChildDirective)
+				public directive;
+
+			}
+
+			@Component({
+				name: 'test-component',
+				template: '<parent-directive><child-directive></child-directive></parent-directive>',
+				directives: [TestChildDirective, TestParentDirective],
+			})
+			class TestComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.childDirective.directives'));
+		});
+
+		it('should compile @ChildDirective for component in directive', () => {
+			@Component({
+				name: 'child-component',
+				template: '',
+			})
+			class TestChildComponent {}
+
+			@Directive({
+				selector: 'parent-directive',
+			})
+			class TestParentDirective
+			{
+
+				@ChildDirective(TestChildComponent)
+				public directive;
+
+			}
+
+			@Component({
+				name: 'test-component',
+				template: '<parent-directive><child-component></child-component></parent-directive>',
+				directives: [TestChildComponent, TestParentDirective],
+			})
+			class TestComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.childDirective.directives.component'));
 		});
 
 		it('should compile @ChildrenDirective', () => {

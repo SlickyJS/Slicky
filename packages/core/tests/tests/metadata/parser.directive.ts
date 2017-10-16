@@ -47,6 +47,8 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			elements: [],
 			events: [],
 			parentComponents: [],
+			childDirectives: [],
+			childrenDirectives: [],
 		});
 	});
 
@@ -72,6 +74,8 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			elements: [],
 			events: [],
 			parentComponents: [],
+			childDirectives: [],
+			childrenDirectives: [],
 		});
 	});
 
@@ -130,6 +134,8 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			elements: [],
 			events: [],
 			parentComponents: [],
+			childDirectives: [],
+			childrenDirectives: [],
 		});
 	});
 
@@ -172,6 +178,8 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			elements: [],
 			events: [],
 			parentComponents: [],
+			childDirectives: [],
+			childrenDirectives: [],
 		});
 	});
 
@@ -208,6 +216,8 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			],
 			events: [],
 			parentComponents: [],
+			childDirectives: [],
+			childrenDirectives: [],
 		});
 	});
 
@@ -263,6 +273,8 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 				},
 			],
 			parentComponents: [],
+			childDirectives: [],
+			childrenDirectives: [],
 		});
 	});
 
@@ -305,6 +317,8 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 					property: 'specificParent',
 				},
 			],
+			childDirectives: [],
+			childrenDirectives: [],
 		});
 	});
 
@@ -336,6 +350,8 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			elements: [],
 			events: [],
 			parentComponents: [],
+			childDirectives: [],
+			childrenDirectives: [],
 		});
 	});
 

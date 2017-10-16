@@ -1,5 +1,5 @@
 import {EnginePlugin} from '@slicky/templates-compiler';
-import {OnProcessElementArgument, OnBeforeCompileArgument, OnExpressionVariableHookArgument} from '@slicky/templates-compiler';
+import {OnProcessElementArgument, OnBeforeCompileArgument, OnExpressionVariableHookArgument, OnAfterProcessElementArgument} from '@slicky/templates-compiler';
 import {forEach} from '@slicky/utils';
 import * as c from '@slicky/core/metadata';
 import * as _ from '@slicky/html-parser';
@@ -25,6 +25,7 @@ export class SlickyEnginePluginManager extends EnginePlugin
 		this.metadata = metadata;
 
 		this.register(new plugins.DirectivesPlugin);
+		this.register(new plugins.DirectivesChildDirectivePlugin);
 		this.register(new plugins.ExportAsPlugin);
 		this.register(new plugins.InputsPlugin);
 		this.register(new plugins.OutputsPlugin);
@@ -98,9 +99,9 @@ export class SlickyEnginePluginManager extends EnginePlugin
 	}
 
 
-	public onAfterProcessElement(element: _.ASTHTMLNodeElement): void
+	public onAfterProcessElement(element: _.ASTHTMLNodeElement, arg: OnAfterProcessElementArgument): void
 	{
-		this.hook('onSlickyAfterProcessElement', element);
+		this.hook('onSlickyAfterProcessElement', element, arg);
 	}
 
 

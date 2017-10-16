@@ -1,5 +1,5 @@
 import {AbstractPlugin} from '@slicky/templates-compiler';
-import {OnProcessElementArgument} from '@slicky/templates-compiler';
+import {OnProcessElementArgument, OnAfterProcessElementArgument} from '@slicky/templates-compiler';
 import {BuilderFunction} from '@slicky/templates-compiler/builder';
 import * as c from '@slicky/core/metadata';
 import * as _ from '@slicky/html-parser';
@@ -19,7 +19,7 @@ export class SlickyEnginePlugin extends AbstractPlugin
 	}
 
 
-	public onSlickyAfterProcessElement(element: _.ASTHTMLNodeElement): void
+	public onSlickyAfterProcessElement(element: _.ASTHTMLNodeElement, arg: OnAfterProcessElementArgument): void
 	{
 	}
 

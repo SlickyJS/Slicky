@@ -6,3 +6,4 @@ export * from './hostElementsPlugin';
 export * from './childDirectivesPlugin';
 export * from './childrenDirectivesPlugin';
 export * from './lifeCycleEventsPlugin';
+export * from './directivesChildDirectivePlugin';

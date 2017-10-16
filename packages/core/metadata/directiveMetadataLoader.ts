@@ -139,8 +139,8 @@ export declare interface DirectiveDefinition {
 	elements: DirectiveDefinitionElementsList,
 	events: DirectiveDefinitionEventsList,
 	parentComponents: DirectiveDefinitionParentComponentsList,
-	childDirectives?: DirectiveDefinitionChildDirectivesList,
-	childrenDirectives?: DirectiveDefinitionChildrenDirectivesList,
+	childDirectives: DirectiveDefinitionChildDirectivesList,
+	childrenDirectives: DirectiveDefinitionChildrenDirectivesList,
 	template?: string,
 	render?: RenderableTemplateFactory,
 	directives?: DirectiveDefinitionDirectivesList,
@@ -313,6 +313,8 @@ export class DirectiveMetadataLoader
 			elements: elements,
 			events: events,
 			parentComponents: parentComponents,
+			childDirectives: childDirectives,
+			childrenDirectives: childrenDirectives,
 		};
 
 		if (annotation.exportAs) {
@@ -323,8 +325,6 @@ export class DirectiveMetadataLoader
 			definition.type = DirectiveDefinitionType.Component;
 			definition.template = annotation.template;
 			definition.render = annotation.render;
-			definition.childDirectives = childDirectives;
-			definition.childrenDirectives = childrenDirectives;
 			definition.styles = annotation.styles;
 			definition.encapsulation = annotation.encapsulation;
 

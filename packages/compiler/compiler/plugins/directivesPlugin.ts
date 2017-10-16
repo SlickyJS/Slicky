@@ -4,16 +4,7 @@ import {OnProcessElementArgument} from '@slicky/templates-compiler';
 import {forEach, filter} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import {SlickyEnginePlugin} from '../slickyEnginePlugin';
-
-
-declare interface ProcessingDirective
-{
-	id: number;
-	directive: DirectiveDefinitionDirective;
-	element: _.ASTHTMLNodeElement;
-	processedHostElements: Array<DirectiveDefinitionElement>;
-	processedHostEvents: Array<DirectiveDefinitionEvent>;
-}
+import {ProcessingDirective} from './data';
 
 
 export class DirectivesPlugin extends SlickyEnginePlugin
@@ -70,6 +61,7 @@ export class DirectivesPlugin extends SlickyEnginePlugin
 				directive: directive,
 				processedHostElements: [],
 				processedHostEvents: [],
+				processedChildDirectives: [],
 			});
 		}
 	}
