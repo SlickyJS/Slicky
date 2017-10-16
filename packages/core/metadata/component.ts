@@ -13,7 +13,6 @@ export declare interface ComponentOptions
 	template?: string,
 	render?: RenderableTemplateFactory,
 	exportAs?: string,
-	precompileDirectives?: Array<ClassType<any>>,
 	directives?: Array<ClassType<any>>,
 	filters?: Array<ClassType<FilterInterface>>,
 	styles?: Array<string>,
@@ -29,8 +28,6 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 	public template: string;
 
 	public render: RenderableTemplateFactory;
-
-	public precompileDirectives: Array<ClassType<any>> = [];
 
 	public directives: Array<ClassType<any>> = [];
 
@@ -59,10 +56,6 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 
 		if (exists(options.render)) {
 			this.render = options.render;
-		}
-
-		if (exists(options.precompileDirectives)) {
-			this.precompileDirectives = options.precompileDirectives;
 		}
 
 		if (exists(options.directives)) {

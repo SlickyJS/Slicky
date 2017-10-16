@@ -53,12 +53,6 @@ export class Application
 	}
 
 
-	public getPrecompileDirectives(): Array<ClassType<any>>
-	{
-		return [].concat(this.precompile, this.extensions.getPrecompileDirectives(), this.directives);
-	}
-
-
 	public run(platform: PlatformInterface, elOrSelector: Element|string): void
 	{
 		if (typeof window === 'undefined') {

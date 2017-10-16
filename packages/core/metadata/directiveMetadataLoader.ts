@@ -144,7 +144,6 @@ export declare interface DirectiveDefinition {
 	template?: string,
 	render?: RenderableTemplateFactory,
 	directives?: DirectiveDefinitionDirectivesList,
-	precompileDirectives?: DirectiveDefinitionDirectivesList,
 	filters?: DirectiveDefinitionFiltersList,
 	styles?: Array<string>,
 	encapsulation?: TemplateEncapsulation,
@@ -344,13 +343,6 @@ export class DirectiveMetadataLoader
 						name: metadata.name,
 						hash: this.getFilterHash(stringify(filterType), metadata),
 					},
-				};
-			});
-
-			definition.precompileDirectives = map(annotation.precompileDirectives, (directiveType: ClassType<any>): DirectiveDefinitionDirective => {
-				return {
-					directiveType: directiveType,
-					metadata: this.load(directiveType),
 				};
 			});
 

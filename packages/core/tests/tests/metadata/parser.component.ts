@@ -91,7 +91,6 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 			childrenDirectives: [],
 			template: '<a>{{ title }}</a>',
 			render: undefined,
-			precompileDirectives: [],
 			directives: [
 				{
 					directiveType: TestChildDirective,
@@ -186,7 +185,6 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 			childrenDirectives: [],
 			template: '',
 			render: undefined,
-			precompileDirectives: [],
 			directives: [
 				{
 					directiveType: TestDirective,
@@ -257,7 +255,6 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 			],
 			template: '',
 			render: undefined,
-			precompileDirectives: [],
 			directives: [
 				{
 					directiveType: TestDirective,

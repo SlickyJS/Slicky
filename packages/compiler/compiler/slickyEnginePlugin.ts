@@ -58,12 +58,6 @@ export class SlickyEnginePlugin extends EnginePlugin
 	public onBeforeCompile(arg: OnBeforeCompileArgument): void
 	{
 		arg.render.args.push('component');
-
-		forEach(this.metadata.precompileDirectives, (directive: c.DirectiveDefinitionDirective) => {
-			if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
-				this.compileComponents.push(directive.metadata);
-			}
-		});
 	}
 
 

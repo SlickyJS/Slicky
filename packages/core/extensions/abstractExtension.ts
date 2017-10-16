@@ -20,12 +20,6 @@ export abstract class AbstractExtension
 	}
 
 
-	public getPrecompileDirectives(): Array<ClassType<any>>
-	{
-		return [];
-	}
-
-
 	public doUpdateDirectiveMetadata(directiveType: ClassType<any>, metadata: DirectiveDefinition, options: DirectiveOptions): void
 	{
 	}

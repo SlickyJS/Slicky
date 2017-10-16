@@ -87,31 +87,6 @@ describe('#Compiler', () => {
 			expect(compiler.getTemplateByHash(metadata.hash)).to.be.a('string');
 		});
 
-		it('should compile components in @Component.precompileDirectives', () => {
-			@Component({
-				name: 'precompiled-component',
-				template: '',
-			})
-			class TestComponentPrecompiled {}
-
-			@Component({
-				name: 'my-component',
-				template: '',
-				precompileDirectives: [TestComponentPrecompiled],
-			})
-			class TestComponent {}
-
-			const metadata = metadataLoader.load(TestComponent);
-			const metadataPrecompiled = metadataLoader.load(TestComponentPrecompiled);
-
-			compiler.compile(metadata);
-
-			expect(compiler.getTemplates()).to.have.keys([
-				metadata.hash,
-				metadataPrecompiled.hash,
-			]);
-		});
-
 		it('should compile component with directive', () => {
 			@Directive({
 				selector: 'directive',

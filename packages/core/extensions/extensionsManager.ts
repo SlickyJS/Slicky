@@ -43,18 +43,6 @@ export class ExtensionsManager
 	}
 
 
-	public getPrecompileDirectives(): Array<ClassType<any>>
-	{
-		let directives = [];
-
-		forEach(this.extensions, (extension: AbstractExtension) => {
-			directives = merge(directives, extension.getPrecompileDirectives());
-		});
-
-		return directives;
-	}
-
-
 	public doUpdateDirectiveMetadata(directiveType: ClassType<any>, metadata: DirectiveDefinition, options: DirectiveOptions): void
 	{
 		this.callHook('doUpdateDirectiveMetadata', directiveType, metadata, options);
