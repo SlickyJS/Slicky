@@ -385,6 +385,10 @@ export class Engine
 		});
 
 		if (!templateSetup.body.isEmpty()) {
+			if (!parameters.length) {
+				templateArguments.push('{}');
+			}
+
 			templateArguments.push(templateSetup.render());
 		}
 
