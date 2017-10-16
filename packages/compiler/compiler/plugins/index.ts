@@ -1,4 +1,6 @@
-export * from './directivesPlugin';
+export * from './abstractDirectivePlugin';
+export * from './directivePlugin';
+export * from './directives';
 export * from './exportAsPlugin';
 export * from './inputsPlugin';
 export * from './outputsPlugin';
@@ -6,4 +8,3 @@ export * from './hostElementsPlugin';
 export * from './childDirectivesPlugin';
 export * from './childrenDirectivesPlugin';
 export * from './lifeCycleEventsPlugin';
-export * from './directivesChildDirectivePlugin';

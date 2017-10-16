@@ -3,10 +3,10 @@ import {BuilderFunction} from '@slicky/templates-compiler/builder';
 import {OnProcessElementArgument} from '@slicky/templates-compiler';
 import {exists, find, forEach, indent} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
-import {SlickyEnginePlugin} from '../slickyEnginePlugin';
+import {AbstractSlickyEnginePlugin} from '../abstracSlickyEnginePlugin';
 
 
-export class InputsPlugin extends SlickyEnginePlugin
+export class InputsPlugin extends AbstractSlickyEnginePlugin
 {
 
 
