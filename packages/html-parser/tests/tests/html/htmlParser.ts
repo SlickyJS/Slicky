@@ -1,4 +1,4 @@
-import {HTMLParser, ASTHTMLNodeDocumentFragment, ASTHTMLNodeTextAttribute, ASTHTMLNodeExpressionAttribute, ASTHTMLNode, ASTHTMLNodeElement, ASTHTMLNodeText, ASTHTMLNodeExpression} from '../../../html';
+import {HTMLParser, ASTHTMLNodeDocumentFragment, ASTHTMLNodeTextAttribute, ASTHTMLNodeExpressionAttribute, ASTHTMLNodeExpressionAttributeEvent, ASTHTMLNode, ASTHTMLNodeElement, ASTHTMLNodeText, ASTHTMLNodeExpression} from '../../../html';
 import {expect} from 'chai';
 
 
@@ -100,6 +100,22 @@ describe('#HTML/HTMLParser', () => {
 						child.attributes.push(new ASTHTMLNodeTextAttribute('hidden', ''));
 						child.attributes.push(new ASTHTMLNodeTextAttribute('id', 'div-id'));
 						child.attributes.push(new ASTHTMLNodeExpressionAttribute('class', '(divClass + \' red\') + " highlighted"'));
+
+						return child;
+					})(),
+				])
+			);
+		});
+
+		it('should parse two way data binding', () => {
+			let ast = parse('<photo [(size)]="photoSize"></photo>');
+
+			expect(ast).to.be.eql(
+				new ASTHTMLNodeDocumentFragment([
+					(() => {
+						let child = new ASTHTMLNodeElement('photo');
+
+						child.twoWayBinding.push(new ASTHTMLNodeExpressionAttribute('size', 'photoSize'));
 
 						return child;
 					})(),

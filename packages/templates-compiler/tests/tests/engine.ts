@@ -180,6 +180,12 @@ describe('#Engine', () => {
 			expect(template).to.be.equal(compareWith('engine.compile.loop.trackBy'));
 		});
 
+		it('should compile two way data binding', () => {
+			let template = engine.compile('<photo [(size)]="photoSize"></photo>');
+
+			expect(template).to.be.equal(compareWith('engine.compile.two-way-binding'));
+		});
+
 	});
 
 });

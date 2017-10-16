@@ -126,6 +126,8 @@ export class ASTHTMLNodeElement extends ASTHTMLNodeParent
 
 	public properties: Array<ASTHTMLNodeExpressionAttribute> = [];
 
+	public twoWayBinding: Array<ASTHTMLNodeExpressionAttribute> = [];
+
 	public exports: Array<ASTHTMLNodeAttribute> = [];
 
 	public templates: Array<ASTHTMLNodeExpressionAttribute> = [];
@@ -369,7 +371,12 @@ export class AST implements _.TreeAdapter
 	private processAttributes(element: ASTHTMLNodeElement, attrs: Array<_.Default.Attribute>): void
 	{
 		forEach(attrs, (attribute: _.Default.Attribute) => {
-			if (attribute.name.match(/^\(.+\)$/)) {
+			if (attribute.name.match(/^\[\(.+\)\]$/)) {
+				const name = attribute.name.substring(2, attribute.name.length - 2);
+
+				element.twoWayBinding.push(new ASTHTMLNodeExpressionAttribute(name, attribute.value));
+
+			} else if (attribute.name.match(/^\(.+\)$/)) {
 				let eventsName = attribute.name.substring(1, attribute.name.length - 1).split('|');
 
 				forEach(eventsName, (eventName: string) => {

@@ -8,7 +8,7 @@ import {TemplateEncapsulation} from '@slicky/templates/templates';
 import {DocumentWalker} from '../querySelector';
 import {EnginePluginManager} from './enginePluginManager';
 import {EnginePlugin} from './enginePlugin';
-import {StylesPlugin, ConditionPlugin, LoopPlugin} from '../plugins';
+import {StylesPlugin, ConditionPlugin, LoopPlugin, TwoWayBindingPlugin} from '../plugins';
 import {EngineProgress} from './engineProgress';
 import * as b from '../builder';
 
@@ -37,6 +37,7 @@ export class Engine
 		this.addPlugin(new StylesPlugin);
 		this.addPlugin(new ConditionPlugin);
 		this.addPlugin(new LoopPlugin);
+		this.addPlugin(new TwoWayBindingPlugin);
 	}
 
 

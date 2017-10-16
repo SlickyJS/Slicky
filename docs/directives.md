@@ -196,6 +196,20 @@ Here we used the `OnInit` life cycle callback, these callback are described belo
 
 Also in that example we generate new random string every second and add it into the `innerText` property of our div.
 
+## Two-way binding
+ 
+This feature helps you easily combine inputs and outputs into one simple form.
+ 
+```html
+<photo [(size)]="photoSize"></photo>
+```
+
+The code above is expanded into the full form in compile time:
+
+```html
+<photo [size]="photoSize" (sizeChange)="photoSize = $event"></photo>
+```
+
 ## Life cycle events
 
 These are methods on directives which gives you an option to monitor changes.
