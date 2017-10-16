@@ -12,8 +12,8 @@ import {PlatformInterface} from '../platform';
 
 export declare interface ApplicationOptions
 {
-	precompile?: Array<ClassType<any>>;
 	directives?: Array<ClassType<any>>;
+	document?: Document;
 }
 
 
@@ -27,16 +27,16 @@ export class Application
 
 	private extensions: ExtensionsManager;
 
-	private precompile: Array<ClassType<any>>;
-
 	private directives: Array<ClassType<any>>;
+
+	private document: Document;
 
 
 	constructor(container: Container, options: ApplicationOptions = {})
 	{
 		this.container = container;
-		this.precompile = exists(options.precompile) ? flatten<ClassType<any>>(options.precompile) : [];
 		this.directives = exists(options.directives) ? flatten<ClassType<any>>(options.directives) : [];
+		this.document = exists(options.document) ? options.document : document;
 
 		this.extensions = new ExtensionsManager;
 		this.metadataLoader = new DirectiveMetadataLoader(this.extensions);
@@ -55,16 +55,11 @@ export class Application
 
 	public run(platform: PlatformInterface, elOrSelector: Element|string): void
 	{
-		if (typeof window === 'undefined') {
-			return;
-		}
-
-		const doc: Document = document;
-		const el: Element = isString(elOrSelector) ? doc.querySelector(<string>elOrSelector) : <Element>elOrSelector;
+		const el: Element = isString(elOrSelector) ? this.document.querySelector(<string>elOrSelector) : <Element>elOrSelector;
 
 		const applicationTemplate = new ApplicationTemplate;
-		const renderer = new Renderer(doc);
-		const runner = new RootDirectiveRunner(doc, platform, applicationTemplate, this.container, this.metadataLoader, this.extensions, renderer, el);
+		const renderer = new Renderer(this.document);
+		const runner = new RootDirectiveRunner(this.document, platform, applicationTemplate, this.container, this.metadataLoader, this.extensions, renderer, el);
 
 		forEach(this.extensions.getServices(), (provider: ProviderOptions) => {
 			this.container.addService(provider.service, provider.options);
