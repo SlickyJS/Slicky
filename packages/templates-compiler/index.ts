@@ -1,4 +1,5 @@
 export {
+	AbstractPluginManager, AbstractPlugin,
 	Engine, EnginePlugin, OnBeforeProcessElementArgument, OnProcessElementArgument, OnAfterProcessElementArgument,
 	OnProcessTemplateArgument, OnExpressionVariableHookArgument, OnBeforeCompileArgument
 } from './engine';

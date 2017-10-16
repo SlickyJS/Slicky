@@ -1,4 +1,3 @@
-import {forEach, exists} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
 import {
@@ -6,18 +5,16 @@ import {
 	OnAfterProcessElementArgument, OnExpressionVariableHookArgument, OnProcessTemplateArgument,
 	OnProcessElementArgument
 } from './enginePlugin';
+import {AbstractPluginManager} from './abstractPluginManager';
 
 
-export class EnginePluginManager
+export class EnginePluginManager extends AbstractPluginManager
 {
 
 
-	private plugins: Array<EnginePlugin> = [];
-
-
-	public register(plugin: EnginePlugin): void
+	public register(plugin: EnginePlugin)
 	{
-		this.plugins.push(plugin);
+		super.register(plugin);
 	}
 
 
@@ -60,20 +57,6 @@ export class EnginePluginManager
 	public onExpressionVariableHook(identifier: tjs.ASTCallExpression, arg: OnExpressionVariableHookArgument): tjs.ASTExpression
 	{
 		return this.hook('onExpressionVariableHook', identifier, arg);
-	}
-
-
-	private hook(name: string, ...args: Array<any>): any
-	{
-		forEach(this.plugins, (plugin: EnginePlugin) => {
-			let result = plugin[name](...args);
-
-			if (exists(result)) {
-				args[0] = result;
-			}
-		});
-
-		return args[0];
 	}
 
 }

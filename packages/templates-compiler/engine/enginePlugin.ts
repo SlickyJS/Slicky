@@ -3,6 +3,7 @@ import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
 import {Engine, EngineCompileOptions} from './';
 import {EngineProgress, EngineProgressTemplate} from './engineProgress';
+import {AbstractPlugin} from './abstractPlugin';
 import * as b from '../builder';
 
 
@@ -70,7 +71,7 @@ export declare interface OnProcessTemplateArgument
 }
 
 
-export abstract class EnginePlugin
+export abstract class EnginePlugin extends AbstractPlugin
 {
 
 
