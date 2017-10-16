@@ -106,8 +106,8 @@
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.43.tgz#03c54589c43ad048cbcbfd63999b55d0424eec27"
 
 "@types/node@*", "@types/node@^8.0.20", "@types/node@^8.0.21", "@types/node@^8.0.22":
-  version "8.0.34"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.34.tgz#55f801fa2ddb2a40dd6dfc15ecfe1dde9c129fe9"
+  version "8.0.39"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.39.tgz#992696d6a7ac571bb26b3482bb775642eef9a7d5"
 
 "@types/node@^6.0.46":
   version "6.0.89"
@@ -5131,6 +5131,6 @@ zone.js@^0.7.8:
   version "0.7.8"
   resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.7.8.tgz#4f3fe8834d44597f2639053a0fa438df34fffded"
 
-zone.js@^0.8.16, zone.js@^0.8.17:
+zone.js@^0.8.16, zone.js@^0.8.17, zone.js@^0.8.18:
   version "0.8.18"
   resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.8.18.tgz#8cecb3977fcd1b3090562ff4570e2847e752b48d"
