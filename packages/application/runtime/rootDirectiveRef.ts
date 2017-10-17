@@ -49,7 +49,9 @@ export class RootDirectiveRef<T>
 			(<any>this.directive).onDestroy();
 		}
 
-		this.template.destroy();
+		if (this.template) {
+			this.template.destroy();
+		}
 
 		if (this.el.parentElement) {
 			this.el.parentElement.removeChild(this.el);
