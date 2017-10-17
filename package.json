@@ -16,7 +16,8 @@
 	"types": "./lib/index.d.ts",
 	"workspaces": [
 		"packages/*",
-		"examples/*"
+		"examples/*",
+		"tests/*"
 	],
 	"devDependencies": {
 		"@slicky/compiler-cli": "^0.1.3",

@@ -1,0 +1,29 @@
+{
+	"name": "@slicky/tests",
+	"description": "Slicky tests",
+	"version": "0.0.1",
+	"license": "MIT",
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:SlickyJS/Slicky.git"
+	},
+	"author": {
+		"name": "David Kudera",
+		"email": "kudera.d@gmail.com"
+	},
+	"main": "./lib/index.js",
+	"types": "./lib/index.d.ts",
+	"dependencies": {
+		"@slicky/tester": "^0.0.1",
+		"@slicky/core": "^0.4.1",
+		"reflect-metadata": "^0.1.10",
+		"zone.js": "^0.8.16"
+	},
+	"devDependencies": {
+		"reflect-metadata": "^0.1.10"
+	},
+	"scripts": {
+		"test": "TS_NODE_PROJECT='tests/tsconfig.json' mocha -r ts-node/register tests/tests/**/*.ts"
+	}
+}
