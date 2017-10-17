@@ -14,24 +14,24 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/application": "^0.5.0",
+		"@slicky/application": "^0.6.0",
 		"@slicky/di": "^1.0.1",
 		"@slicky/lang": "^1.0.0",
-		"@slicky/platform-browser": "^0.1.5",
+		"@slicky/platform-browser": "^0.1.6",
 		"jsdom": "^11.3.0"
 	},
 	"devDependencies": {
-		"@slicky/core": "^0.4.1",
+		"@slicky/core": "^0.5.0",
 		"@types/chai": "^4.0.3",
 		"@types/mocha": "^2.2.41",
 		"@types/node": "^8.0.20",
 		"chai": "^4.1.1",
 		"jsdom": "^11.3.0",
 		"mocha": "^3.5.0",
+		"reflect-metadata": "^0.1.10",
 		"ts-node": "^3.3.0",
 		"typescript": "^2.4.2",
-		"zone.js": "^0.8.18",
-		"reflect-metadata": "^0.1.10"
+		"zone.js": "^0.8.18"
 	},
 	"scripts": {
 		"test": "TS_NODE_PROJECT='tests/tsconfig.json' mocha -r ts-node/register tests/tests/**/*.ts"

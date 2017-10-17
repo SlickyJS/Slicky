@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/templates-compiler",
 	"description": "Slicky templates compiler",
-	"version": "1.1.1",
+	"version": "1.2.0",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -15,7 +15,7 @@
 	"types": "./index.d.ts",
 	"dependencies": {
 		"@slicky/css-parser": "^0.1.1",
-		"@slicky/html-parser": "^0.1.1",
+		"@slicky/html-parser": "^0.1.2",
 		"@slicky/query-selector": "^1.2.0",
 		"@slicky/templates": "^1.1.1",
 		"@slicky/tiny-js": "^1.1.1",
