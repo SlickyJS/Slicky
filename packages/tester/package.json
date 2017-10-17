@@ -16,6 +16,7 @@
 	"dependencies": {
 		"@slicky/application": "^0.5.0",
 		"@slicky/di": "^1.0.1",
+		"@slicky/lang": "^1.0.0",
 		"@slicky/platform-browser": "^0.1.5",
 		"jsdom": "^11.3.0"
 	},
