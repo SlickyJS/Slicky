@@ -46,7 +46,15 @@ export class InputsPlugin extends AbstractSlickyEnginePlugin
 				];
 
 				if (directive.metadata.onUpdate) {
-					watchUpdate.push(`directive.onUpdate("${property.name}", value);`);
+					if (directive.metadata.type === DirectiveDefinitionType.Component) {
+						watchUpdate.push(
+							'template.run(function() {\n' +
+							`	directive.onUpdate("${property.name}", value);\n` +
+							'});'
+						)
+					} else {
+						watchUpdate.push(`directive.onUpdate("${property.name}", value);`);
+					}
 				}
 
 				if (directive.metadata.type === DirectiveDefinitionType.Component) {
@@ -65,7 +73,15 @@ export class InputsPlugin extends AbstractSlickyEnginePlugin
 				directiveSetup.body.add(`directive.${input.property} = "${property.value}";`);
 
 				if (directive.metadata.onUpdate) {
-					directiveSetup.body.add(`directive.onUpdate("${input.property}", "${property.value}");`);
+					if (directive.metadata.type === DirectiveDefinitionType.Component) {
+						directiveSetup.body.add(
+							'template.run(function() {\n' +
+							`	directive.onUpdate("${input.property}", "${property.value}");\n` +
+							'});'
+						)
+					} else {
+						directiveSetup.body.add(`directive.onUpdate("${input.property}", "${property.value}");`);
+					}
 				}
 			}
 
