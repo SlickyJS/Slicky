@@ -1,7 +1,7 @@
 import {Container, ProviderOptions} from '@slicky/di';
 import {exists, forEach, isString, flatten} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
-import {AbstractExtension} from '@slicky/core';
+import {AbstractExtension, FilterInterface} from '@slicky/core';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {ApplicationTemplate} from '@slicky/templates/templates';
@@ -13,6 +13,7 @@ import {PlatformInterface} from '../platform';
 export declare interface ApplicationOptions
 {
 	directives?: Array<ClassType<any>>;
+	filters?: Array<ClassType<FilterInterface>>;
 	document?: Document;
 }
 
@@ -40,6 +41,10 @@ export class Application
 
 		this.extensions = new ExtensionsManager;
 		this.metadataLoader = new DirectiveMetadataLoader(this.extensions);
+
+		if (exists(options.filters)) {
+			this.metadataLoader.addGlobalFilters(options.filters);
+		}
 
 		this.container.addService(DirectiveMetadataLoader, {
 			useValue: this.metadataLoader,
