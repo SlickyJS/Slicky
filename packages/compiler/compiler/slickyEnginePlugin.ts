@@ -1,12 +1,19 @@
 import {EnginePlugin} from '@slicky/templates-compiler';
 import {OnProcessElementArgument, OnBeforeCompileArgument, OnExpressionVariableHookArgument, OnAfterProcessElementArgument} from '@slicky/templates-compiler';
-import {forEach} from '@slicky/utils';
+import {forEach, filter, clone, merge, unique} from '@slicky/utils';
 import * as c from '@slicky/core/metadata';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
 import {createFunction} from '@slicky/templates-compiler/builder';
 import {AbstractSlickyEnginePlugin} from './abstracSlickyEnginePlugin';
 import * as plugins from './plugins';
+
+
+declare interface ElementInnerDirectives
+{
+	element: _.ASTHTMLNodeElement;
+	directives: Array<c.DirectiveDefinitionDirective>;
+}
 
 
 export class SlickyEnginePlugin extends EnginePlugin
@@ -16,6 +23,8 @@ export class SlickyEnginePlugin extends EnginePlugin
 	private metadata: c.DirectiveDefinition;
 
 	private processedDirectivesCount: number = 0;
+
+	private elementsInnerDirectives: Array<ElementInnerDirectives> = [];
 
 
 	constructor(metadata: c.DirectiveDefinition)
@@ -57,9 +66,21 @@ export class SlickyEnginePlugin extends EnginePlugin
 	{
 		this.hook('onSlickyBeforeProcessElement', element, arg);
 
-		forEach(this.metadata.directives, (directive: c.DirectiveDefinitionDirective) => {
+		const directives = this.getDirectives();
+		const elementInnerDirectives = {
+			element: element,
+			directives: [],
+		};
+
+		this.elementsInnerDirectives.push(elementInnerDirectives);
+
+		forEach(directives, (directive: c.DirectiveDefinitionDirective) => {
 			if (!arg.matcher.matches(element, directive.metadata.selector)) {
 				return;
+			}
+
+			if (directive.metadata.type === c.DirectiveDefinitionType.Directive) {
+				elementInnerDirectives.directives = unique(merge(elementInnerDirectives.directives, directive.metadata.directives));
 			}
 
 			const directiveId = this.processedDirectivesCount++;
@@ -100,6 +121,10 @@ export class SlickyEnginePlugin extends EnginePlugin
 
 	public onAfterProcessElement(element: _.ASTHTMLNodeElement, arg: OnAfterProcessElementArgument): void
 	{
+		this.elementsInnerDirectives = filter(this.elementsInnerDirectives, (elementInnerDirectives: ElementInnerDirectives) => {
+			return elementInnerDirectives.element !== element;
+		});
+
 		this.hook('onSlickyAfterProcessElement', element, arg);
 	}
 
@@ -118,6 +143,18 @@ export class SlickyEnginePlugin extends EnginePlugin
 			new tjs.ASTIdentifier('component'),
 			new tjs.ASTIdentifier(parameter)
 		);
+	}
+
+
+	private getDirectives(): Array<c.DirectiveDefinitionDirectivesList>
+	{
+		let directives = clone(this.metadata.directives);
+
+		forEach(this.elementsInnerDirectives, (elementInnerDirectives: ElementInnerDirectives) => {
+			directives = merge(directives, elementInnerDirectives.directives);
+		});
+
+		return unique(directives);
 	}
 
 }

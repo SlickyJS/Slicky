@@ -36,4 +36,34 @@ describe('#Application.directives', () => {
 		expect(called).to.be.equal(false);
 	});
 
+	it('should provide child directives inside of component by another directive', () => {
+		@Component({
+			name: 'test-child-component',
+			template: 'yes',
+		})
+		class TestChildComponent {}
+
+		@Directive({
+			selector: 'test-parent-directive',
+			directives: [TestChildComponent],
+		})
+		class TestParentDirective {}
+
+		@Component({
+			name: 'test-component',
+			template: (
+				'<test-parent-directive>' +
+					'inside: <test-child-component></test-child-component>' +
+				'</test-parent-directive>, ' +
+				'outside: <test-child-component></test-child-component>'
+			),
+			directives: [TestParentDirective],
+		})
+		class TestComponent {}
+
+		const component = Tester.runDirective('<test-component></test-component>', TestComponent);
+
+		expect(component.application.document.body.textContent).to.be.equal('inside: yes, outside: ');
+	})
+
 });

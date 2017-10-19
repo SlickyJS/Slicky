@@ -29,8 +29,6 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 
 	public render: RenderableTemplateFactory;
 
-	public directives: Array<ClassType<any>> = [];
-
 	public filters: Array<ClassType<FilterInterface>> = [];
 
 	public styles: Array<string> = [];
@@ -56,10 +54,6 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 
 		if (exists(options.render)) {
 			this.render = options.render;
-		}
-
-		if (exists(options.directives)) {
-			this.directives = options.directives;
 		}
 
 		if (exists(options.filters)) {

@@ -138,12 +138,12 @@ export declare interface DirectiveDefinition {
 	outputs: DirectiveDefinitionOutputsList,
 	elements: DirectiveDefinitionElementsList,
 	events: DirectiveDefinitionEventsList,
+	directives: DirectiveDefinitionDirectivesList,
 	parentComponents: DirectiveDefinitionParentComponentsList,
 	childDirectives: DirectiveDefinitionChildDirectivesList,
 	childrenDirectives: DirectiveDefinitionChildrenDirectivesList,
 	template?: string,
 	render?: RenderableTemplateFactory,
-	directives?: DirectiveDefinitionDirectivesList,
 	filters?: DirectiveDefinitionFiltersList,
 	styles?: Array<string>,
 	encapsulation?: TemplateEncapsulation,
@@ -176,7 +176,7 @@ export class DirectiveMetadataLoader
 	}
 
 
-	public getLoadedByHash(hash: number): DirectiveDefinition
+	public getLoadedByHash(hash: number): DirectiveDefinition		// todo: remove
 	{
 		return this.definitions[hash];
 	}
@@ -312,6 +312,12 @@ export class DirectiveMetadataLoader
 			outputs: outputs,
 			elements: elements,
 			events: events,
+			directives: map(annotation.directives, (directiveType: ClassType<any>): DirectiveDefinitionDirective => {
+				return {
+					directiveType: directiveType,
+					metadata: this.load(directiveType),
+				};
+			}),
 			parentComponents: parentComponents,
 			childDirectives: childDirectives,
 			childrenDirectives: childrenDirectives,
@@ -343,13 +349,6 @@ export class DirectiveMetadataLoader
 						name: metadata.name,
 						hash: this.getFilterHash(stringify(filterType), metadata),
 					},
-				};
-			});
-
-			definition.directives = map(annotation.directives, (directiveType: ClassType<any>): DirectiveDefinitionDirective => {
-				return {
-					directiveType: directiveType,
-					metadata: this.load(directiveType),
 				};
 			});
 		}
