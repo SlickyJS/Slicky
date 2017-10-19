@@ -16,6 +16,9 @@ export class RootDirectiveRunner
 {
 
 
+	private static ELEMENT_COMPONENT_STORAGE = '__slicky_component';
+
+
 	private platform: PlatformInterface;
 
 	private template: ApplicationTemplate;
@@ -55,6 +58,10 @@ export class RootDirectiveRunner
 
 	public runDirective<T>(directiveType: ClassType<T>, metadata: DirectiveDefinition, el: Element, providers: Array<ProviderOptions> = [], setup?: (directive: T) => void): RootDirectiveRef<T>
 	{
+		if (this.isElementInRootComponent(el)) {
+			return;
+		}
+
 		let changeDetector: ChangeDetectorRef;
 
 		const container = metadata.type === DirectiveDefinitionType.Component ? this.container.fork() : this.container;
@@ -71,6 +78,10 @@ export class RootDirectiveRunner
 		}
 
 		const directive = this.directiveFactory.createDirective(container, directiveType, metadata, el, providers);
+
+		if (metadata.type === DirectiveDefinitionType.Component) {
+			el[RootDirectiveRunner.ELEMENT_COMPONENT_STORAGE] = directive;
+		}
 
 		forEach(metadata.inputs, (input: DirectiveDefinitionInput) => {
 			directive[input.property] = el.getAttribute(input.name);
@@ -124,6 +135,24 @@ export class RootDirectiveRunner
 		this.extensions.doInitComponentContainer(container, metadata, component);
 
 		return this.directiveFactory.runComponent(container, component, metadata, this.template, el, changeDetector);
+	}
+
+
+	private isElementInRootComponent(el: Element): boolean
+	{
+		if (exists(el[RootDirectiveRunner.ELEMENT_COMPONENT_STORAGE])) {
+			return true;
+		}
+
+		while (el !== this.el) {
+			if (exists(el[RootDirectiveRunner.ELEMENT_COMPONENT_STORAGE])) {
+				return true;
+			}
+
+			el = el.parentElement;
+		}
+
+		return false;
 	}
 
 }
