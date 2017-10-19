@@ -22,6 +22,7 @@ export class DirectivePlugin extends AbstractSlickyEnginePlugin
 		this.register(new plugins.DirectiveHostElementsPlugin);
 		this.register(new plugins.DirectiveHostEventsPlugin);
 		this.register(new plugins.DirectiveChildDirectivesPlugin);
+		this.register(new plugins.DirectiveChildrenDirectivesPlugin);
 	}
 
 
