@@ -1,6 +1,7 @@
-import {DirectiveDefinitionEvent, DirectiveDefinitionType} from '@slicky/core/metadata';
-import {forEach} from '@slicky/utils';
+import {DirectiveDefinitionEvent, DirectiveDefinitionType, DirectiveDefinitionDirective} from '@slicky/core/metadata';
+import {forEach, exists} from '@slicky/utils';
 import {OnProcessElementArgument} from '@slicky/templates-compiler';
+import {BuilderFunction} from '@slicky/templates-compiler/builder';
 import * as _ from '@slicky/html-parser';
 import {AbstractDirectivePlugin, ProcessingDirective} from '../abstractDirectivePlugin';
 
@@ -17,17 +18,37 @@ export class DirectiveHostEventsPlugin extends AbstractDirectivePlugin
 					return;
 				}
 
+				if (!exists(hostEvent.selector)) {
+					return;
+				}
+
 				if (!arg.matcher.matches(element, hostEvent.selector, directive.element)) {
 					return;
 				}
 
-				arg.render.body.add(
-					`el.addEvent("${hostEvent.event}", function($event) {\n` +
-					`	template.getParameter("@directive_${directive.id}").${hostEvent.method}($event);\n` +
-					`});`
-				);
+				this.writeHostEvent(arg.render, hostEvent, directive.id);
 
 				directive.processedHostEvents.push(hostEvent);
+			});
+		}
+	}
+
+
+	public onSlickyAfterProcessDirective(directive: DirectiveDefinitionDirective, directiveSetup: BuilderFunction, processingDirective: ProcessingDirective, arg: OnProcessElementArgument): void
+	{
+		if (directive.metadata.type === DirectiveDefinitionType.Directive) {
+			forEach(directive.metadata.events, (hostEvent: DirectiveDefinitionEvent) => {
+				if (processingDirective.processedHostEvents.indexOf(hostEvent) >= 0) {
+					return;
+				}
+
+				if (exists(hostEvent.selector)) {
+					return;
+				}
+
+				this.writeHostEvent(arg.render, hostEvent, processingDirective.id);
+
+				processingDirective.processedHostEvents.push(hostEvent);
 			});
 		}
 	}
@@ -42,6 +63,16 @@ export class DirectiveHostEventsPlugin extends AbstractDirectivePlugin
 				}
 			});
 		}
+	}
+
+
+	private writeHostEvent(render: BuilderFunction, hostEvent: DirectiveDefinitionEvent, directiveId: number): void
+	{
+		render.body.add(
+			`el.addEvent("${hostEvent.event}", function($event) {\n` +
+			`	template.getParameter("@directive_${directiveId}").${hostEvent.method}($event);\n` +
+			`});`
+		);
 	}
 
 }
