@@ -1,6 +1,6 @@
 import {DirectiveDefinition, DirectiveDefinitionDirective, DirectiveDefinitionType} from '@slicky/core/metadata';
 import {BuilderFunction} from '@slicky/templates-compiler/builder';
-import {OnProcessElementArgument} from '@slicky/templates-compiler';
+import {OnProcessElementArgument, OnAfterProcessElementArgument} from '@slicky/templates-compiler';
 import {filter, forEach, reverse} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import {AbstractSlickyEnginePlugin} from '../abstracSlickyEnginePlugin';
@@ -13,6 +13,13 @@ declare interface ProcessedParentDirective
 }
 
 
+declare interface InitDirective
+{
+	directive: DirectiveDefinitionDirective;
+	directiveId: number;
+}
+
+
 export class LifeCycleEventsPlugin extends AbstractSlickyEnginePlugin
 {
 
@@ -20,6 +27,8 @@ export class LifeCycleEventsPlugin extends AbstractSlickyEnginePlugin
 	private metadata: DirectiveDefinition;
 
 	private processedParentDirectives: Array<ProcessedParentDirective> = [];
+
+	private initDirectives: Array<InitDirective> = [];
 
 
 	constructor(metadata: DirectiveDefinition)
@@ -55,7 +64,10 @@ export class LifeCycleEventsPlugin extends AbstractSlickyEnginePlugin
 			}
 
 		} else if (directive.metadata.onInit) {
-			directiveSetup.body.add('directive.onInit();');
+			this.initDirectives.push({
+				directive: directive,
+				directiveId: directiveId,
+			});
 		}
 
 		if (directive.metadata.onDestroy) {
@@ -73,8 +85,14 @@ export class LifeCycleEventsPlugin extends AbstractSlickyEnginePlugin
 	}
 
 
-	public onSlickyAfterProcessElement(element: _.ASTHTMLNodeElement): void
+	public onSlickyAfterProcessElement(element: _.ASTHTMLNodeElement, arg: OnAfterProcessElementArgument): void
 	{
+		forEach(this.initDirectives, (directive: InitDirective) => {
+			arg.render.body.add(`template.getParameter("@directive_${directive.directiveId}").onInit();`);
+		});
+
+		this.initDirectives = [];
+
 		this.processedParentDirectives = filter(this.processedParentDirectives, (processedParentDirective: ProcessedParentDirective) => {
 			return processedParentDirective.element !== element;
 		});
