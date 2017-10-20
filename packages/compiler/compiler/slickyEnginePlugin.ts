@@ -1,6 +1,6 @@
 import {EnginePlugin} from '@slicky/templates-compiler';
 import {OnProcessElementArgument, OnBeforeCompileArgument, OnExpressionVariableHookArgument, OnAfterProcessElementArgument} from '@slicky/templates-compiler';
-import {forEach, filter, clone, merge, unique} from '@slicky/utils';
+import {forEach, filter, clone, merge, unique, find} from '@slicky/utils';
 import * as c from '@slicky/core/metadata';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
@@ -146,7 +146,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 	}
 
 
-	private getDirectives(): Array<c.DirectiveDefinitionDirectivesList>
+	private getDirectives(): Array<c.DirectiveDefinitionDirective>
 	{
 		let directives = clone(this.metadata.directives);
 
@@ -154,7 +154,29 @@ export class SlickyEnginePlugin extends EnginePlugin
 			directives = merge(directives, elementInnerDirectives.directives);
 		});
 
-		return unique(directives);
+		directives = unique(directives);
+
+		const result: Array<c.DirectiveDefinitionDirective> = [];
+
+		forEach(directives, (directive: c.DirectiveDefinitionDirective) => {
+			const dependencyFor: c.DirectiveDefinitionDirective = find(directives, (dependencyFor: c.DirectiveDefinitionDirective) => {
+				if (
+					dependencyFor.metadata.override &&
+					(
+						dependencyFor.metadata.override.directiveType === directive.directiveType ||
+						directive.directiveType.prototype instanceof dependencyFor.metadata.override.directiveType
+					)
+				) {
+					return true;
+				}
+			});
+
+			if (!dependencyFor) {
+				result.push(directive);
+			}
+		});
+
+		return result;
 	}
 
 }

@@ -204,4 +204,73 @@ describe('#Application.directives', () => {
 		expect(initialized).to.be.eql(['a', 'b']);
 	});
 
+	it('should override default directive with more specific directive', () => {
+		const directives = [];
+
+		@Directive({
+			selector: 'test-directive',
+		})
+		class TestDirective
+		{
+
+			public onInit(): void
+			{
+				directives.push('test-directive');
+			}
+
+		}
+
+		@Directive({
+			selector: 'test-directive',
+		})
+		class TestDefaultDirective
+		{
+
+			public onInit(): void
+			{
+				directives.push('test-default-directive');
+			}
+
+		}
+
+		@Directive({
+			selector: 'test-directive',
+			override: TestDefaultDirective,
+		})
+		class TestSpecificDirective
+		{
+
+			public onInit(): void
+			{
+				directives.push('test-specific-directive');
+			}
+
+		}
+
+		@Directive({
+			selector: 'test-directive',
+			override: TestSpecificDirective,
+		})
+		class TestMoreSpecificDirective
+		{
+
+			public onInit(): void
+			{
+				directives.push('test-more-specific-directive');
+			}
+
+		}
+
+		@Component({
+			name: 'test-component',
+			template: '<test-directive></test-directive>',
+			directives: [TestMoreSpecificDirective, TestDirective, TestDefaultDirective, TestSpecificDirective],
+		})
+		class TestComponent {}
+
+		Tester.runDirective('<test-component></test-component>', TestComponent);
+
+		expect(directives).to.be.eql(['test-more-specific-directive', 'test-directive']);
+	});
+
 });

@@ -14,6 +14,7 @@ export declare interface ComponentOptions
 	render?: RenderableTemplateFactory,
 	exportAs?: string,
 	directives?: Array<ClassType<any>>,
+	override?: ClassType<any>,
 	filters?: Array<ClassType<FilterInterface>>,
 	styles?: Array<string>,
 	encapsulation?: TemplateEncapsulation,

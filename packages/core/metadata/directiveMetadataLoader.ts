@@ -130,6 +130,7 @@ export declare interface DirectiveDefinition {
 	elements: DirectiveDefinitionElementsList,
 	events: DirectiveDefinitionEventsList,
 	directives: DirectiveDefinitionDirectivesList,
+	override?: DirectiveDefinitionDirective,
 	childDirectives: DirectiveDefinitionChildDirectivesList,
 	childrenDirectives: DirectiveDefinitionChildrenDirectivesList,
 	template?: string,
@@ -306,6 +307,13 @@ export class DirectiveMetadataLoader
 			childDirectives: childDirectives,
 			childrenDirectives: childrenDirectives,
 		};
+
+		if (annotation.override) {
+			definition.override = {
+				directiveType: annotation.override,
+				metadata: this.load(annotation.override),
+			};
+		}
 
 		if (annotation.exportAs) {
 			definition.exportAs = annotation.exportAs;
