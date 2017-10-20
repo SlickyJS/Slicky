@@ -315,6 +315,19 @@ export function reverse<T>(arr: Array<T>): Array<T>
 }
 
 
+export function sort<T>(arr: Array<T>, compare?: (a: T, b: T) => number): Array<T>
+{
+	if (!isArray(arr)) {
+		throw new Error(`sort: only arrays are allowed, ${getType(arr)} given.`);
+	}
+
+	const copy: Array<T> = clone(arr);
+	copy.sort(compare);
+
+	return copy;
+}
+
+
 // from typescript
 export function extend(child: any, parent: any): any
 {

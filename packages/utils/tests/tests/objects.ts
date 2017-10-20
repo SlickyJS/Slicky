@@ -1,6 +1,6 @@
 import {
 	getType, isString, isNumber, isArray, isObject, isFunction, isIterable, exists, forEach, map, find, filter, unique,
-	clone, merge, toArray, extend, keys, values, flatten, reverse
+	clone, merge, toArray, extend, keys, values, flatten, reverse, sort
 } from '../..';
 import {expect} from 'chai';
 
@@ -454,6 +454,24 @@ describe('#objects', () => {
 			const modified = reverse(original);
 
 			expect(modified).to.be.eql([5, 4, 3, 2, 1]);
+			expect(modified).to.not.be.equal(original);
+		});
+
+	});
+
+	describe('sort()', () => {
+
+		it('should throw an error when sorting non arrays', () => {
+			expect(() => {
+				sort(<any>5);
+			}).to.throw(Error, 'sort: only arrays are allowed, [object Number] given.');
+		});
+
+		it('should sort array', () => {
+			const original = [5, 4, 3, 2, 1];
+			const modified = sort(original);
+
+			expect(modified).to.be.eql([1, 2, 3, 4, 5]);
 			expect(modified).to.not.be.equal(original);
 		});
 
