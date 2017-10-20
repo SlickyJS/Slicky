@@ -3,7 +3,7 @@ import {List} from 'immutable';
 
 
 const TEMPLATE = `
-<button (click)="add()">Add</button><br />
+<button (click)="add()">Add</button><br>
 <ul *s:if="items.size > 0">
 	<li *s:for="item in items" style="display: block;">{{ item }} <button (click)="remove(item)">X</button></li>
 </ul>

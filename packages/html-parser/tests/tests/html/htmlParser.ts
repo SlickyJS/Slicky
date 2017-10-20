@@ -1,4 +1,4 @@
-import {HTMLParser, ASTHTMLNodeDocumentFragment, ASTHTMLNodeTextAttribute, ASTHTMLNodeExpressionAttribute, ASTHTMLNodeExpressionAttributeEvent, ASTHTMLNode, ASTHTMLNodeElement, ASTHTMLNodeText, ASTHTMLNodeExpression} from '../../../html';
+import {HTMLParser, ASTHTMLNodeDocumentFragment, ASTHTMLNodeTextAttribute, ASTHTMLNodeExpressionAttribute, ASTHTMLNode, ASTHTMLNodeElement, ASTHTMLNodeText, ASTHTMLNodeExpression} from '../../../html';
 import {expect} from 'chai';
 
 
@@ -118,6 +118,82 @@ describe('#HTML/HTMLParser', () => {
 						child.twoWayBinding.push(new ASTHTMLNodeExpressionAttribute('size', 'photoSize'));
 
 						return child;
+					})(),
+				])
+			);
+		});
+
+		it('should correctly parse void elements', () => {
+			let ast = parse('<div><span>Hello</span><br><span>world</span></div>');
+
+			expect(ast).to.be.eql(
+				new ASTHTMLNodeDocumentFragment([
+					new ASTHTMLNodeElement('div', [
+						new ASTHTMLNodeElement('span', [
+							new ASTHTMLNodeText('Hello'),
+						]),
+						new ASTHTMLNodeElement('br'),
+						new ASTHTMLNodeElement('span', [
+							new ASTHTMLNodeText('world'),
+						]),
+					]),
+				])
+			);
+		});
+
+		it('should parse custom elements', () => {
+			let ast = parse('<my-directive></my-directive><span></span><my-child></my-child>');
+
+			expect(ast).to.be.eql(
+				new ASTHTMLNodeDocumentFragment([
+					new ASTHTMLNodeElement('my-directive'),
+					new ASTHTMLNodeElement('span'),
+					new ASTHTMLNodeElement('my-child'),
+				])
+			);
+		});
+
+		it('should parse template', () => {
+			let ast = parse('<template>hello world</template>');
+
+			expect(ast).to.be.eql(
+				new ASTHTMLNodeDocumentFragment([
+					(() => {
+						const template = new ASTHTMLNodeElement('template');
+
+						template.content = new ASTHTMLNodeDocumentFragment([
+							new ASTHTMLNodeText('hello world'),
+						]);
+
+						return template;
+					})(),
+				])
+			);
+		});
+
+		it('should parse inline templates', () => {
+			let ast = parse('<span *s:if="true" *s:for="item in items"></span>');
+
+			expect(ast).to.be.eql(
+				new ASTHTMLNodeDocumentFragment([
+					(() => {
+						const template = new ASTHTMLNodeElement('template');
+
+						template.properties.push(new ASTHTMLNodeExpressionAttribute('s:if', 'true'));
+						template.content = new ASTHTMLNodeDocumentFragment([
+							(() => {
+								const template = new ASTHTMLNodeElement('template');
+
+								template.properties.push(new ASTHTMLNodeExpressionAttribute('s:for', 'item in items'));
+								template.content = new ASTHTMLNodeDocumentFragment([
+									new ASTHTMLNodeElement('span'),
+								]);
+
+								return template;
+							})(),
+						]);
+
+						return template;
 					})(),
 				])
 			);

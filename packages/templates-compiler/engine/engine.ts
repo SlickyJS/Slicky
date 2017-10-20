@@ -331,7 +331,7 @@ export class Engine
 			renderTemplate: renderTemplate,
 		});
 
-		this._processTree(renderTemplate, innerProgress, matcher, element);
+		this._processTree(renderTemplate, innerProgress, matcher, element.content);
 
 		render.body.add(
 			`template.declareTemplate("${template.name}", ${renderTemplate.render()});`

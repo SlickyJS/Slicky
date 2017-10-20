@@ -23,11 +23,11 @@
 		<div class="uk-width-5-6">
 			<div class="uk-inline max-width">
 				<a [hidden]="!currentText.length" (click.prevent)="saveTodo()" class="uk-form-icon uk-form-icon-flip" href="#" [icon]="updating ? 'check' : 'plus'"></a>
-				<input (input)="currentText = $this.value" [value]="currentText" placeholder="{{ 'addNew' | translate }}" class="uk-input" type="text" />
+				<input (input)="currentText = $this.value" [value]="currentText" placeholder="{{ 'addNew' | translate }}" class="uk-input" type="text">
 			</div>
 		</div>
 		<div class="uk-width-1-6">
-			<input (input)="currentColor = $this.value" [value]="currentColor" type="color" class="uk-input" />
+			<input (input)="currentColor = $this.value" [value]="currentColor" type="color" class="uk-input">
 		</div>
 	</form>
 </div>

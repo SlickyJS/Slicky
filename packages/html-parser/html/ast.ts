@@ -55,6 +55,11 @@ export abstract class ASTHTMLNodeParent extends ASTHTMLNode
 }
 
 
+export class ASTHTMLNodeDocument extends ASTHTMLNodeParent
+{
+}
+
+
 export class ASTHTMLNodeDocumentFragment extends ASTHTMLNodeParent
 {
 }
@@ -149,9 +154,25 @@ export class AST implements _.TreeAdapter
 {
 
 
+	public createDocument(): ASTHTMLNodeDocument
+	{
+		return new ASTHTMLNodeDocument;
+	}
+
+
 	public createDocumentFragment(): ASTHTMLNodeDocumentFragment
 	{
 		return new ASTHTMLNodeDocumentFragment;
+	}
+
+
+	public setDocumentType(document: ASTHTMLNodeDocument, name: string, publicId: string, systemId: string): void
+	{
+	}
+
+
+	public setDocumentMode(document: ASTHTMLNodeDocument, mode: _.DocumentMode): void
+	{
 	}
 
 
@@ -274,29 +295,11 @@ export class AST implements _.TreeAdapter
 
 	public getNamespaceURI(element: _.Element): string
 	{
-		return undefined;
-	}
-
-
-	public createDocument(): _.Document
-	{
-		throw new Error('not implemented');
+		return 'http://www.w3.org/1999/xhtml';
 	}
 
 
 	public getChildNodes(node: _.ParentNode): Array<_.Node>
-	{
-		throw new Error('not implemented');
-	}
-
-
-	public setDocumentType(document: _.Document, name: string, publicId: string, systemId: string): void
-	{
-		throw new Error('not implemented');
-	}
-
-
-	public setDocumentMode(document: _.Document, mode: _.DocumentMode): void
 	{
 		throw new Error('not implemented');
 	}

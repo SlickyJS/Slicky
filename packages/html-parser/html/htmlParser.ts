@@ -1,4 +1,4 @@
-import {parseFragment} from 'parse5';
+import {parse} from 'parse5';
 import {forEach, map, startsWith, keys, find, exists} from '@slicky/utils';
 import {InputStream} from '@slicky/tokenizer';
 import {TextTokenizer, TextToken, TextTokenText, TextTokenExpression} from '../text';
@@ -23,19 +23,27 @@ export class HTMLParser
 
 	public parse(): _.ASTHTMLNodeDocumentFragment
 	{
-		let document = <_.ASTHTMLNodeDocumentFragment>parseFragment(this.input, {
+		const document = <_.ASTHTMLNodeDocument>parse(`<!DOCTYPE html><html><meta charset="UTF-8"><head></head><body>${this.input}</body></html>`, {
 			treeAdapter: this.ast,
 		});
 
-		this.process(document);
+		const body = <_.ASTHTMLNodeElement>(<_.ASTHTMLNodeElement>document.childNodes[0]).childNodes[1];
 
-		return document;
+		return this.process(body);
 	}
 
 
-	private process(document: _.ASTHTMLNodeDocumentFragment): void
+	private process(body: _.ASTHTMLNodeElement): _.ASTHTMLNodeDocumentFragment
 	{
-		this.processChildNodes(document.childNodes);
+		const fragment = new _.ASTHTMLNodeDocumentFragment;
+
+		forEach(body.childNodes, (childNode: _.ASTHTMLNode) => {
+			this.ast.appendChild(fragment, childNode);
+		});
+
+		this.processChildNodes(fragment.childNodes);
+
+		return fragment;
 	}
 
 
@@ -111,10 +119,12 @@ export class HTMLParser
 			let template = new _.ASTHTMLNodeElement('template');
 			template.properties = group;
 
+			this.ast.setTemplateContent(template, new _.ASTHTMLNodeDocumentFragment);
+
 			if (marker === element) {
 				this.ast.insertBefore(marker.parentNode, template, marker);
 			} else {
-				this.ast.appendChild(marker, template);
+				this.ast.appendChild(marker.content, template);
 			}
 
 			marker = template;
@@ -122,7 +132,7 @@ export class HTMLParser
 
 		if (marker !== element) {
 			this.ast.detachNode(element);
-			this.ast.appendChild(marker, element);
+			this.ast.appendChild(marker.content, element);
 		}
 
 		return marker;
