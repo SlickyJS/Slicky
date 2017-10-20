@@ -1,7 +1,7 @@
 import '../bootstrap';
 
 import {Tester} from '@slicky/tester';
-import {Component, Directive, OnInit, OnDestroy, OnUpdate, Input} from '@slicky/core';
+import {Component, Directive, OnInit, OnDestroy, OnUpdate, OnAttach, Input} from '@slicky/core';
 import {expect} from 'chai';
 
 
@@ -132,6 +132,87 @@ describe('#Application.lifeCycleEvents', () => {
 					done();
 				}, 30);
 			}, 30);
+		});
+
+	});
+
+	describe('onAttach', () => {
+
+		it('should call onAttach event on component', () => {
+			const attachedTo = {
+				directiveParent: [],
+				directiveChild: [],
+				component: [],
+			};
+
+			@Directive({
+				selector: 'test-child-directive',
+			})
+			class TestChildDirective implements OnAttach
+			{
+
+				public onAttach(parent): void
+				{
+					attachedTo.directiveChild.push(parent);
+				}
+
+			}
+
+			@Directive({
+				selector: 'test-parent-directive',
+			})
+			class TestParentDirective implements OnAttach
+			{
+
+				public onAttach(parent): void
+				{
+					attachedTo.directiveParent.push(parent);
+				}
+
+			}
+
+			@Component({
+				name: 'test-child-component',
+				template: ''
+			})
+			class TestChildComponent
+			{
+
+				public onAttach(parent): void
+				{
+					attachedTo.component.push(parent);
+				}
+
+			}
+
+			@Component({
+				name: 'test-parent-component',
+				template: (
+					'<test-parent-directive>' +
+						'<test-child-directive>' +
+							'<test-child-component></test-child-component>' +
+						'</test-child-directive>' +
+					'</test-parent-directive>' +
+					'<test-child-component></test-child-component>'
+				),
+				directives: [TestChildComponent, TestParentDirective, TestChildDirective],
+			})
+			class TestParentComponent {}
+
+			Tester.runDirective('<test-parent-component></test-parent-component>', TestParentComponent);
+
+			expect(attachedTo.directiveParent).to.have.lengthOf(1);
+			expect(attachedTo.directiveParent[0]).to.be.an.instanceOf(TestParentComponent);
+
+			expect(attachedTo.directiveChild).to.have.lengthOf(2);
+			expect(attachedTo.directiveChild[0]).to.be.an.instanceOf(TestParentDirective);
+			expect(attachedTo.directiveChild[1]).to.be.an.instanceOf(TestParentComponent);
+
+			expect(attachedTo.component).to.have.lengthOf(4);
+			expect(attachedTo.component[0]).to.be.an.instanceOf(TestChildDirective);
+			expect(attachedTo.component[1]).to.be.an.instanceOf(TestParentDirective);
+			expect(attachedTo.component[2]).to.be.an.instanceOf(TestParentComponent);
+			expect(attachedTo.component[3]).to.be.an.instanceOf(TestParentComponent);
 		});
 
 	});

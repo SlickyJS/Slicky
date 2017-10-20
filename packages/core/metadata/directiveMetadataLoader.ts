@@ -9,7 +9,6 @@ import {RequiredDefinition} from './required';
 import {OutputDefinition} from './output';
 import {HostElementDefinition} from './hostElement';
 import {HostEventDefinition} from './hostEvent';
-import {ParentComponentDefinition} from './parentComponent';
 import {ChildDirectiveDefinition} from './childDirective';
 import {ChildrenDirectiveDefinition} from './childrenDirective';
 import {DirectiveAnnotationDefinition} from './directive';
@@ -70,15 +69,6 @@ export declare interface DirectiveDefinitionEvent
 export type DirectiveDefinitionEventsList = Array<DirectiveDefinitionEvent>;
 
 
-export declare interface DirectiveDefinitionParentComponent
-{
-	property: string,
-}
-
-
-export type DirectiveDefinitionParentComponentsList = Array<DirectiveDefinitionParentComponent>;
-
-
 export declare interface DirectiveDefinitionChildDirective
 {
 	property: string,
@@ -134,12 +124,12 @@ export declare interface DirectiveDefinition {
 	onInit: boolean,
 	onDestroy: boolean,
 	onUpdate: boolean,
+	onAttach: boolean,
 	inputs: DirectiveDefinitionInputsList,
 	outputs: DirectiveDefinitionOutputsList,
 	elements: DirectiveDefinitionElementsList,
 	events: DirectiveDefinitionEventsList,
 	directives: DirectiveDefinitionDirectivesList,
-	parentComponents: DirectiveDefinitionParentComponentsList,
 	childDirectives: DirectiveDefinitionChildDirectivesList,
 	childrenDirectives: DirectiveDefinitionChildrenDirectivesList,
 	template?: string,
@@ -205,7 +195,6 @@ export class DirectiveMetadataLoader
 		let outputs: DirectiveDefinitionOutputsList = [];
 		let elements: DirectiveDefinitionElementsList = [];
 		let events: DirectiveDefinitionEventsList = [];
-		let parentComponents: DirectiveDefinitionParentComponentsList = [];
 		let childDirectives: DirectiveDefinitionChildDirectivesList = [];
 		let childrenDirectives: DirectiveDefinitionChildrenDirectivesList = [];
 
@@ -255,11 +244,6 @@ export class DirectiveMetadataLoader
 
 					events.push(event);
 
-				} else if (metadata instanceof ParentComponentDefinition) {
-					parentComponents.push({
-						property: property,
-					});
-
 				} else if (metadata instanceof ChildDirectiveDefinition) {
 					childDirective = {
 						property: property,
@@ -308,6 +292,7 @@ export class DirectiveMetadataLoader
 			onInit: isFunction(directiveType.prototype.onInit),
 			onDestroy: isFunction(directiveType.prototype.onDestroy),
 			onUpdate: isFunction(directiveType.prototype.onUpdate),
+			onAttach: isFunction(directiveType.prototype.onAttach),
 			inputs: inputs,
 			outputs: outputs,
 			elements: elements,
@@ -318,7 +303,6 @@ export class DirectiveMetadataLoader
 					metadata: this.load(directiveType),
 				};
 			}),
-			parentComponents: parentComponents,
 			childDirectives: childDirectives,
 			childrenDirectives: childrenDirectives,
 		};

@@ -1,3 +1,6 @@
+import {ClassType} from '@slicky/lang';
+
+
 export interface OnInit
 {
 
@@ -21,5 +24,14 @@ export interface OnUpdate
 
 
 	onUpdate(input: string, value: any): void;
+
+}
+
+
+export interface OnAttach
+{
+
+
+	onAttach(parentDirective: ClassType<any>): void;
 
 }

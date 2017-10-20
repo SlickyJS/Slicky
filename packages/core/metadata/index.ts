@@ -8,5 +8,4 @@ export * from './hostElement';
 export * from './hostEvent';
 export * from './input';
 export * from './output';
-export * from './parentComponent';
 export * from './required';

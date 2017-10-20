@@ -1,6 +1,6 @@
 import '../../bootstrap';
 
-import {OnInit, Directive, Input, Required, Output, HostElement, HostEvent, ParentComponent} from '../../../';
+import {OnInit, OnDestroy, OnUpdate, OnAttach, Directive, Input, Required, Output, HostElement, HostEvent} from '../../../';
 import {DirectiveMetadataLoader, DirectiveDefinitionType} from '../../../metadata';
 import {ExtensionsManager} from '../../../extensions';
 import {expect} from 'chai';
@@ -42,12 +42,12 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			onInit: false,
 			onDestroy: false,
 			onUpdate: false,
+			onAttach: false,
 			inputs: [],
 			outputs: [],
 			elements: [],
 			events: [],
 			directives: [],
-			parentComponents: [],
 			childDirectives: [],
 			childrenDirectives: [],
 		});
@@ -70,12 +70,12 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			onInit: false,
 			onDestroy: false,
 			onUpdate: false,
+			onAttach: false,
 			inputs: [],
 			outputs: [],
 			elements: [],
 			events: [],
 			directives: [],
-			parentComponents: [],
 			childDirectives: [],
 			childrenDirectives: [],
 		});
@@ -110,6 +110,7 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			onInit: false,
 			onDestroy: false,
 			onUpdate: false,
+			onAttach: false,
 			inputs: [
 				{
 					property: 'notRequired',
@@ -136,7 +137,6 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			elements: [],
 			events: [],
 			directives: [],
-			parentComponents: [],
 			childDirectives: [],
 			childrenDirectives: [],
 		});
@@ -167,6 +167,7 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			onInit: false,
 			onDestroy: false,
 			onUpdate: false,
+			onAttach: false,
 			inputs: [],
 			outputs: [
 				{
@@ -181,7 +182,6 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			elements: [],
 			events: [],
 			directives: [],
-			parentComponents: [],
 			childDirectives: [],
 			childrenDirectives: [],
 		});
@@ -209,6 +209,7 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			onInit: false,
 			onDestroy: false,
 			onUpdate: false,
+			onAttach: false,
 			inputs: [],
 			outputs: [],
 			elements: [
@@ -220,7 +221,6 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			],
 			events: [],
 			directives: [],
-			parentComponents: [],
 			childDirectives: [],
 			childrenDirectives: [],
 		});
@@ -258,6 +258,7 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			onInit: false,
 			onDestroy: false,
 			onUpdate: false,
+			onAttach: false,
 			inputs: [],
 			outputs: [],
 			elements: [],
@@ -278,52 +279,6 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 				},
 			],
 			directives: [],
-			parentComponents: [],
-			childDirectives: [],
-			childrenDirectives: [],
-		});
-	});
-
-	it('should parse parent component', () => {
-		class TestDirectiveParent {}
-
-		@Directive({
-			selector: 'button',
-		})
-		class TestDirective
-		{
-
-
-			@ParentComponent() parent;
-
-			@ParentComponent(TestDirectiveParent) specificParent;
-
-		}
-
-		let definition = loader.load(TestDirective);
-
-		expect(definition).to.be.eql({
-			type: DirectiveDefinitionType.Directive,
-			name: 'TestDirective',
-			uniqueName: 'TestDirective_9386130',
-			hash: 9386130,
-			selector: 'button',
-			onInit: false,
-			onDestroy: false,
-			onUpdate: false,
-			inputs: [],
-			outputs: [],
-			elements: [],
-			events: [],
-			directives: [],
-			parentComponents: [
-				{
-					property: 'parent',
-				},
-				{
-					property: 'specificParent',
-				},
-			],
 			childDirectives: [],
 			childrenDirectives: [],
 		});
@@ -333,11 +288,17 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 		@Directive({
 			selector: 'button',
 		})
-		class TestDirective implements OnInit
+		class TestDirective implements OnInit, OnDestroy, OnUpdate, OnAttach
 		{
 
 
 			public onInit(): void {}
+
+			public onDestroy(): void {}
+
+			public onUpdate(): void {}
+
+			public onAttach(): void {}
 
 		}
 
@@ -350,14 +311,14 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 			hash: 9386130,
 			selector: 'button',
 			onInit: true,
-			onDestroy: false,
-			onUpdate: false,
+			onDestroy: true,
+			onUpdate: true,
+			onAttach: true,
 			inputs: [],
 			outputs: [],
 			elements: [],
 			events: [],
 			directives: [],
-			parentComponents: [],
 			childDirectives: [],
 			childrenDirectives: [],
 		});
