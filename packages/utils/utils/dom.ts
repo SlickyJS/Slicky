@@ -1,4 +1,4 @@
-function callDomEvent(document: Document, element: Element, type: string, name: string): void
+export function callDomEvent(document: Document, element: Element, type: string, name: string): void
 {
 	let event = document.createEvent(type);
 	event.initEvent(name, false, true);
