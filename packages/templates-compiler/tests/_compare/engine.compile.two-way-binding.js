@@ -5,7 +5,7 @@ return function(template, el) {
 		}, function(value) {
 			el._nativeNode.size = value;
 		});
-		el.addEvent("sizeChange", function($event) {
+		el.addEvent("size-change", function($event) {
 			return template.getParameter('photoSize') = $event;
 		});
 	});

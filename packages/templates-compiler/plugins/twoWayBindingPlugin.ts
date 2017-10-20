@@ -11,7 +11,7 @@ export class TwoWayBindingPlugin extends EnginePlugin
 	{
 		forEach(element.twoWayBinding, (binding: _.ASTHTMLNodeExpressionAttribute) => {
 			element.properties.push(binding);
-			element.events.push(new _.ASTHTMLNodeExpressionAttributeEvent(`${binding.name}Change`, `${binding.value} = $event`));
+			element.events.push(new _.ASTHTMLNodeExpressionAttributeEvent(`${binding.name}-change`, `${binding.value} = $event`));
 		});
 
 		return element;

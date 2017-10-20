@@ -1,7 +1,7 @@
 import {DirectiveDefinitionDirective, DirectiveDefinitionOutput, DirectiveDefinitionType} from '@slicky/core/metadata';
 import {BuilderFunction} from '@slicky/templates-compiler/builder';
 import {OnProcessElementArgument} from '@slicky/templates-compiler';
-import {forEach, find} from '@slicky/utils';
+import {forEach, find, exists} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import {AbstractSlickyEnginePlugin} from '../abstracSlickyEnginePlugin';
 
@@ -17,9 +17,11 @@ export class OutputsPlugin extends AbstractSlickyEnginePlugin
 				return event.name === output.name;
 			});
 
-			if (event) {
-				element.events.splice(element.events.indexOf(event), 1);
+			if (!exists(event)) {
+				return;
 			}
+
+			element.events.splice(element.events.indexOf(event), 1);
 
 			directiveSetup.body.add(
 				`directive.${output.property}.subscribe(function($event) {\n` +
