@@ -1,5 +1,5 @@
 import {findAnnotation, getPropertiesMetadata} from '@slicky/reflection';
-import {exists, forEach, stringify, hash, map, isFunction, merge, unique, camelCaseToHyphens} from '@slicky/utils';
+import {exists, forEach, stringify, hash, map, isFunction, merge, unique, camelCaseToHyphens, flatten} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {EventEmitter} from '@slicky/event-emitter';
 import {TemplateEncapsulation} from '@slicky/templates/templates';
@@ -297,7 +297,7 @@ export class DirectiveMetadataLoader
 			outputs: outputs,
 			elements: elements,
 			events: events,
-			directives: map(annotation.directives, (directiveType: ClassType<any>): DirectiveDefinitionDirective => {
+			directives: map(flatten(annotation.directives), (directiveType: ClassType<any>): DirectiveDefinitionDirective => {
 				return {
 					directiveType: directiveType,
 					metadata: this.load(directiveType),

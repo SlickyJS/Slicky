@@ -163,4 +163,45 @@ describe('#Application.directives', () => {
 		});
 	});
 
+	it('should provide directives for component from array', () => {
+		const initialized = [];
+
+		@Directive({
+			selector: '[test-directive-a]',
+		})
+		class TestDirectiveA implements OnInit
+		{
+
+			public onInit(): void
+			{
+				initialized.push('a');
+			}
+
+		}
+
+		@Directive({
+			selector: '[test-directive-b]',
+		})
+		class TestDirectiveB implements OnInit
+		{
+
+			public onInit(): void
+			{
+				initialized.push('b');
+			}
+
+		}
+
+		@Component({
+			name: 'test-component',
+			template: '<div test-directive-a test-directive-b></div>',
+			directives: [[TestDirectiveA, TestDirectiveB]],
+		})
+		class TestComponent {}
+
+		Tester.runDirective('<test-component></test-component>', TestComponent);
+
+		expect(initialized).to.be.eql(['a', 'b']);
+	});
+
 });
