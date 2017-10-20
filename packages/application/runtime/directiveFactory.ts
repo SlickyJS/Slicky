@@ -1,9 +1,10 @@
 import {BaseTemplate, ApplicationTemplate, TemplateRenderFactory, TemplateEncapsulation} from '@slicky/templates/templates';
 import {Renderer} from '@slicky/templates/dom';
-import {ElementRef, FilterInterface, ChangeDetectorRef} from '@slicky/core';
+import {ElementRef, FilterInterface, ChangeDetectorRef, DirectivesStorageRef} from '@slicky/core';
 import {DirectiveMetadataLoader, DirectiveDefinitionDirective, DirectiveDefinition, DirectiveDefinitionFilter} from '@slicky/core/metadata';
+import {DirectivesStorage} from '@slicky/core/directives';
 import {ExtensionsManager} from '@slicky/core/extensions';
-import {forEach, isFunction} from '@slicky/utils';
+import {forEach, isFunction, exists} from '@slicky/utils';
 import {Container, ProviderOptions} from '@slicky/di';
 import {ClassType} from '@slicky/lang';
 import {PlatformInterface} from '../platform';
@@ -12,6 +13,9 @@ import {ComponentTemplate} from './componentTemplate';
 
 export class DirectiveFactory
 {
+
+
+	private static ELEMENT_DIRECTIVES_STORAGE = '__slicky_directives';
 
 
 	private document: Document;
@@ -55,6 +59,8 @@ export class DirectiveFactory
 
 	public createDirective<T>(container: Container, directiveType: ClassType<T>, metadata: DirectiveDefinition, el: Element, providers: Array<ProviderOptions> = []): T
 	{
+		let directives = this.getDirectivesStorage(el);
+
 		providers.push({
 			service: ElementRef,
 			options: {
@@ -62,9 +68,20 @@ export class DirectiveFactory
 			},
 		});
 
+		providers.push({
+			service: DirectivesStorageRef,
+			options: {
+				useFactory: () => new DirectivesStorageRef(directives),
+			},
+		});
+
 		this.extensions.doUpdateDirectiveServices(directiveType, metadata, providers);
 
-		return container.create(directiveType, providers);
+		const directive = container.create(directiveType, providers);
+
+		directives.addDirective(directive);
+
+		return directive;
 	}
 
 
@@ -99,6 +116,16 @@ export class DirectiveFactory
 		}, templateFactory, component);
 
 		return template;
+	}
+
+
+	private getDirectivesStorage(el: Element): DirectivesStorage
+	{
+		if (!exists(el[DirectiveFactory.ELEMENT_DIRECTIVES_STORAGE])) {
+			el[DirectiveFactory.ELEMENT_DIRECTIVES_STORAGE] = new DirectivesStorage;
+		}
+
+		return el[DirectiveFactory.ELEMENT_DIRECTIVES_STORAGE];
 	}
 
 }

@@ -1,4 +1,4 @@
-export {ElementRef, ChildrenDirectivesStorage, ChangeDetectorRef} from './directives';
+export {ElementRef, ChildrenDirectivesStorage, ChangeDetectorRef, DirectivesStorageRef} from './directives';
 export {AbstractExtension} from './extensions';
 export {FilterInterface} from './filters';
 export {OnInit, OnDestroy, OnUpdate, OnAttach} from './lifeCycleEvents';

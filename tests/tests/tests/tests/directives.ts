@@ -1,7 +1,8 @@
 import '../bootstrap';
 
 import {Tester} from '@slicky/tester';
-import {Component, Directive, OnInit} from '@slicky/core';
+import {Component, Directive, OnInit, DirectivesStorageRef} from '@slicky/core';
+import {forEach} from '@slicky/utils';
 import {expect} from 'chai';
 
 
@@ -64,6 +65,102 @@ describe('#Application.directives', () => {
 		const component = Tester.runDirective('<test-component></test-component>', TestComponent);
 
 		expect(component.application.document.body.textContent).to.be.equal('inside: yes, outside: ');
-	})
+	});
+
+	it('should have access to DirectivesStorage inside of directive', () => {
+		const directives = {
+			a: [],
+			b: [],
+			c: [],
+		};
+
+		interface TestDirective
+		{
+
+			name: string;
+
+		}
+
+		@Directive({
+			selector: '[test-directive-a]',
+		})
+		class TestDirectiveA implements OnInit, TestDirective
+		{
+
+			public name = 'a';
+
+			public storage: DirectivesStorageRef;
+
+			constructor(storage: DirectivesStorageRef)
+			{
+				this.storage = storage;
+			}
+
+			public onInit(): void
+			{
+				forEach(this.storage.directives, (directive: TestDirective) => directives.a.push(directive.name));
+			}
+
+		}
+
+		@Directive({
+			selector: '[test-directive-b]',
+		})
+		class TestDirectiveB implements OnInit, TestDirective
+		{
+
+			public name = 'b';
+
+			public storage: DirectivesStorageRef;
+
+			constructor(storage: DirectivesStorageRef)
+			{
+				this.storage = storage;
+			}
+
+			public onInit(): void
+			{
+				forEach(this.storage.directives, (directive: TestDirective) => directives.b.push(directive.name));
+			}
+
+		}
+
+		@Directive({
+			selector: '[test-directive-c]',
+		})
+		class TestDirectiveC implements OnInit, TestDirective
+		{
+
+			public name = 'c';
+
+			public storage: DirectivesStorageRef;
+
+			constructor(storage: DirectivesStorageRef)
+			{
+				this.storage = storage;
+			}
+
+			public onInit(): void
+			{
+				forEach(this.storage.directives, (directive: TestDirective) => directives.c.push(directive.name));
+			}
+
+		}
+
+		@Component({
+			name: 'test-component',
+			template: '<div test-directive-a test-directive-b test-directive-c></div>',
+			directives: [TestDirectiveA, TestDirectiveB, TestDirectiveC],
+		})
+		class TestComponent {}
+
+		Tester.runDirective('<test-component></test-component>', TestComponent);
+
+		expect(directives).to.be.eql({
+			a: ['a', 'b', 'c'],
+			b: ['a', 'b', 'c'],
+			c: ['a', 'b', 'c'],
+		});
+	});
 
 });
