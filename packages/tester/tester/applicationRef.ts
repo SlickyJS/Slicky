@@ -1,5 +1,6 @@
 import {Application} from '@slicky/application';
 import {Container} from '@slicky/di';
+import {callDomEvent, callMouseEvent} from '@slicky/utils';
 
 
 export class ApplicationRef
@@ -36,6 +37,18 @@ export class ApplicationRef
 	get document(): Document
 	{
 		return this._document;
+	}
+
+
+	public callEvent(element: Element, type: string, name: string): void
+	{
+		callDomEvent(this._document, element, type, name);
+	}
+
+
+	public callMouseEvent(element: Element, name: string): void
+	{
+		callMouseEvent(this._document, element, name);
 	}
 
 }
