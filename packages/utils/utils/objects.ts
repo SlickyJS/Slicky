@@ -302,6 +302,19 @@ export function flatten<T>(arr: Array<any>): Array<T>
 }
 
 
+export function reverse<T>(arr: Array<T>): Array<T>
+{
+	if (!isArray(arr)) {
+		throw new Error(`reverse: only arrays are allowed, ${getType(arr)} given.`);
+	}
+
+	const copy: Array<T> = clone(arr);
+	copy.reverse();
+
+	return copy;
+}
+
+
 // from typescript
 export function extend(child: any, parent: any): any
 {

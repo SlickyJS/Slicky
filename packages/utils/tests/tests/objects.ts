@@ -1,4 +1,7 @@
-import {getType, isString, isNumber, isArray, isObject, isFunction, isIterable, exists, forEach, map, find, filter, unique, clone, merge, toArray, extend, keys, values, flatten} from '../..';
+import {
+	getType, isString, isNumber, isArray, isObject, isFunction, isIterable, exists, forEach, map, find, filter, unique,
+	clone, merge, toArray, extend, keys, values, flatten, reverse
+} from '../..';
 import {expect} from 'chai';
 
 
@@ -434,6 +437,24 @@ describe('#objects', () => {
 
 		it('should flatten an array', () => {
 			expect(flatten([1, [2], [3, [[4]]]])).to.be.eql([1, 2, 3, 4]);
+		});
+
+	});
+
+	describe('reverse()', () => {
+
+		it('should throw an error when reversing non arrays', () => {
+			expect(() => {
+				reverse(<any>5);
+			}).to.throw(Error, 'reverse: only arrays are allowed, [object Number] given.');
+		});
+
+		it('should reverse array', () => {
+			const original = [1, 2, 3, 4, 5];
+			const modified = reverse(original);
+
+			expect(modified).to.be.eql([5, 4, 3, 2, 1]);
+			expect(modified).to.not.be.equal(original);
 		});
 
 	});
