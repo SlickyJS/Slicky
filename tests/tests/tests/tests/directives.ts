@@ -273,4 +273,46 @@ describe('#Application.directives', () => {
 		expect(directives).to.be.eql(['test-more-specific-directive', 'test-directive']);
 	});
 
+	it('should override only matching directive by another directive', () => {
+		const directives = [];
+
+		@Directive({
+			selector: '[dir-a]',
+		})
+		class TestCorrectDirective implements OnInit
+		{
+
+			public onInit(): void
+			{
+				directives.push('a');
+			}
+
+		}
+
+		@Directive({
+			selector: '[dir-b]',
+			override: TestCorrectDirective,
+		})
+		class TestWrongDirective implements OnInit
+		{
+
+			public onInit(): void
+			{
+				directives.push('b');
+			}
+
+		}
+
+		@Component({
+			name: 'test-component',
+			template: '<div dir-a></div>',
+			directives: [TestCorrectDirective, TestWrongDirective],
+		})
+		class TestComponent {}
+
+		Tester.runDirective('<test-component></test-component>', TestComponent);
+
+		expect(directives).to.be.eql(['a']);
+	});
+
 });

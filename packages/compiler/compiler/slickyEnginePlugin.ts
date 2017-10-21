@@ -5,6 +5,7 @@ import * as c from '@slicky/core/metadata';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
 import {createFunction} from '@slicky/templates-compiler/builder';
+import {Matcher} from '@slicky/query-selector';
 import {AbstractSlickyEnginePlugin} from './abstracSlickyEnginePlugin';
 import * as plugins from './plugins';
 
@@ -66,7 +67,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 	{
 		this.hook('onSlickyBeforeProcessElement', element, arg);
 
-		const directives = this.getDirectives();
+		const directives = this.getDirectives(element, arg.matcher);
 		const elementInnerDirectives = {
 			element: element,
 			directives: [],
@@ -75,10 +76,6 @@ export class SlickyEnginePlugin extends EnginePlugin
 		this.elementsInnerDirectives.push(elementInnerDirectives);
 
 		forEach(directives, (directive: c.DirectiveDefinitionDirective) => {
-			if (!arg.matcher.matches(element, directive.metadata.selector)) {
-				return;
-			}
-
 			if (directive.metadata.type === c.DirectiveDefinitionType.Directive) {
 				elementInnerDirectives.directives = unique(merge(elementInnerDirectives.directives, directive.metadata.directives));
 			}
@@ -146,7 +143,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 	}
 
 
-	private getDirectives(): Array<c.DirectiveDefinitionDirective>
+	private getDirectives(element: _.ASTHTMLNodeElement, matcher: Matcher): Array<c.DirectiveDefinitionDirective>
 	{
 		let directives = clone(this.metadata.directives);
 
@@ -155,6 +152,14 @@ export class SlickyEnginePlugin extends EnginePlugin
 		});
 
 		directives = unique(directives);
+
+		directives = filter(directives, (directive: c.DirectiveDefinitionDirective) => {
+			if (!matcher.matches(element, directive.metadata.selector)) {
+				return false;
+			}
+
+			return true;
+		});
 
 		const result: Array<c.DirectiveDefinitionDirective> = [];
 
