@@ -1,3 +1,5 @@
+import {find} from '@slicky/utils';
+import {ClassType} from '@slicky/lang';
 import {DirectivesStorage} from './directivesStorage';
 
 
@@ -17,6 +19,14 @@ export class DirectivesStorageRef
 	get directives(): Array<any>
 	{
 		return this.storage.getDirectives();
+	}
+
+
+	public find<T>(directiveType: ClassType<T>): T
+	{
+		return find(this.storage.getDirectives(), (directive: any) => {
+			return directive instanceof directiveType;
+		});
 	}
 
 }
