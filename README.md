@@ -32,6 +32,7 @@ something else. (Maybe when there'll be router it could be used on SPA's also).
 9. [Ahead of time compilation](./docs/aot.md)
 10. [Extensions](./docs/extensions.md)
 11. [Testing](./docs/testing.md)
+12. [HTTP](./docs/http.md)
 
 ## Examples
 

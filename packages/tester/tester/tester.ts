@@ -4,6 +4,7 @@ import {ApplicationOptions} from '@slicky/application/application';
 import {RootDirectiveRunner, ComponentTemplate} from '@slicky/application/runtime';
 import {PlatformBrowser} from '@slicky/platform-browser';
 import {ClassType} from '@slicky/lang';
+import {isFunction} from '@slicky/utils';
 import {Component, ChildDirective, Required} from '@slicky/core';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {JSDOM} from 'jsdom';
@@ -18,7 +19,7 @@ export class Tester
 	private static APP_CONTAINER_ID = 'app-container';
 
 
-	public static run(html: string, options: ApplicationOptions = {}): ApplicationRef
+	public static run(html: string, options: ApplicationOptions = {}, setup?: (application: Application, container: Container) => void): ApplicationRef
 	{
 		const dom = new JSDOM(`<!DOCTYPE html><html><head></head><body id="${Tester.APP_CONTAINER_ID}">${html}</body></html>`);
 		const doc = dom.window.document;
@@ -28,6 +29,10 @@ export class Tester
 		const container = new Container;
 		const platform = new PlatformBrowser;
 		const app = new Application(container, options);
+
+		if (isFunction(setup)) {
+			setup(app, container);
+		}
 
 		platform.run(app, `#${Tester.APP_CONTAINER_ID}`);
 
