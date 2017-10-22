@@ -12,7 +12,7 @@ import {expect} from 'chai';
 
 function compareWith(name: string): string
 {
-	return readFileSync(path.join(__dirname, '..', '_compare', `${name}.js`), {encoding: 'utf-8'});
+	return <string>readFileSync(path.join(__dirname, '..', '_compare', `${name}.js`), {encoding: 'utf-8'});
 }
 
 
@@ -655,7 +655,6 @@ describe('#Compiler', () => {
 			class TestChildDirective
 			{
 
-
 				public text = 'Hello world';
 
 			}
@@ -668,6 +667,16 @@ describe('#Compiler', () => {
 			class TestParentComponent {}
 
 			expect(compiler.compile(metadataLoader.load(TestParentComponent))).to.be.equal(compareWith('compiler.export.component'));
+		});
+
+		it('should create new local variable inside of template', () => {
+			@Component({
+				name: 'test-component',
+				template: '{{ let greeting = "hello world" }} {{ greeting }}',
+			})
+			class TestComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.localVariable'));
 		});
 
 	});

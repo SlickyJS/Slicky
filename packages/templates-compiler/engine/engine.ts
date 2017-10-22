@@ -101,6 +101,20 @@ export class Engine
 	{
 		let parser = new tjs.Parser(new tjs.Tokenizer(new InputStream(expr)), {
 			addMissingReturn: addMissingReturn,
+			variableDeclarationHook: (identifier: tjs.ASTVariableDeclaration) => {
+				progress.localVariables.push(identifier.name.name);
+
+				return new tjs.ASTCallExpression(
+					new tjs.ASTMemberExpression(
+						new tjs.ASTIdentifier('template'),
+						new tjs.ASTIdentifier('setParameter')
+					),
+					[
+						new tjs.ASTStringLiteral(identifier.name.name),
+						identifier.init,
+					]
+				);
+			},
 			variableHook: (identifier: tjs.ASTIdentifier, declaration: tjs.ParserVariableDeclaration) => {
 				if (declaration === tjs.ParserVariableDeclaration.FunctionArgument) {
 					return identifier;
@@ -173,11 +187,16 @@ export class Engine
 
 	private processExpression(progress: EngineProgress, render: b.BuilderFunction, expression: _.ASTHTMLNodeExpression): void
 	{
-		render.body.add(
-			`el.addExpression(function() {\n` +
-			`	${this._compileExpression(expression.value, progress, true)};\n` +
-			`});`
-		);
+		if (startsWith(expression.value, 'let ')) {
+			render.body.add(this._compileExpression(expression.value, progress) + ';');
+
+		} else {
+			render.body.add(
+				`el.addExpression(function() {\n` +
+				`	${this._compileExpression(expression.value, progress, true)};\n` +
+				`});`
+			);
+		}
 	}
 
 

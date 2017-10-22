@@ -186,6 +186,12 @@ describe('#Engine', () => {
 			expect(template).to.be.equal(compareWith('engine.compile.two-way-binding'));
 		});
 
+		it('should create new local variable inside of template', () => {
+			let template = engine.compile('{{ let greeting = "hello world" }} {{ greeting }}');
+
+			expect(template).to.be.equal(compareWith('compiler.localVariable'));
+		});
+
 	});
 
 });
