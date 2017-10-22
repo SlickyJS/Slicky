@@ -107,11 +107,16 @@ export class Engine
 				return new tjs.ASTCallExpression(
 					new tjs.ASTMemberExpression(
 						new tjs.ASTIdentifier('template'),
-						new tjs.ASTIdentifier('setParameter')
+						new tjs.ASTIdentifier('setDynamicParameter')
 					),
 					[
 						new tjs.ASTStringLiteral(identifier.name.name),
-						identifier.init,
+						new tjs.ASTArrowFunctionExpression(
+							[],
+							[
+								new tjs.ASTReturnStatement(identifier.init),
+							]
+						),
 					]
 				);
 			},

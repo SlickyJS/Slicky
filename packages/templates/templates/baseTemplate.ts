@@ -135,6 +135,14 @@ export abstract class BaseTemplate
 	}
 
 
+	public setDynamicParameter(name: string, valueCallback: () => any): void
+	{
+		this.watch(valueCallback, (value) => {
+			this.setParameter(name, value);
+		});
+	}
+
+
 	public updateParameter(name: string, update: (value: any) => any): void
 	{
 		if (exists(this.parameters[name])) {
