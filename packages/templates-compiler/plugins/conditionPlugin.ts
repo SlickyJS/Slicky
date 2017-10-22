@@ -18,7 +18,7 @@ export class ConditionPlugin extends EnginePlugin
 		}
 
 		arg.render.body.add(
-			`template.addCondition(function(template, el) {\n` +
+			`template.addCondition(function() {\n` +
 			`	${arg.engine._compileExpression(condition.value, arg.progress, true)};\n` +
 			`}, "${arg.template.name}");`
 		);

@@ -63,4 +63,27 @@ describe('#Application.conditions', () => {
 		expect(body.textContent).to.be.equal('hello world');
 	});
 
+	it('should render when true with local variable', () => {
+		@Component({
+			name: 'test-component',
+			template: '{{ let visible = true }}<template [s:if]="visible">hello world</template>',
+		})
+		class TestComponent {}
+
+		const component = Tester.runDirective('<test-component></test-component>', TestComponent);
+		const body = component.application.document.body;
+
+		expect(body.textContent).to.be.equal('hello world');
+
+		component.template.setParameter('visible', false);
+		component.template.refresh();
+
+		expect(body.textContent).to.be.equal('');
+
+		component.template.setParameter('visible', true);
+		component.template.refresh();
+
+		expect(body.textContent).to.be.equal('hello world');
+	});
+
 });
