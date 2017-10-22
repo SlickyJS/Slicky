@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/compiler",
 	"description": "Templates compiler for slicky framework",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -14,12 +14,12 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/core": "^0.5.0",
-		"@slicky/html-parser": "^0.1.2",
+		"@slicky/core": "^0.6.0",
+		"@slicky/html-parser": "^0.1.3",
 		"@slicky/query-selector": "^1.2.0",
-		"@slicky/templates-compiler": "^1.2.0",
-		"@slicky/tiny-js": "^1.1.1",
-		"@slicky/utils": "^1.2.0"
+		"@slicky/templates-compiler": "^1.3.0",
+		"@slicky/tiny-js": "^1.1.2",
+		"@slicky/utils": "^1.3.0"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",
