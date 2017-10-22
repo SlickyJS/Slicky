@@ -21,7 +21,7 @@
 		"@slicky/event-emitter": "^1.0.1",
 		"@slicky/extension-translator": "^0.1.4",
 		"@slicky/lang": "^1.0.0",
-		"@slicky/platform-browser": "^0.1.8",
+		"@slicky/platform-browser": "^0.1.9",
 		"@slicky/platform-server": "^0.1.7",
 		"immutable": "^3.8.1",
 		"jquery": "^3.2.1",

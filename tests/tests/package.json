@@ -16,7 +16,7 @@
 	"types": "./lib/index.d.ts",
 	"dependencies": {
 		"@slicky/core": "^0.6.0",
-		"@slicky/tester": "^0.0.3",
+		"@slicky/tester": "^0.0.4",
 		"reflect-metadata": "^0.1.10",
 		"zone.js": "^0.8.16"
 	},
