@@ -57,6 +57,10 @@ export abstract class ASTHTMLNodeParent extends ASTHTMLNode
 
 export class ASTHTMLNodeDocument extends ASTHTMLNodeParent
 {
+
+
+	public mode: _.DocumentMode;
+
 }
 
 
@@ -171,8 +175,15 @@ export class AST implements _.TreeAdapter
 	}
 
 
+	public getDocumentMode(document: ASTHTMLNodeDocument): _.DocumentMode
+	{
+		return document.mode;
+	}
+
+
 	public setDocumentMode(document: ASTHTMLNodeDocument, mode: _.DocumentMode): void
 	{
+		document.mode = mode;
 	}
 
 
@@ -300,12 +311,6 @@ export class AST implements _.TreeAdapter
 
 
 	public getChildNodes(node: _.ParentNode): Array<_.Node>
-	{
-		throw new Error('not implemented');
-	}
-
-
-	public getDocumentMode(document: _.Document): _.DocumentMode
 	{
 		throw new Error('not implemented');
 	}
