@@ -185,6 +185,8 @@ export class SlickyEnginePlugin extends EnginePlugin
 		});
 
 		const result: Array<c.DirectiveDefinitionDirective> = [];
+		const componentNames: Array<string> = [];
+		const directiveNames: Array<string> = [];
 
 		forEach(directives, (directive: c.DirectiveDefinitionDirective) => {
 			const dependencyFor: c.DirectiveDefinitionDirective = find(directives, (dependencyFor: c.DirectiveDefinitionDirective) => {
@@ -201,8 +203,22 @@ export class SlickyEnginePlugin extends EnginePlugin
 
 			if (!dependencyFor) {
 				result.push(directive);
+
+				if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
+					componentNames.push(directive.metadata.name);
+				} else {
+					directiveNames.push(directive.metadata.name);
+				}
 			}
 		});
+
+		if (componentNames.length > 1) {
+			throw new Error(`More than 1 component is attached to element <${element.name}></${element.name}>: ${componentNames.join(', ')}.`);
+		}
+
+		if (componentNames.length === 1 && directiveNames.length > 0) {
+			throw new Error(`Both component and directive are attached to element <${element.name}></${element.name}>: ${componentNames[0]}, ${directiveNames.join(', ')}.`);
+		}
 
 		return result;
 	}
