@@ -49,7 +49,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 		this.register(new plugins.HostElementsPlugin(this.metadata));
 		this.register(new plugins.ChildDirectivesPlugin(this.metadata));
 		this.register(new plugins.ChildrenDirectivesPlugin(this.metadata));
-		this.register(new plugins.LifeCycleEventsPlugin(this.metadata));
+		this.register(new plugins.LifeCycleEventsPlugin);
 	}
 
 

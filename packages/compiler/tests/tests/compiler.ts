@@ -746,6 +746,29 @@ describe('#Compiler', () => {
 			}).to.throw(Error, 'Both component and directive are attached to element <test-child-component></test-child-component>: TestChildComponent, TestChildDirectiveA, TestChildDirectiveC.');
 		});
 
+		it('should initialize directive after all inner elements', () => {
+			@Directive({
+				selector: 'test-directive',
+			})
+			class TestDirective implements OnInit
+			{
+
+				public onInit(): void
+				{
+				}
+
+			}
+
+			@Component({
+				name: 'test-component',
+				template: '<test-directive><div></div></test-directive>',
+				directives: [TestDirective],
+			})
+			class TestComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.init.order'));
+		});
+
 	});
 
 });
