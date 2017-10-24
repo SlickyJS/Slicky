@@ -1,9 +1,8 @@
-import {DirectiveDefinitionDirective} from '@slicky/core/metadata';
-import {BuilderFunction} from '@slicky/templates-compiler/builder';
 import {OnProcessElementArgument} from '@slicky/templates-compiler';
 import {forEach, filter} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import {AbstractSlickyEnginePlugin} from '../abstracSlickyEnginePlugin';
+import {ElementProcessingDirective} from '../slickyEnginePlugin';
 import {AbstractDirectivePlugin, ProcessingDirective} from './abstractDirectivePlugin';
 import * as plugins from './directives';
 
@@ -32,36 +31,38 @@ export class DirectivePlugin extends AbstractSlickyEnginePlugin
 	}
 
 
-	public onSlickyBeforeProcessElement(element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): void
+	public onProcessElement(element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): void
 	{
 		forEach(this.processingDirectives, (directive: ProcessingDirective) => {
-			this.hook('onSlickyCheckDirectiveWithElement', directive, element, arg);
+			this.hook('onDirectiveInnerElement', directive, element, arg);
 		});
 	}
 
 
-	public onSlickyProcessDirective(element: _.ASTHTMLNodeElement, directive: DirectiveDefinitionDirective, directiveId: number, directiveSetup: BuilderFunction, arg: OnProcessElementArgument): void
+	public onBeforeProcessDirective(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, arg: OnProcessElementArgument): void
 	{
+		this.hook('onBeforeProcessDirective', element, directive, arg);
+
+		forEach(this.processingDirectives, (processingDirective: ProcessingDirective) => {
+			this.hook('onProcessDirectiveInParent', element, directive, processingDirective, arg);
+		});
+
 		this.processingDirectives.push({
-			id: directiveId,
+			id: directive.id,
 			element: element,
-			directive: directive,
+			directive: directive.directive,
 			processedHostElements: [],
 			processedHostEvents: [],
 			processedChildDirectives: [],
 		});
-
-		forEach(this.processingDirectives, (processingDirective: ProcessingDirective) => {
-			this.hook('onSlickyAfterProcessDirective', directive, directiveSetup, processingDirective, arg);
-		});
 	}
 
 
-	public onSlickyAfterProcessElement(element: _.ASTHTMLNodeElement): void
+	public onAfterProcessElement(element: _.ASTHTMLNodeElement): void
 	{
 		this.processingDirectives = filter(this.processingDirectives, (directive: ProcessingDirective) => {
 			if (directive.element === element) {
-				this.hook('onSlickyFinishDirective', directive);
+				this.hook('onAfterElementDirective', directive);
 
 				return false;
 			}

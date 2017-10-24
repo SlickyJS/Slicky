@@ -9,7 +9,7 @@ export class DirectiveHostElementsPlugin extends AbstractDirectivePlugin
 {
 
 
-	public onSlickyCheckDirectiveWithElement(directive: ProcessingDirective, element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): void
+	public onDirectiveInnerElement(directive: ProcessingDirective, element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): void
 	{
 		if (directive.directive.metadata.type === DirectiveDefinitionType.Directive) {
 			forEach(directive.directive.metadata.elements, (hostElement: DirectiveDefinitionElement) => {
@@ -29,7 +29,7 @@ export class DirectiveHostElementsPlugin extends AbstractDirectivePlugin
 	}
 
 
-	public onSlickyFinishDirective(directive: ProcessingDirective): void
+	public onAfterElementDirective(directive: ProcessingDirective): void
 	{
 		if (directive.directive.metadata.type === DirectiveDefinitionType.Directive) {
 			forEach(directive.directive.metadata.elements, (hostElement: DirectiveDefinitionElement) => {

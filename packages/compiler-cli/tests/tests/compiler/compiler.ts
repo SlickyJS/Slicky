@@ -21,13 +21,13 @@ function clear(): void
 
 function loadAoT(name: string): string
 {
-	return readFileSync(path.join(__dirname, '..', '..', '_apps', name, 'aot', 'app-templates-factory.ts'), {encoding: 'utf-8'});
+	return <string>readFileSync(path.join(__dirname, '..', '..', '_apps', name, 'aot', 'app-templates-factory.ts'), {encoding: 'utf-8'});
 }
 
 
 function compareWith(name: string): string
 {
-	return readFileSync(path.join(__dirname, '..', '..', '_compare', `${name}.ts`), {encoding: 'utf-8'});
+	return <string>readFileSync(path.join(__dirname, '..', '..', '_compare', `${name}.ts`), {encoding: 'utf-8'});
 }
 
 

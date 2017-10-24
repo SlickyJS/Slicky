@@ -1,23 +1,24 @@
-import {DirectiveDefinitionDirective, DirectiveDefinitionChildrenDirective} from '@slicky/core/metadata';
-import {BuilderFunction} from '@slicky/templates-compiler/builder';
+import {DirectiveDefinitionChildrenDirective} from '@slicky/core/metadata';
 import {OnProcessElementArgument} from '@slicky/templates-compiler';
 import {forEach} from '@slicky/utils';
+import * as _ from '@slicky/html-parser';
 import {AbstractDirectivePlugin, ProcessingDirective} from '../abstractDirectivePlugin';
+import {ElementProcessingDirective} from '../../slickyEnginePlugin';
 
 
 export class DirectiveChildrenDirectivesPlugin extends AbstractDirectivePlugin
 {
 
 
-	public onSlickyAfterProcessDirective(directive: DirectiveDefinitionDirective, directiveSetup: BuilderFunction, processingDirective: ProcessingDirective, arg: OnProcessElementArgument): void
+	public onProcessDirectiveInParent(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, processingParentDirective: ProcessingDirective, arg: OnProcessElementArgument): void
 	{
-		forEach(processingDirective.directive.metadata.childrenDirectives, (childrenDirective: DirectiveDefinitionChildrenDirective) => {
-			if (directive.directiveType === childrenDirective.directiveType) {
-				directiveSetup.body.add(`template.getParameter("@directive_${processingDirective.id}").${childrenDirective.property}.add.emit(directive);`);
+		forEach(processingParentDirective.directive.metadata.childrenDirectives, (childrenDirective: DirectiveDefinitionChildrenDirective) => {
+			if (directive.directive.directiveType === childrenDirective.directiveType) {
+				directive.setup.body.add(`template.getParameter("@directive_${processingParentDirective.id}").${childrenDirective.property}.add.emit(directive);`);
 
-				directiveSetup.body.add(
+				directive.setup.body.add(
 					`template.onDestroy(function() {\n` +
-					`	template.getParameter("@directive_${processingDirective.id}").${childrenDirective.property}.remove.emit(directive);\n` +
+					`	template.getParameter("@directive_${processingParentDirective.id}").${childrenDirective.property}.remove.emit(directive);\n` +
 					`});`
 				);
 			}

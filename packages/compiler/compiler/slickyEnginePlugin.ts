@@ -4,7 +4,7 @@ import {forEach, filter, clone, merge, unique, find} from '@slicky/utils';
 import * as c from '@slicky/core/metadata';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
-import {createFunction} from '@slicky/templates-compiler/builder';
+import {createFunction, BuilderFunction} from '@slicky/templates-compiler/builder';
 import {Matcher} from '@slicky/query-selector';
 import {AbstractSlickyEnginePlugin} from './abstracSlickyEnginePlugin';
 import * as plugins from './plugins';
@@ -14,6 +14,14 @@ declare interface ElementInnerDirectives
 {
 	element: _.ASTHTMLNodeElement;
 	directives: Array<c.DirectiveDefinitionDirective>;
+}
+
+
+export declare interface ElementProcessingDirective
+{
+	id: number;
+	setup: BuilderFunction;
+	directive: c.DirectiveDefinitionDirective;
 }
 
 
@@ -59,13 +67,13 @@ export class SlickyEnginePlugin extends EnginePlugin
 
 	public onAfterCompile(): void
 	{
-		this.hook('onSlickyAfterCompile');
+		this.hook('onAfterCompile');
 	}
 
 
 	public onProcessElement(element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): _.ASTHTMLNodeElement
 	{
-		this.hook('onSlickyBeforeProcessElement', element, arg);
+		this.hook('onProcessElement', element, arg);
 
 		const directives = this.getDirectives(element, arg.matcher);
 		const elementInnerDirectives = {
@@ -75,21 +83,28 @@ export class SlickyEnginePlugin extends EnginePlugin
 
 		this.elementsInnerDirectives.push(elementInnerDirectives);
 
+		const processingDirectives: Array<ElementProcessingDirective> = [];
+
 		forEach(directives, (directive: c.DirectiveDefinitionDirective) => {
 			if (directive.metadata.type === c.DirectiveDefinitionType.Directive) {
 				elementInnerDirectives.directives = unique(merge(elementInnerDirectives.directives, directive.metadata.directives));
 			}
 
-			const directiveId = this.processedDirectivesCount++;
-			const directiveSetup = createFunction(null, ['directive']);
+			const processingDirective: ElementProcessingDirective = {
+				id: this.processedDirectivesCount++,
+				setup: createFunction(null, ['directive']),
+				directive: directive,
+			};
 
-			this.hook('onSlickyProcessDirective', element, directive, directiveId, directiveSetup, arg);
+			processingDirectives.push(processingDirective);
+
+			this.hook('onBeforeProcessDirective', element, processingDirective, arg);
 
 			let factoryMethod: string;
 
 			if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
-				directiveSetup.args.push('template');
-				directiveSetup.args.push('outer');
+				processingDirective.setup.args.push('template');
+				processingDirective.setup.args.push('outer');
 
 				factoryMethod = 'createComponent';
 			} else {
@@ -99,17 +114,25 @@ export class SlickyEnginePlugin extends EnginePlugin
 			const factoryArguments = [
 				'template',
 				'el',
-				`"@directive_${directiveId}"`,
+				`"@directive_${processingDirective.id}"`,
 				directive.metadata.hash,
 			];
 
-			if (!directiveSetup.body.isEmpty()) {
-				factoryArguments.push(directiveSetup.render());
+			if (!processingDirective.setup.body.isEmpty()) {
+				factoryArguments.push(processingDirective.setup.render());
 			}
 
 			arg.render.body.add(
 				`template.root.${factoryMethod}(${factoryArguments.join(', ')});`
 			);
+		});
+
+		forEach(processingDirectives, (processingDirective: ElementProcessingDirective) => {
+			this.hook('onProcessDirective', element, processingDirective, arg);
+		});
+
+		forEach(processingDirectives, (processingDirective: ElementProcessingDirective) => {
+			this.hook('onAfterProcessDirective', element, processingDirective, arg);
 		});
 
 		return element;
@@ -122,7 +145,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 			return elementInnerDirectives.element !== element;
 		});
 
-		this.hook('onSlickyAfterProcessElement', element, arg);
+		this.hook('onAfterProcessElement', element, arg);
 	}
 
 

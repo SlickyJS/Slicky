@@ -1,22 +1,15 @@
-import {DirectiveDefinition, DirectiveDefinitionDirective, DirectiveDefinitionType} from '@slicky/core/metadata';
-import {BuilderFunction} from '@slicky/templates-compiler/builder';
+import {DirectiveDefinition, DirectiveDefinitionType} from '@slicky/core/metadata';
 import {OnProcessElementArgument, OnAfterProcessElementArgument} from '@slicky/templates-compiler';
 import {filter, forEach, reverse} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import {AbstractSlickyEnginePlugin} from '../abstracSlickyEnginePlugin';
+import {ElementProcessingDirective} from '../slickyEnginePlugin';
 
 
 declare interface ProcessedParentDirective
 {
 	element: _.ASTHTMLNodeElement;
-	directiveId: number;
-}
-
-
-declare interface InitDirective
-{
-	directive: DirectiveDefinitionDirective;
-	directiveId: number;
+	id: number;
 }
 
 
@@ -28,8 +21,6 @@ export class LifeCycleEventsPlugin extends AbstractSlickyEnginePlugin
 
 	private processedParentDirectives: Array<ProcessedParentDirective> = [];
 
-	private initDirectives: Array<InitDirective> = [];
-
 
 	constructor(metadata: DirectiveDefinition)
 	{
@@ -39,39 +30,34 @@ export class LifeCycleEventsPlugin extends AbstractSlickyEnginePlugin
 	}
 
 
-	public onSlickyProcessDirective(element: _.ASTHTMLNodeElement, directive: DirectiveDefinitionDirective, directiveId: number, directiveSetup: BuilderFunction, arg: OnProcessElementArgument): void
+	public onBeforeProcessDirective(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, arg: OnProcessElementArgument): void
 	{
-		if (directive.metadata.onAttach) {
-			const useTemplate = directive.metadata.type === DirectiveDefinitionType.Component ?
+		if (directive.directive.metadata.onAttach) {
+			const useTemplate = directive.directive.metadata.type === DirectiveDefinitionType.Component ?
 				'outer' :
 				'template'
 			;
 
 			forEach(reverse(this.processedParentDirectives), (dir: ProcessedParentDirective) => {
-				directiveSetup.body.add(`directive.onAttach(${useTemplate}.getParameter("@directive_${dir.directiveId}"));`);
+				directive.setup.body.add(`directive.onAttach(${useTemplate}.getParameter("@directive_${dir.id}"));`);
 			});
 
-			directiveSetup.body.add('directive.onAttach(component);');
+			directive.setup.body.add('directive.onAttach(component);');
 		}
 
-		if (directive.metadata.type === DirectiveDefinitionType.Component) {
-			if (directive.metadata.onInit) {
-				directiveSetup.body.add(
+		// todo: move to onAfterProcessDirective?
+		if (directive.directive.metadata.type === DirectiveDefinitionType.Component) {
+			if (directive.directive.metadata.onInit) {
+				directive.setup.body.add(
 					'template.run(function() {\n' +
 					'	directive.onInit();\n' +
 					'});'
 				);
 			}
-
-		} else if (directive.metadata.onInit) {
-			this.initDirectives.push({
-				directive: directive,
-				directiveId: directiveId,
-			});
 		}
 
-		if (directive.metadata.onDestroy) {
-			directiveSetup.body.add(
+		if (directive.directive.metadata.onDestroy) {
+			directive.setup.body.add(
 				'template.onDestroy(function() {\n' +
 				'	directive.onDestroy();\n' +
 				'});'
@@ -80,19 +66,21 @@ export class LifeCycleEventsPlugin extends AbstractSlickyEnginePlugin
 
 		this.processedParentDirectives.push({
 			element: element,
-			directiveId: directiveId,
+			id: directive.id,
 		});
 	}
 
 
-	public onSlickyAfterProcessElement(element: _.ASTHTMLNodeElement, arg: OnAfterProcessElementArgument): void
+	public onAfterProcessDirective(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, arg: OnProcessElementArgument): void
 	{
-		forEach(this.initDirectives, (directive: InitDirective) => {
-			arg.render.body.add(`template.getParameter("@directive_${directive.directiveId}").onInit();`);
-		});
+		if (directive.directive.metadata.onInit && directive.directive.metadata.type === DirectiveDefinitionType.Directive) {
+			arg.render.body.add(`template.getParameter("@directive_${directive.id}").onInit();`);
+		}
+	}
 
-		this.initDirectives = [];
 
+	public onAfterProcessElement(element: _.ASTHTMLNodeElement, arg: OnAfterProcessElementArgument): void
+	{
 		this.processedParentDirectives = filter(this.processedParentDirectives, (processedParentDirective: ProcessedParentDirective) => {
 			return processedParentDirective.element !== element;
 		});

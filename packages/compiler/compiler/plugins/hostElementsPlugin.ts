@@ -22,7 +22,7 @@ export class HostElementsPlugin extends AbstractSlickyEnginePlugin
 	}
 
 
-	public onSlickyBeforeProcessElement(element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): void
+	public onProcessElement(element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): void
 	{
 		forEach(this.metadata.elements, (hostElement: DirectiveDefinitionElement) => {
 			if (!arg.matcher.matches(element, hostElement.selector)) {
@@ -36,7 +36,7 @@ export class HostElementsPlugin extends AbstractSlickyEnginePlugin
 	}
 
 
-	public onSlickyAfterCompile(): void
+	public onAfterCompile(): void
 	{
 		forEach(this.metadata.elements, (hostElement: DirectiveDefinitionElement) => {
 			if (this.processedHostElements.indexOf(hostElement) < 0 && hostElement.required) {

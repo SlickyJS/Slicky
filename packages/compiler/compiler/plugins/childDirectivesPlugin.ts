@@ -1,9 +1,9 @@
-import {DirectiveDefinition, DirectiveDefinitionDirective, DirectiveDefinitionChildDirective} from '@slicky/core/metadata';
-import {BuilderFunction} from '@slicky/templates-compiler/builder';
+import {DirectiveDefinition, DirectiveDefinitionChildDirective} from '@slicky/core/metadata';
 import {OnProcessElementArgument} from '@slicky/templates-compiler';
 import {forEach} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import {AbstractSlickyEnginePlugin} from '../abstracSlickyEnginePlugin';
+import {ElementProcessingDirective} from '../slickyEnginePlugin';
 
 
 export class ChildDirectivesPlugin extends AbstractSlickyEnginePlugin
@@ -23,18 +23,18 @@ export class ChildDirectivesPlugin extends AbstractSlickyEnginePlugin
 	}
 
 
-	public onSlickyProcessDirective(element: _.ASTHTMLNodeElement, directive: DirectiveDefinitionDirective, directiveId: number, directiveSetup: BuilderFunction, arg: OnProcessElementArgument): void
+	public onBeforeProcessDirective(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, arg: OnProcessElementArgument): void
 	{
 		forEach(this.metadata.childDirectives, (childDirective: DirectiveDefinitionChildDirective) => {
-			if (childDirective.directiveType === directive.directiveType && !arg.progress.inTemplate) {
+			if (childDirective.directiveType === directive.directive.directiveType && !arg.progress.inTemplate) {
 				this.processedChildDirectives.push(childDirective);
-				directiveSetup.body.add(`component.${childDirective.property} = directive;`);
+				directive.setup.body.add(`component.${childDirective.property} = directive;`);
 			}
 		});
 	}
 
 
-	public onSlickyAfterCompile(): void
+	public onAfterCompile(): void
 	{
 		forEach(this.metadata.childDirectives, (childDirective: DirectiveDefinitionChildDirective) => {
 			if (this.processedChildDirectives.indexOf(childDirective) < 0 && childDirective.required) {

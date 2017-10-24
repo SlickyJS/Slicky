@@ -1,68 +1,73 @@
-import {DirectiveDefinitionEvent, DirectiveDefinitionType, DirectiveDefinitionDirective} from '@slicky/core/metadata';
+import {DirectiveDefinitionEvent, DirectiveDefinitionType} from '@slicky/core/metadata';
 import {forEach, exists} from '@slicky/utils';
 import {OnProcessElementArgument} from '@slicky/templates-compiler';
 import {BuilderFunction} from '@slicky/templates-compiler/builder';
 import * as _ from '@slicky/html-parser';
 import {AbstractDirectivePlugin, ProcessingDirective} from '../abstractDirectivePlugin';
+import {ElementProcessingDirective} from '../../slickyEnginePlugin';
 
 
 export class DirectiveHostEventsPlugin extends AbstractDirectivePlugin
 {
 
 
-	public onSlickyCheckDirectiveWithElement(directive: ProcessingDirective, element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): void
+	public onBeforeProcessDirective(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, arg: OnProcessElementArgument): void
 	{
-		if (directive.directive.metadata.type === DirectiveDefinitionType.Directive) {
-			forEach(directive.directive.metadata.events, (hostEvent: DirectiveDefinitionEvent) => {
-				if (directive.processedHostEvents.indexOf(hostEvent) >= 0) {
-					return;
-				}
-
-				if (!exists(hostEvent.selector)) {
-					return;
-				}
-
-				if (!arg.matcher.matches(element, hostEvent.selector, directive.element)) {
-					return;
-				}
-
-				this.writeHostEvent(arg.render, hostEvent, directive.id);
-
-				directive.processedHostEvents.push(hostEvent);
-			});
+		if (directive.directive.metadata.type !== DirectiveDefinitionType.Directive) {
+			return
 		}
+
+		forEach(directive.directive.metadata.events, (hostEvent: DirectiveDefinitionEvent) => {
+			if (exists(hostEvent.selector)) {
+				return;
+			}
+
+			this.writeHostEvent(arg.render, hostEvent, directive.id);
+		});
 	}
 
 
-	public onSlickyAfterProcessDirective(directive: DirectiveDefinitionDirective, directiveSetup: BuilderFunction, processingDirective: ProcessingDirective, arg: OnProcessElementArgument): void
+	public onDirectiveInnerElement(directive: ProcessingDirective, element: _.ASTHTMLNodeElement, arg: OnProcessElementArgument): void
 	{
-		if (directive.metadata.type === DirectiveDefinitionType.Directive) {
-			forEach(directive.metadata.events, (hostEvent: DirectiveDefinitionEvent) => {
-				if (processingDirective.processedHostEvents.indexOf(hostEvent) >= 0) {
-					return;
-				}
-
-				if (exists(hostEvent.selector)) {
-					return;
-				}
-
-				this.writeHostEvent(arg.render, hostEvent, processingDirective.id);
-
-				processingDirective.processedHostEvents.push(hostEvent);
-			});
+		if (directive.directive.metadata.type !== DirectiveDefinitionType.Directive) {
+			return;
 		}
+
+		forEach(directive.directive.metadata.events, (hostEvent: DirectiveDefinitionEvent) => {
+			if (directive.processedHostEvents.indexOf(hostEvent) >= 0) {
+				return;
+			}
+
+			if (!exists(hostEvent.selector)) {
+				return;
+			}
+
+			if (!arg.matcher.matches(element, hostEvent.selector, directive.element)) {
+				return;
+			}
+
+			this.writeHostEvent(arg.render, hostEvent, directive.id);
+
+			directive.processedHostEvents.push(hostEvent);
+		});
 	}
 
 
-	public onSlickyFinishDirective(directive: ProcessingDirective): void
+	public onAfterElementDirective(directive: ProcessingDirective): void
 	{
-		if (directive.directive.metadata.type === DirectiveDefinitionType.Directive) {
-			forEach(directive.directive.metadata.events, (hostEvent: DirectiveDefinitionEvent) => {
-				if (directive.processedHostEvents.indexOf(hostEvent) < 0) {
-					throw new Error(`${directive.directive.metadata.name}.${hostEvent.method}: @HostEvent for "${hostEvent.selector}" was not found.`);
-				}
-			});
+		if (directive.directive.metadata.type !== DirectiveDefinitionType.Directive) {
+			return;
 		}
+
+		forEach(directive.directive.metadata.events, (hostEvent: DirectiveDefinitionEvent) => {
+			if (!exists(hostEvent.selector)) {
+				return;
+			}
+
+			if (directive.processedHostEvents.indexOf(hostEvent) < 0) {
+				throw new Error(`${directive.directive.metadata.name}.${hostEvent.method}: @HostEvent for "${hostEvent.selector}" was not found.`);
+			}
+		});
 	}
 
 

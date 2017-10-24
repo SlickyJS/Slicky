@@ -1,18 +1,18 @@
-import {DirectiveDefinitionDirective, DirectiveDefinitionInput, DirectiveDefinitionType} from '@slicky/core/metadata';
-import {BuilderFunction} from '@slicky/templates-compiler/builder';
+import {DirectiveDefinitionInput, DirectiveDefinitionType} from '@slicky/core/metadata';
 import {OnProcessElementArgument} from '@slicky/templates-compiler';
 import {exists, find, forEach, indent} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import {AbstractSlickyEnginePlugin} from '../abstracSlickyEnginePlugin';
+import {ElementProcessingDirective} from '../slickyEnginePlugin';
 
 
 export class InputsPlugin extends AbstractSlickyEnginePlugin
 {
 
 
-	public onSlickyProcessDirective(element: _.ASTHTMLNodeElement, directive: DirectiveDefinitionDirective, directiveId: number, directiveSetup: BuilderFunction, arg: OnProcessElementArgument): void
+	public onBeforeProcessDirective(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, arg: OnProcessElementArgument): void
 	{
-		forEach(directive.metadata.inputs, (input: DirectiveDefinitionInput) => {
+		forEach(directive.directive.metadata.inputs, (input: DirectiveDefinitionInput) => {
 			let property: _.ASTHTMLNodeAttribute;
 			let isProperty: boolean = false;
 
@@ -33,7 +33,7 @@ export class InputsPlugin extends AbstractSlickyEnginePlugin
 			;
 
 			if (!exists(property) && input.required) {
-				throw new Error(`${directive.metadata.name}.${input.property}: required input is not set in <${element.name}> tag.`);
+				throw new Error(`${directive.directive.metadata.name}.${input.property}: required input is not set in <${element.name}> tag.`);
 			}
 
 			if (!exists(property)) {
@@ -45,8 +45,8 @@ export class InputsPlugin extends AbstractSlickyEnginePlugin
 					`directive.${input.property} = value;`,
 				];
 
-				if (directive.metadata.onUpdate) {
-					if (directive.metadata.type === DirectiveDefinitionType.Component) {
+				if (directive.directive.metadata.onUpdate) {
+					if (directive.directive.metadata.type === DirectiveDefinitionType.Component) {
 						watchUpdate.push(
 							'template.run(function() {\n' +
 							`	directive.onUpdate("${property.name}", value);\n` +
@@ -57,12 +57,12 @@ export class InputsPlugin extends AbstractSlickyEnginePlugin
 					}
 				}
 
-				if (directive.metadata.type === DirectiveDefinitionType.Component) {
+				if (directive.directive.metadata.type === DirectiveDefinitionType.Component) {
 					watchUpdate.push('template.refresh();');
 				}
 
-				directiveSetup.body.add(
-					`${directive.metadata.type === DirectiveDefinitionType.Component ? 'outer' : 'template'}.watch(function() {\n` +
+				directive.setup.body.add(
+					`${directive.directive.metadata.type === DirectiveDefinitionType.Component ? 'outer' : 'template'}.watch(function() {\n` +
 					`	${arg.engine._compileExpression(property.value, arg.progress, true, true)};\n` +
 					`}, function(value) {\n` +
 					`${indent(watchUpdate.join('\n'))}\n` +
@@ -70,17 +70,17 @@ export class InputsPlugin extends AbstractSlickyEnginePlugin
 				);
 
 			} else {
-				directiveSetup.body.add(`directive.${input.property} = "${property.value}";`);
+				directive.setup.body.add(`directive.${input.property} = "${property.value}";`);
 
-				if (directive.metadata.onUpdate) {
-					if (directive.metadata.type === DirectiveDefinitionType.Component) {
-						directiveSetup.body.add(
+				if (directive.directive.metadata.onUpdate) {
+					if (directive.directive.metadata.type === DirectiveDefinitionType.Component) {
+						directive.setup.body.add(
 							'template.run(function() {\n' +
 							`	directive.onUpdate("${input.property}", "${property.value}");\n` +
 							'});'
 						)
 					} else {
-						directiveSetup.body.add(`directive.onUpdate("${input.property}", "${property.value}");`);
+						directive.setup.body.add(`directive.onUpdate("${input.property}", "${property.value}");`);
 					}
 				}
 			}
