@@ -2,6 +2,7 @@ import '../bootstrap';
 
 import {Tester} from '@slicky/tester';
 import {Component} from '@slicky/core';
+import {Observable} from 'rxjs';
 import {expect} from 'chai';
 
 
@@ -42,6 +43,52 @@ describe('#Application.syntax', () => {
 
 		expect(component.template.getParameter('localName')).to.be.equal('Clare');
 		expect(component.application.document.body.textContent.trim()).to.be.equal('Clare');
+	});
+
+	it('should call asynchronous method in template', (done) => {
+		const TIMEOUT = 10;
+
+		@Component({
+			name: 'test-component',
+			template: '<div *s:if="isVisible()">hello world</div>',
+		})
+		class TestComponent
+		{
+
+			public visible = false;
+
+			public isVisible(): Observable<boolean>
+			{
+				return new Observable<boolean>((subscriber) => {
+					setTimeout(() => {
+						subscriber.next(this.visible);
+					}, TIMEOUT);
+				});
+			}
+
+		}
+
+		const component = Tester.runDirective('<test-component></test-component>', TestComponent);
+		const body = component.application.document.body;
+
+		setTimeout(() => {
+			expect(body.textContent).to.be.equal('');
+
+			component.directive.visible = true;
+			component.template.refresh();
+
+			setTimeout(() => {
+				expect(body.textContent).to.be.equal('hello world');
+
+				component.directive.visible = false;
+				component.template.refresh();
+
+				setTimeout(() => {
+					expect(body.textContent).to.be.equal('');
+					done();
+				}, TIMEOUT + 10);
+			}, TIMEOUT + 10);
+		}, TIMEOUT + 10);
 	});
 
 });

@@ -1,4 +1,5 @@
-import {forEach} from '@slicky/utils';
+import {forEach, isFunction} from '@slicky/utils';
+import {Observable} from 'rxjs';
 
 
 declare interface WatcherItem
@@ -24,26 +25,36 @@ export class Watcher
 	}
 
 
-	public check(): boolean
+	public check(done?: (changed: boolean) => void): void
 	{
-		if (!this.enabled) {
-			return false;
+		if (!this.enabled || !this.watchers.length) {
+			if (isFunction(done)) {
+				done(false);
+			}
+
+			return;
 		}
 
+		const total = this.watchers.length;
+
+		let i = 0;
 		let changed = false;
 
 		forEach(this.watchers, (watcher: WatcherItem) => {
-			let current = watcher.getter();
+			i++;
 
-			if (current !== watcher.current) {
-				watcher.update(current);
-				watcher.current = current;
+			this.getCurrent(watcher.getter, (current) => {
+				if (current !== watcher.current) {
+					watcher.update(current);
+					watcher.current = current;
+					changed = true;
+				}
 
-				changed = true;
-			}
+				if (i === total && isFunction(done)) {
+					done(changed);
+				}
+			});
 		});
-
-		return changed;
 	}
 
 
@@ -53,15 +64,27 @@ export class Watcher
 			return;
 		}
 
-		let current = getter();
+		this.getCurrent(getter, (current) => {
+			this.watchers.push({
+				current: current,
+				getter: getter,
+				update: update,
+			});
 
-		update(current);
-
-		this.watchers.push({
-			current: current,
-			getter: getter,
-			update: update,
+			update(current);
 		});
+	}
+
+
+	private getCurrent(getter: () => any, cb: (current: any) => void): void
+	{
+		const current = getter();
+
+		if (current instanceof Observable) {
+			current.subscribe(cb);
+		} else {
+			cb(current);
+		}
 	}
 
 }

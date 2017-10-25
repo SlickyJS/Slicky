@@ -199,8 +199,7 @@ export abstract class RenderableTemplate extends BaseTemplate
 			storage.onFalseContainer = this.renderEmbeddedTemplatesContainer(nameOnFalse);
 		}
 
-		// noinspection PointlessBooleanExpressionJS
-		this.watch(() => !!condition(), (value) => {
+		this.watch(condition, (value) => {
 			this.refreshCondition(storage, value);
 		});
 	}
@@ -292,12 +291,16 @@ export abstract class RenderableTemplate extends BaseTemplate
 		if (value) {
 			if (exists(condition.currentFalse)) {
 				condition.onFalseContainer.remove(condition.currentFalse);
+				condition.currentFalse = undefined;
 			}
 
-			condition.currentTrue = condition.onTrueContainer.add();
+			if (!exists(condition.currentTrue)) {
+				condition.currentTrue = condition.onTrueContainer.add();
+			}
 		} else {
 			if (exists(condition.currentTrue)) {
 				condition.onTrueContainer.remove(condition.currentTrue);
+				condition.currentTrue = undefined;
 			}
 
 			if (exists(condition.onFalseContainer)) {

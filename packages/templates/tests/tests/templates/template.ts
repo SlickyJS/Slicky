@@ -107,6 +107,29 @@ describe('#Templates/Template', () => {
 			);
 		});
 
+		it('should refresh truthy condition', () => {
+			const root = document.createElement('mock-root');
+			let visible = true;
+
+			template.render(root, (template) => {
+				template.addCondition(() => visible, (template, el) => {
+					el.addText('hello world');
+				});
+			});
+
+			expect(root.textContent).to.be.equal('hello world');
+
+			visible = false;
+			template.refresh();
+
+			expect(root.textContent).to.be.equal('');
+
+			visible = true;
+			template.refresh();
+
+			expect(root.textContent).to.be.equal('hello world');
+		});
+
 		it('should refresh loop', () => {
 			const root = document.createElement('mock-root');
 
