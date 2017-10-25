@@ -8,6 +8,7 @@ export type HTMLFormInputElement = HTMLInputElement|HTMLSelectElement|HTMLTextAr
 
 @Directive({
 	selector: '[s:model]',
+	exportAs: 'sModel',
 })
 export class ModelDirective<T, U extends Element> implements OnInit, OnUpdate
 {
