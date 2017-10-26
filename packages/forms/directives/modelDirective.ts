@@ -1,6 +1,6 @@
-import {Directive, OnInit, OnUpdate, Input, Output, ElementRef, DirectivesStorageRef} from '@slicky/core';
+import {Directive, OnTemplateInit, OnUpdate, Input, Output, ElementRef, DirectivesStorageRef} from '@slicky/core';
 import {EventEmitter} from '@slicky/event-emitter';
-import {isBoolean, merge, forEach, isObject, exists} from '@slicky/utils';
+import {isBoolean, merge, forEach, isObject} from '@slicky/utils';
 import {Observable} from 'rxjs';
 import {AbstractInputValueAccessor} from './abstractInputValueAccessor';
 import {AbstractValidator, ValidationErrors} from '../validators';
@@ -13,7 +13,7 @@ export type HTMLFormInputElement = HTMLInputElement|HTMLSelectElement|HTMLTextAr
 	selector: '[s:model]',
 	exportAs: 'sModel',
 })
-export class ModelDirective<T, U extends Element> implements OnInit, OnUpdate
+export class ModelDirective<T, U extends Element> implements OnTemplateInit, OnUpdate
 {
 
 
@@ -69,7 +69,7 @@ export class ModelDirective<T, U extends Element> implements OnInit, OnUpdate
 	}
 
 
-	public onInit(): void
+	public onTemplateInit(): void
 	{
 		this.validators = this.directives.findAll(<any>AbstractValidator);
 		this.valueAccessor = this.directives.find(<any>AbstractInputValueAccessor);

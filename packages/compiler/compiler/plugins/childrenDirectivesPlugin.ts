@@ -2,7 +2,7 @@ import {DirectiveDefinition, DirectiveDefinitionChildrenDirective} from '@slicky
 import {OnProcessElementArgument} from '@slicky/templates-compiler';
 import {forEach} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
-import {AbstractSlickyEnginePlugin} from '../abstracSlickyEnginePlugin';
+import {AbstractSlickyEnginePlugin} from '../abstractSlickyEnginePlugin';
 import {ElementProcessingDirective} from '../slickyEnginePlugin';
 
 

@@ -1,7 +1,7 @@
 import {OnProcessElementArgument} from '@slicky/templates-compiler';
 import {forEach, filter} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
-import {AbstractSlickyEnginePlugin} from '../abstracSlickyEnginePlugin';
+import {AbstractSlickyEnginePlugin} from '../abstractSlickyEnginePlugin';
 import {ElementProcessingDirective} from '../slickyEnginePlugin';
 import {AbstractDirectivePlugin, ProcessingDirective} from './abstractDirectivePlugin';
 import * as plugins from './directives';

@@ -2,7 +2,7 @@ import {DirectiveDefinition, DirectiveDefinitionElement} from '@slicky/core/meta
 import {OnProcessElementArgument} from '@slicky/templates-compiler';
 import {forEach} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
-import {AbstractSlickyEnginePlugin} from '../abstracSlickyEnginePlugin';
+import {AbstractSlickyEnginePlugin} from '../abstractSlickyEnginePlugin';
 
 
 export class HostElementsPlugin extends AbstractSlickyEnginePlugin

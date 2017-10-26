@@ -1,5 +1,5 @@
 import {AbstractPlugin} from '@slicky/templates-compiler';
-import {OnProcessElementArgument, OnAfterProcessElementArgument} from '@slicky/templates-compiler';
+import {OnProcessElementArgument, OnAfterProcessElementArgument, OnBeforeCompileArgument, OnAfterCompileArgument} from '@slicky/templates-compiler';
 import * as _ from '@slicky/html-parser';
 import {ElementProcessingDirective} from './slickyEnginePlugin';
 
@@ -8,7 +8,12 @@ export abstract class AbstractSlickyEnginePlugin extends AbstractPlugin
 {
 
 
-	public onAfterCompile(): void
+	public onBeforeCompile(arg: OnBeforeCompileArgument): void
+	{
+	}
+
+
+	public onAfterCompile(arg: OnAfterCompileArgument): void
 	{
 	}
 

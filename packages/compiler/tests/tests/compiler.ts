@@ -1,6 +1,6 @@
 import '../bootstrap';
 
-import {Directive, Component, HostElement, HostEvent, Input, Required, Output, ChildDirective, ChildrenDirective, OnInit, OnDestroy} from '@slicky/core';
+import {Directive, Component, HostElement, HostEvent, Input, Required, Output, ChildDirective, ChildrenDirective, OnInit, OnDestroy, OnTemplateInit} from '@slicky/core';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {readFileSync} from 'fs';
@@ -768,11 +768,24 @@ describe('#Compiler', () => {
 			}).to.throw(Error, 'Both component and directive are attached to element <test-child-component></test-child-component>: TestChildComponent, TestChildDirectiveA, TestChildDirectiveC.');
 		});
 
-		it('should initialize directive after all inner elements', () => {
+		it('should initialize directive before all inner elements', () => {
 			@Directive({
-				selector: 'test-directive',
+				selector: 'test-child-directive',
 			})
-			class TestDirective implements OnInit
+			class TestChildDirective implements OnInit
+			{
+
+				public onInit(): void
+				{
+				}
+
+			}
+
+			@Component({
+				name: 'test-child-component',
+				template: '<span></span>',
+			})
+			class TestChildComponent implements OnInit
 			{
 
 				public onInit(): void
@@ -783,12 +796,52 @@ describe('#Compiler', () => {
 
 			@Component({
 				name: 'test-component',
+				template:
+					'<test-child-directive><div></div></test-child-directive>' +
+					'<test-child-component></test-child-component>',
+				directives: [TestChildDirective, TestChildComponent],
+			})
+			class TestParentComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestParentComponent))).to.be.equal(compareWith('compiler.init.order'));
+		});
+
+		it('should call onTemplateInit event', () => {
+			@Directive({
+				selector: 'test-directive',
+			})
+			class TestDirective implements OnInit, OnTemplateInit
+			{
+
+				public onInit(): void
+				{
+				}
+
+				public onTemplateInit(): void
+				{
+				}
+
+			}
+
+			@Component({
+				name: 'test-component',
 				template: '<test-directive><div></div></test-directive>',
 				directives: [TestDirective],
 			})
-			class TestComponent {}
+			class TestComponent implements OnTemplateInit
+			{
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.init.order'));
+				public onInit(): void
+				{
+				}
+
+				public onTemplateInit(): void
+				{
+				}
+
+			}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.templateInit'));
 		});
 
 	});

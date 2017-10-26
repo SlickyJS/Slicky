@@ -1,12 +1,12 @@
 import {EnginePlugin} from '@slicky/templates-compiler';
-import {OnProcessElementArgument, OnBeforeCompileArgument, OnExpressionVariableHookArgument, OnAfterProcessElementArgument} from '@slicky/templates-compiler';
+import {OnProcessElementArgument, OnBeforeCompileArgument, OnExpressionVariableHookArgument, OnAfterProcessElementArgument, OnAfterCompileArgument} from '@slicky/templates-compiler';
 import {forEach, filter, clone, merge, unique, find} from '@slicky/utils';
 import * as c from '@slicky/core/metadata';
 import * as _ from '@slicky/html-parser';
 import * as tjs from '@slicky/tiny-js';
 import {createFunction, BuilderFunction} from '@slicky/templates-compiler/builder';
 import {Matcher} from '@slicky/query-selector';
-import {AbstractSlickyEnginePlugin} from './abstracSlickyEnginePlugin';
+import {AbstractSlickyEnginePlugin} from './abstractSlickyEnginePlugin';
 import * as plugins from './plugins';
 
 
@@ -49,7 +49,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 		this.register(new plugins.HostElementsPlugin(this.metadata));
 		this.register(new plugins.ChildDirectivesPlugin(this.metadata));
 		this.register(new plugins.ChildrenDirectivesPlugin(this.metadata));
-		this.register(new plugins.LifeCycleEventsPlugin);
+		this.register(new plugins.LifeCycleEventsPlugin(this.metadata));
 	}
 
 
@@ -62,12 +62,13 @@ export class SlickyEnginePlugin extends EnginePlugin
 	public onBeforeCompile(arg: OnBeforeCompileArgument): void
 	{
 		arg.render.args.push('component');
+		this.hook('onBeforeCompile', arg);
 	}
 
 
-	public onAfterCompile(): void
+	public onAfterCompile(arg: OnAfterCompileArgument): void
 	{
-		this.hook('onAfterCompile');
+		this.hook('onAfterCompile', arg);
 	}
 
 

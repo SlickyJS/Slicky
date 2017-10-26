@@ -19,6 +19,15 @@ export interface OnDestroy
 }
 
 
+export interface OnTemplateInit
+{
+
+
+	onTemplateInit(): void;
+
+}
+
+
 export interface OnUpdate
 {
 

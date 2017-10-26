@@ -287,12 +287,12 @@ TEXT: {{ el.innerText }} {{ directiveA.name }} and {{ directiveB.name }}
 These are methods on directives which gives you an option to monitor changes.
 
 ```typescript
-import {Directive, OnInit, OnDestroy, OnUpdate, OnAttach} from '@slicky/core';
+import {Directive, OnInit, OnDestroy, OnTemplateInit, OnUpdate, OnAttach} from '@slicky/core';
 
 @Directive({
 	selector: '.my-directive',
 })
-class MyDirective implements OnInit, OnDestroy, OnUpdate
+class MyDirective implements OnInit, OnDestroy, OnTemplateInit, OnUpdate, OnAttach
 {
 	
 	
@@ -305,6 +305,12 @@ class MyDirective implements OnInit, OnDestroy, OnUpdate
 	public onDestroy(): void
 	{
 		console.log('Directive is being removed.');
+	}
+	
+	
+	public onTemplateInit(): void
+	{
+		console.log('Inner template was fully rendered.');
 	}
 	
 	

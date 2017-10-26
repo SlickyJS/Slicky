@@ -1,8 +1,8 @@
-import {DirectiveDefinitionType} from '@slicky/core/metadata';
-import {OnProcessElementArgument, OnAfterProcessElementArgument} from '@slicky/templates-compiler';
+import {DirectiveDefinitionType, DirectiveDefinition} from '@slicky/core/metadata';
+import {OnProcessElementArgument, OnAfterProcessElementArgument, OnBeforeCompileArgument, OnAfterCompileArgument} from '@slicky/templates-compiler';
 import {filter, forEach, reverse} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
-import {AbstractSlickyEnginePlugin} from '../abstracSlickyEnginePlugin';
+import {AbstractSlickyEnginePlugin} from '../abstractSlickyEnginePlugin';
 import {ElementProcessingDirective} from '../slickyEnginePlugin';
 
 
@@ -17,7 +17,41 @@ export class LifeCycleEventsPlugin extends AbstractSlickyEnginePlugin
 {
 
 
+	private metadata: DirectiveDefinition;
+
 	private processedParentDirectives: Array<ProcessedParentDirective> = [];
+
+
+	constructor(metadata: DirectiveDefinition)
+	{
+		super();
+
+		this.metadata = metadata;
+	}
+
+
+	public onBeforeCompile(arg: OnBeforeCompileArgument): void
+	{
+		if (this.metadata.onInit) {
+			arg.render.body.add(
+				'template.run(function() {\n' +
+				'	component.onInit();\n' +
+				'});'
+			);
+		}
+	}
+
+
+	public onAfterCompile(arg: OnAfterCompileArgument): void
+	{
+		if (this.metadata.onTemplateInit) {
+			arg.render.body.add(
+				'template.run(function() {\n' +
+				'	component.onTemplateInit();\n' +
+				'});'
+			);
+		}
+	}
 
 
 	public onBeforeProcessDirective(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, arg: OnProcessElementArgument): void
@@ -35,17 +69,6 @@ export class LifeCycleEventsPlugin extends AbstractSlickyEnginePlugin
 			directive.setup.body.add('directive.onAttach(component);');
 		}
 
-		// todo: move to onAfterProcessElement?
-		if (directive.directive.metadata.type === DirectiveDefinitionType.Component) {
-			if (directive.directive.metadata.onInit) {
-				directive.setup.body.add(
-					'template.run(function() {\n' +
-					'	directive.onInit();\n' +
-					'});'
-				);
-			}
-		}
-
 		if (directive.directive.metadata.onDestroy) {
 			directive.setup.body.add(
 				'template.onDestroy(function() {\n' +
@@ -61,6 +84,14 @@ export class LifeCycleEventsPlugin extends AbstractSlickyEnginePlugin
 	}
 
 
+	public onAfterProcessDirective(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, arg: OnProcessElementArgument): void
+	{
+		if (directive.directive.metadata.onInit && directive.directive.metadata.type === DirectiveDefinitionType.Directive) {
+			arg.render.body.add(`template.getParameter("@directive_${directive.id}").onInit();`);
+		}
+	}
+
+
 	public onAfterProcessElement(element: _.ASTHTMLNodeElement, arg: OnAfterProcessElementArgument): void
 	{
 		this.processedParentDirectives = filter(this.processedParentDirectives, (processedParentDirective: ProcessedParentDirective) => {
@@ -68,8 +99,8 @@ export class LifeCycleEventsPlugin extends AbstractSlickyEnginePlugin
 				return true;
 			}
 
-			if (processedParentDirective.directive.directive.metadata.onInit && processedParentDirective.directive.directive.metadata.type === DirectiveDefinitionType.Directive) {
-				arg.render.body.add(`template.getParameter("@directive_${processedParentDirective.directive.id}").onInit();`);
+			if (processedParentDirective.directive.directive.metadata.onTemplateInit && processedParentDirective.directive.directive.metadata.type === DirectiveDefinitionType.Directive) {
+				arg.render.body.add(`template.getParameter("@directive_${processedParentDirective.directive.id}").onTemplateInit();`);
 			}
 		});
 	}

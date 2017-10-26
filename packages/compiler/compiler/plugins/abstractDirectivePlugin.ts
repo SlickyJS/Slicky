@@ -1,6 +1,5 @@
 import {AbstractPlugin} from '@slicky/templates-compiler';
 import {DirectiveDefinitionDirective, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionChildDirective} from '@slicky/core/metadata';
-import {BuilderFunction} from '@slicky/templates-compiler/builder';
 import {OnProcessElementArgument} from '@slicky/templates-compiler';
 import * as _ from '@slicky/html-parser';
 import {ElementProcessingDirective} from '../slickyEnginePlugin';
