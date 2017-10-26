@@ -1,6 +1,9 @@
 import {Directive, OnInit, OnUpdate, Input, Output, ElementRef, DirectivesStorageRef} from '@slicky/core';
 import {EventEmitter} from '@slicky/event-emitter';
+import {isBoolean, merge, forEach, isObject} from '@slicky/utils';
+import {Observable} from 'rxjs';
 import {AbstractInputValueAccessor} from './abstractInputValueAccessor';
+import {AbstractValidator, ValidationErrors} from '../validators';
 
 
 export type HTMLFormInputElement = HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement;
@@ -26,6 +29,12 @@ export class ModelDirective<T, U extends Element> implements OnInit, OnUpdate
 
 	private valueAccessor: AbstractInputValueAccessor<T, U>;
 
+	private validators: Array<AbstractValidator<any>>;
+
+	private _valid: boolean;
+
+	private _errors: ValidationErrors;
+
 
 	constructor(el: ElementRef<HTMLFormInputElement>, directives: DirectivesStorageRef)
 	{
@@ -34,12 +43,43 @@ export class ModelDirective<T, U extends Element> implements OnInit, OnUpdate
 	}
 
 
+	get value(): T
+	{
+		return this._value;
+	}
+
+
+	get valid(): Observable<boolean>
+	{
+		return new Observable((subscriber) => {
+			this.loadErrors(() => {
+				subscriber.next(this._valid);
+			});
+		});
+	}
+
+
+	get errors(): Observable<ValidationErrors>
+	{
+		return new Observable((subscriber) => {
+			this.loadErrors(() => {
+				subscriber.next(this._errors);
+			});
+		});
+	}
+
+
 	public onInit(): void
 	{
+		this.validators = this.directives.findAll(<any>AbstractValidator);
+
 		this.valueAccessor = this.directives.find(<any>AbstractInputValueAccessor);
 		this.valueAccessor.setValue(this._value);
 		this.valueAccessor.onChange.subscribe((value: T) => {
+			this._valid = undefined;
+			this._errors = undefined;
 			this._value = value;
+
 			this.onChange.emit(value);
 		});
 	}
@@ -51,13 +91,39 @@ export class ModelDirective<T, U extends Element> implements OnInit, OnUpdate
 			return;
 		}
 
+		this._valid = undefined;
+		this._errors = undefined;
+
 		this.valueAccessor.setValue(value);
 	}
 
 
-	get value(): T
+	private loadErrors(cb: () => void): void
 	{
-		return this._value;
+		if (isBoolean(this._valid) && isObject(this._errors)) {
+			cb();
+		} else {
+			this._valid = true;
+			this._errors = {};
+
+			const total = this.validators.length;
+			let i = 0;
+
+			forEach(this.validators, (validator: AbstractValidator<any>) => {
+				validator.validate(this._value, (errors) => {
+					i++;
+
+					if (errors !== null) {
+						this._valid = false;
+						this._errors = merge(this._errors, errors);
+					}
+
+					if (i === total) {
+						cb();
+					}
+				});
+			});
+		}
 	}
 
 }

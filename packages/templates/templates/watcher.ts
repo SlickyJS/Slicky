@@ -41,9 +41,9 @@ export class Watcher
 		let changed = false;
 
 		forEach(this.watchers, (watcher: WatcherItem) => {
-			i++;
-
 			this.getCurrent(watcher.getter, (current) => {
+				i++;
+
 				if (current !== watcher.current) {
 					watcher.update(current);
 					watcher.current = current;
