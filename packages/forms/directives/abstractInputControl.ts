@@ -1,8 +1,16 @@
 import {ElementRef, DirectivesStorageRef, OnInit, OnTemplateInit} from '@slicky/core';
-import {isBoolean, merge, forEach, isObject} from '@slicky/utils';
+import {isFunction, merge, forEach, exists} from '@slicky/utils';
 import {EventEmitter} from '@slicky/event-emitter';
 import {AbstractInputValueAccessor} from './abstractInputValueAccessor';
 import {AbstractValidator, ValidationErrors} from '../validators';
+
+
+export enum ControlState
+{
+	Valid,
+	Invalid,
+	Pending,
+}
 
 
 export abstract class AbstractInputControl<T, U extends Element> implements OnInit, OnTemplateInit
@@ -19,7 +27,7 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 
 	private validators: Array<AbstractValidator<any>>;
 
-	private _valid: boolean;
+	private status: ControlState;
 
 	private _errors: ValidationErrors;
 
@@ -33,34 +41,43 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 	}
 
 
-	public getValue(): T
+	get value(): T
 	{
 		return this._value;
 	}
 
 
+	get valid(): boolean
+	{
+		return this.status === ControlState.Valid;
+	}
+
+
+	get invalid(): boolean
+	{
+		return this.status === ControlState.Invalid;
+	}
+
+
+	get pending(): boolean
+	{
+		return this.status === ControlState.Pending;
+	}
+
+
+	get errors(): ValidationErrors
+	{
+		return this._errors;
+	}
+
+
 	public setValue(value: T): void
 	{
-		this._valid = undefined;
+		this.status = undefined;
 		this._errors = undefined;
 		this._value = value;
+		this.doValidate();
 		this.valueAccessor.setValue(value);
-	}
-
-
-	public isValid(cb: (valid: boolean) => void): void
-	{
-		this.doValidate(() => {
-			cb(this._valid);
-		});
-	}
-
-
-	public getErrors(cb: (errors: ValidationErrors) => void): void
-	{
-		this.doValidate(() => {
-			cb(this._errors);
-		});
 	}
 
 
@@ -70,10 +87,11 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 		this.valueAccessor = this.directives.find(<any>AbstractInputValueAccessor);
 
 		this.valueAccessor.onChange.subscribe((value: T) => {
-			this._valid = undefined;
+			this.status = undefined;
 			this._errors = undefined;
 			this._value = value;
 
+			this.doValidate();
 			this.onChange.emit(value);
 		});
 	}
@@ -82,15 +100,18 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 	public onTemplateInit(): void
 	{
 		this._value = this.valueAccessor.getValue();
+		this.doValidate();
 	}
 
 
-	private doValidate(cb: () => void): void
+	private doValidate(cb?: () => void): void
 	{
-		if (isBoolean(this._valid) && isObject(this._errors)) {
-			cb();
+		if (exists(this.status)) {
+			if (isFunction(cb)) {
+				cb();
+			}
 		} else {
-			this._valid = true;
+			this.status = ControlState.Pending;
 			this._errors = {};
 
 			const total = this.validators.length;
@@ -101,12 +122,18 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 					i++;
 
 					if (errors !== null) {
-						this._valid = false;
+						this.status = ControlState.Invalid;
 						this._errors = merge(this._errors, errors);
 					}
 
 					if (i === total) {
-						cb();
+						if (this.status === ControlState.Pending) {
+							this.status = ControlState.Valid;
+						}
+
+						if (isFunction(cb)) {
+							cb();
+						}
 					}
 				});
 			});

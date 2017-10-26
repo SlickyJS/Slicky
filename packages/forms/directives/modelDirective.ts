@@ -1,6 +1,5 @@
 import {Directive, OnInit, OnTemplateInit, OnUpdate, Input, Output, ElementRef, DirectivesStorageRef} from '@slicky/core';
 import {EventEmitter} from '@slicky/event-emitter';
-import {Observable} from 'rxjs';
 import {AbstractInputControl} from './abstractInputControl';
 import {ValidationErrors} from '../validators';
 
@@ -38,27 +37,31 @@ export class ModelDirective<T, U extends Element> implements OnInit, OnTemplateI
 
 	get value(): T
 	{
-		return this.control.getValue();
+		return this.control.value;
 	}
 
 
-	get valid(): Observable<boolean>
+	get valid(): boolean
 	{
-		return new Observable((subscriber) => {
-			this.control.isValid((valid) => {
-				subscriber.next(valid);
-			});
-		});
+		return this.control.valid;
 	}
 
 
-	get errors(): Observable<ValidationErrors>
+	get invalid(): boolean
 	{
-		return new Observable((subscriber) => {
-			this.control.getErrors((errors) => {
-				subscriber.next(errors);
-			});
-		});
+		return this.control.invalid;
+	}
+
+
+	get pending(): boolean
+	{
+		return this.control.pending;
+	}
+
+
+	get errors(): ValidationErrors
+	{
+		return this.control.errors;
 	}
 
 
