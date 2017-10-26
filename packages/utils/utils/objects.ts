@@ -4,6 +4,12 @@ export function getType(obj: any): string
 }
 
 
+export function isBoolean(obj: any): boolean
+{
+	return typeof obj === 'boolean';
+}
+
+
 export function isString(obj: any): boolean
 {
 	return typeof obj === 'string';

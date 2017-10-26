@@ -1,6 +1,6 @@
 import {
 	getType, isString, isNumber, isArray, isObject, isFunction, isIterable, exists, forEach, map, find, filter, unique,
-	clone, merge, toArray, extend, keys, values, flatten, reverse, sort
+	clone, merge, toArray, extend, keys, values, flatten, reverse, sort, isBoolean
 } from '../..';
 import {expect} from 'chai';
 
@@ -11,6 +11,19 @@ describe('#objects', () => {
 
 		it('should get type of object', () => {
 			expect(getType([])).to.be.equal('[object Array]');
+		});
+
+	});
+
+	describe('isBoolean()', () => {
+
+		it('should be a boolean', () => {
+			expect(isBoolean(true)).to.be.equal(true);
+			expect(isBoolean(false)).to.be.equal(true);
+		});
+
+		it('should not be a boolean', () => {
+			expect(isBoolean(1)).to.be.equal(false);
 		});
 
 	});
