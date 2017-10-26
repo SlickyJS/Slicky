@@ -17,9 +17,9 @@ export abstract class AbstractInputValueAccessor<T, U extends Element>
 	}
 
 
-	public abstract getValue(): T;
+	public abstract getValue(): T|null;
 
 
-	public abstract setValue(value: T): void;
+	public abstract setValue(value: T|null): void;
 
 }

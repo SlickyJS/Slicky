@@ -15,7 +15,7 @@ export class EmailValidator extends AbstractValidator<string>
 
 	public validate(value: string, done: (errors) => void): void
 	{
-		if (value == null || value === '') {
+		if (value === null) {
 			done(null);
 		} else {
 			done(EMAIL_REGEXP.test(value) ? null : {email: true});

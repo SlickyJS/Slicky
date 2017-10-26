@@ -1,6 +1,6 @@
 import {Directive, OnInit, OnUpdate, Input, Output, ElementRef, DirectivesStorageRef} from '@slicky/core';
 import {EventEmitter} from '@slicky/event-emitter';
-import {isBoolean, merge, forEach, isObject} from '@slicky/utils';
+import {isBoolean, merge, forEach, isObject, exists} from '@slicky/utils';
 import {Observable} from 'rxjs';
 import {AbstractInputValueAccessor} from './abstractInputValueAccessor';
 import {AbstractValidator, ValidationErrors} from '../validators';
@@ -72,9 +72,8 @@ export class ModelDirective<T, U extends Element> implements OnInit, OnUpdate
 	public onInit(): void
 	{
 		this.validators = this.directives.findAll(<any>AbstractValidator);
-
 		this.valueAccessor = this.directives.find(<any>AbstractInputValueAccessor);
-		this.valueAccessor.setValue(this._value);
+
 		this.valueAccessor.onChange.subscribe((value: T) => {
 			this._valid = undefined;
 			this._errors = undefined;
@@ -82,6 +81,13 @@ export class ModelDirective<T, U extends Element> implements OnInit, OnUpdate
 
 			this.onChange.emit(value);
 		});
+
+		if (<any>this._value === '') {
+			this._value = this.valueAccessor.getValue();
+		} else {
+			this.valueAccessor.setValue(this._value);
+		}
+
 	}
 
 

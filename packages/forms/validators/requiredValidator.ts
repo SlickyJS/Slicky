@@ -18,7 +18,7 @@ export class RequiredValidator extends AbstractValidator<string>
 		if (this.required === false || this.required === 'false') {
 			done(null);
 		} else {
-			if (value == null || value === '') {
+			if (value === null) {
 				done({required: true});
 			} else {
 				done(null);

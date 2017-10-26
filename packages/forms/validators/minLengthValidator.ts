@@ -16,7 +16,7 @@ export class MinLengthValidator extends AbstractValidator<string>
 	public validate(value: string, done: (errors) => void): void
 	{
 		const minLength = this.minLength * 1;
-		const length = value && value !== '' ? value.length : 0;
+		const length = value ? value.length : 0;
 
 		done(length < minLength ? {minLength : {requiredLength: minLength, actualLength: length}} : null);
 	}

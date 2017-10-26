@@ -233,6 +233,28 @@ describe('#Compiler', () => {
 			expect(compiler.compile(metadataLoader.load(TestComponentParent))).to.be.equal(compareWith('compiler.inputs'));
 		});
 
+		it('should not import undefined input', () => {
+			@Directive({
+				selector: 'test-directive',
+			})
+			class TestDirective
+			{
+
+				@Input()
+				public input;
+
+			}
+
+			@Component({
+				name: 'test-component',
+				template: '<test-directive></test-directive>',
+				directives: [TestDirective],
+			})
+			class TestComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.inputs.undefined'));
+		});
+
 		it('should compile outputs', () => {
 			@Directive({
 				selector: 'directive-child',

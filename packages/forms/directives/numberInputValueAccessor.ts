@@ -24,15 +24,16 @@ export class NumberInputValueAccessor extends AbstractInputValueAccessor<number,
 	}
 
 
-	public getValue(): number
+	public getValue(): number|null
 	{
-		return +this.el.nativeElement.value;
+		const value = this.el.nativeElement.value;
+		return value === '' ? null : +value;
 	}
 
 
-	public setValue(value: number): void
+	public setValue(value: number|null): void
 	{
-		this.el.nativeElement.value = value + '';
+		this.el.nativeElement.value = value === null ? '' : value + '';
 	}
 
 }

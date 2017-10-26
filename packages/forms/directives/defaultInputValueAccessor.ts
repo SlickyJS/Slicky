@@ -22,15 +22,16 @@ export class DefaultInputValueAccessor extends AbstractInputValueAccessor<string
 	}
 
 
-	public getValue(): string
+	public getValue(): string|null
 	{
-		return this.el.nativeElement.value;
+		const value = this.el.nativeElement.value;
+		return value === '' ? null : value;
 	}
 
 
-	public setValue(value: string): void
+	public setValue(value: string|null): void
 	{
-		this.el.nativeElement.value = value;
+		this.el.nativeElement.value = value === null ? '' : value;
 	}
 
 }

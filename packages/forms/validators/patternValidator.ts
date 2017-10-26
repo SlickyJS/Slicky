@@ -16,7 +16,7 @@ export class PatternValidator extends AbstractValidator<string>
 
 	public validate(value: string, done: (errors) => void): void
 	{
-		if (value == null || value === '') {
+		if (value === null) {
 			done(null);
 		} else {
 			const regex: RegExp = isString(this.pattern) ? new RegExp(<string>this.pattern) : <RegExp>this.pattern;

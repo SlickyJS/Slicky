@@ -281,4 +281,26 @@ describe('#Application.forms.model', () => {
 		expect(modelB.value).to.be.equal('b');
 	});
 
+	it('should use model without connection to directive', () => {
+		@Component({
+			name: 'test-component',
+			template: '<input type="text" s:model #i="sModel" value="hello world">',
+			directives: [FORM_DIRECTIVES],
+		})
+		class TestComponent {}
+
+		const component = Tester.runDirective('<test-component></test-component>', TestComponent);
+		const input = <HTMLInputElement>component.application.document.querySelector('input');
+		const model = <ModelDirective<string, HTMLInputElement>>component.template.getParameter('i');
+
+		expect(input.value).to.be.equal('hello world');
+		expect(model.value).to.be.equal('hello world');
+
+		input.value = 'lorem ipsum';
+		component.application.callEvent(input, 'UIEvent', 'input');
+
+		expect(input.value).to.be.equal('lorem ipsum');
+		expect(model.value).to.be.equal('lorem ipsum');
+	});
+
 });

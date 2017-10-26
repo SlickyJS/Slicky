@@ -57,10 +57,10 @@ class FormComponent
 
 ***Build in validators:***
 
-* `required`: `<input type="text" [(s:model)]="value" required>` - value must not be empty
-* `pattern`: `<input type="text" [(s:model)]="value" pattern="[a-z]+">` - value must be allowed by pattern
-* `email`: `<input type="email" [(s:model)]="value">` - value must be a valid email
-* `minLength`: `<input type="text" [(s:model)]="value" minlength="10">` - value's length must be greater than 10 letters
-* `maxLength`: `<input type="text" [(s:model)]="value" maxlength="10">` - value's length must be smaller than 10 letters
-* `min`: `<input type="number" [(s:model)]="value" min="10">` - value number must be larger than 10
-* `max`: `<input type="number" [(s:model)]="value" max="10">` - value number must be smaller than 10
+* `required`: `<input type="text" s:model required>` - value must not be empty
+* `pattern`: `<input type="text" s:model pattern="[a-z]+">` - value must be allowed by pattern
+* `email`: `<input type="email" s:model>` - value must be a valid email
+* `minLength`: `<input type="text" s:model minlength="10">` - value's length must be greater than 10 letters
+* `maxLength`: `<input type="text" s:model maxlength="10">` - value's length must be smaller than 10 letters
+* `min`: `<input type="number" s:model min="10">` - value number must be larger than 10
+* `max`: `<input type="number" s:model max="10">` - value number must be smaller than 10
