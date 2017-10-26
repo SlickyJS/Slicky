@@ -29,6 +29,8 @@ export class Compiler
 			encapsulation: metadata.encapsulation,
 		});
 
+		//console.log(this.templates[metadata.hash]);
+
 		return this.templates[metadata.hash];
 	}
 

@@ -26,11 +26,13 @@ export class SelectMultipleInputValueAccessor extends AbstractInputValueAccessor
 
 	public getValue(): Array<string>
 	{
-		const options = this.el.nativeElement.selectedOptions;
+		const options = this.el.nativeElement.options;
 		const value = [];
 
 		for (let i = 0; i < options.length; i++) {
-			value.push(options[i].value);
+			if (options[i].selected) {
+				value.push(options[i].value);
+			}
 		}
 
 		return value;

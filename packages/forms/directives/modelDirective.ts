@@ -1,9 +1,8 @@
-import {Directive, OnTemplateInit, OnUpdate, Input, Output, ElementRef, DirectivesStorageRef} from '@slicky/core';
+import {Directive, OnInit, OnTemplateInit, OnUpdate, Input, Output, ElementRef, DirectivesStorageRef} from '@slicky/core';
 import {EventEmitter} from '@slicky/event-emitter';
-import {isBoolean, merge, forEach, isObject} from '@slicky/utils';
 import {Observable} from 'rxjs';
-import {AbstractInputValueAccessor} from './abstractInputValueAccessor';
-import {AbstractValidator, ValidationErrors} from '../validators';
+import {AbstractInputControl} from './abstractInputControl';
+import {ValidationErrors} from '../validators';
 
 
 export type HTMLFormInputElement = HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement;
@@ -13,7 +12,7 @@ export type HTMLFormInputElement = HTMLInputElement|HTMLSelectElement|HTMLTextAr
 	selector: '[s:model]',
 	exportAs: 'sModel',
 })
-export class ModelDirective<T, U extends Element> implements OnTemplateInit, OnUpdate
+export class ModelDirective<T, U extends Element> implements OnInit, OnTemplateInit, OnUpdate
 {
 
 
@@ -27,13 +26,7 @@ export class ModelDirective<T, U extends Element> implements OnTemplateInit, OnU
 
 	private directives: DirectivesStorageRef;
 
-	private valueAccessor: AbstractInputValueAccessor<T, U>;
-
-	private validators: Array<AbstractValidator<any>>;
-
-	private _valid: boolean;
-
-	private _errors: ValidationErrors;
+	private control: AbstractInputControl<T, U>;
 
 
 	constructor(el: ElementRef<HTMLFormInputElement>, directives: DirectivesStorageRef)
@@ -45,15 +38,15 @@ export class ModelDirective<T, U extends Element> implements OnTemplateInit, OnU
 
 	get value(): T
 	{
-		return this._value;
+		return this.control.getValue();
 	}
 
 
 	get valid(): Observable<boolean>
 	{
 		return new Observable((subscriber) => {
-			this.loadErrors(() => {
-				subscriber.next(this._valid);
+			this.control.isValid((valid) => {
+				subscriber.next(valid);
 			});
 		});
 	}
@@ -62,74 +55,38 @@ export class ModelDirective<T, U extends Element> implements OnTemplateInit, OnU
 	get errors(): Observable<ValidationErrors>
 	{
 		return new Observable((subscriber) => {
-			this.loadErrors(() => {
-				subscriber.next(this._errors);
+			this.control.getErrors((errors) => {
+				subscriber.next(errors);
 			});
+		});
+	}
+
+
+	public onInit(): void
+	{
+		this.control = this.directives.find(<any>AbstractInputControl);
+		this.control.onChange.subscribe((value) => {
+			this.onChange.emit(value);
 		});
 	}
 
 
 	public onTemplateInit(): void
 	{
-		this.validators = this.directives.findAll(<any>AbstractValidator);
-		this.valueAccessor = this.directives.find(<any>AbstractInputValueAccessor);
-
-		this.valueAccessor.onChange.subscribe((value: T) => {
-			this._valid = undefined;
-			this._errors = undefined;
-			this._value = value;
-
-			this.onChange.emit(value);
-		});
-
-		if (<any>this._value === '') {
-			this._value = this.valueAccessor.getValue();
-		} else {
-			this.valueAccessor.setValue(this._value);
+		// here because we need to have access to inner <option> elements
+		if (this._value) {
+			this.control.setValue(this._value);
 		}
-
 	}
 
 
 	public onUpdate(input: string, value: T): void
 	{
-		if (!this.valueAccessor || input !== 's:model') {
+		if (!this.control || input !== 's:model') {
 			return;
 		}
 
-		this._valid = undefined;
-		this._errors = undefined;
-
-		this.valueAccessor.setValue(value);
-	}
-
-
-	private loadErrors(cb: () => void): void
-	{
-		if (isBoolean(this._valid) && isObject(this._errors)) {
-			cb();
-		} else {
-			this._valid = true;
-			this._errors = {};
-
-			const total = this.validators.length;
-			let i = 0;
-
-			forEach(this.validators, (validator: AbstractValidator<any>) => {
-				validator.validate(this._value, (errors) => {
-					i++;
-
-					if (errors !== null) {
-						this._valid = false;
-						this._errors = merge(this._errors, errors);
-					}
-
-					if (i === total) {
-						cb();
-					}
-				});
-			});
-		}
+		this.control.setValue(value);
 	}
 
 }
