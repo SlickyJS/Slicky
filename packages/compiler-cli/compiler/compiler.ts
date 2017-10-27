@@ -5,9 +5,13 @@ import {writeFileSync} from 'fs';
 import * as path from 'path';
 
 
-export declare interface CompilerTemplatesList
+export declare interface CompiledTemplate
 {
-	[hash: number]: string;
+	file: string;
+	exportAs: string;
+	hash: number;
+	name: string;
+	template: string;
 }
 
 
@@ -19,28 +23,46 @@ export declare interface CompilerSlickyOptions
 }
 
 
+declare interface TemplateImport
+{
+	file: string;
+	template: CompiledTemplate;
+}
+
+
 export class Compiler
 {
 
 
 	public onFile = new EventEmitter<string>();
 
-	public onTemplate = new EventEmitter<{file: string, exportName: string, template: string}>();
+	public onTemplate = new EventEmitter<CompiledTemplate>();
 
 
-	public compileAndWrite(tsconfigPath: string, done: (outDir: string, factory: string, templates: CompilerTemplatesList) => void = null): void
+	public compileAndWrite(tsconfigPath: string, done?: (outDir: string) => void): void
 	{
-		this.compile(tsconfigPath, (outDir: string, factory: string, templates: CompilerTemplatesList) => {
-			writeFileSync(path.join(outDir, 'app-templates-factory.ts'), factory, {encoding: 'utf8'});
+		const templates: Array<TemplateImport> = [];
+
+		this.compile(tsconfigPath, (outDir, template) => {
+			const file = path.join(outDir, `tmpl_${template.name}_${template.hash}.ts`);
+
+			writeFileSync(file, template.template, {encoding: 'utf8'});
+
+			templates.push({
+				file: file,
+				template: template,
+			})
+		}, (outDir) => {
+			writeFileSync(path.join(outDir, 'app-templates-factory.ts'), this.processTemplates(templates), {encoding: 'utf8'});
 
 			if (isFunction(done)) {
-				done(outDir, factory, templates);
+				done(outDir);
 			}
 		});
 	}
 
 
-	public compile(tsconfigPath: string, done: (outDir: string, factory: string, templates: CompilerTemplatesList) => void = null): void
+	public compile(tsconfigPath: string, onTemplate: (outDir: string, template: CompiledTemplate) => void, onDone: (outDir: string) => void): void
 	{
 		const worker = fork(path.join(__dirname, 'compilerWorker.js'), [], {
 			env: {
@@ -49,7 +71,6 @@ export class Compiler
 		});
 
 		let compilerOptions: CompilerSlickyOptions;
-		let templates: CompilerTemplatesList = {};
 
 		worker.on('message', (message) => {
 			if (exists(message.error)) {
@@ -69,13 +90,8 @@ export class Compiler
 			}
 
 			if (exists(message.template)) {
-				templates[message.template.hash] = message.template.template;
-
-				this.onTemplate.emit({
-					file: message.template.file,
-					exportName: message.template.name,
-					template: message.template.template,
-				});
+				onTemplate(compilerOptions.outDir, message.template);
+				this.onTemplate.emit(message.template);
 			}
 		});
 
@@ -84,44 +100,32 @@ export class Compiler
 				return;
 			}
 
-			const compiledTemplates = this.processTemplates(templates);
-
-			if (isFunction(done)) {
-				done(compilerOptions.outDir, compiledTemplates, templates);
-			}
+			onDone(compilerOptions.outDir);
 		});
 	}
 
 
-	private processTemplates(templates: CompilerTemplatesList): string
+	private processTemplates(imports: Array<TemplateImport>): string
 	{
-		let templateFactories: Array<string> = [];
-		let templateMappings: Array<string> = [];
+		const templateImports = [];
+		const mappings = [];
 
-		forEach(templates, (template: string, hash: number) => {
-			templateFactories.push(
-				`function _factory${hash}()\n` +
-				`{\n` +
-				`${indent(template)};\n` +
-				`}\n`
-			);
-
-			templateMappings.push(
-				`${hash}: _factory${hash}`
-			);
+		forEach(imports, (templateImport: TemplateImport) => {
+			templateImports.push(`import {${templateImport.template.exportAs}} from './${path.basename(templateImport.file, '.ts')}';`);
+			mappings.push(`${templateImport.template.hash}: ${templateImport.template.exportAs}`);
 		});
 
 		return (
-			`${templateFactories.join('\n\n')}\n\n` +
-			`const _mapping = {\n` +
-			`${indent(templateMappings.join(',\n'))}\n` +
+			`${templateImports.join('\n')}\n\n\n` +
+			`const mapping = {\n` +
+			`${indent(mappings.join(',\n'))}\n` +
 			`};\n\n\n` +
 			`export function APP_TEMPLATES_FACTORY(hash: number)\n` +
 			`{\n` +
-			`	if (typeof _mapping[hash] === 'undefined') {\n` +
+			`	if (typeof mapping[hash] === 'undefined') {\n` +
 			`		throw new Error("Component template " + hash + " does not exists.");\n` +
 			`	}\n\n` +
-			`	return _mapping[hash]();\n` +
+			`	return mapping[hash]();\n` +
 			`}\n`
 		);
 	}

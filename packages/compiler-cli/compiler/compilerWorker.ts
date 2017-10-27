@@ -1,11 +1,11 @@
 import 'reflect-metadata';
-import {exists, forEach} from '@slicky/utils';
+import {exists, forEach, indent} from '@slicky/utils';
 import {DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType} from '@slicky/core/metadata';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {Compiler} from '@slicky/compiler';
-import {readFileSync} from 'fs';
+import {readFileSync, unlinkSync} from 'fs';
 import * as path from 'path';
-import {CompilerSlickyOptions} from './';
+import {CompilerSlickyOptions} from './compiler';
 import * as glob from 'glob';
 
 
@@ -40,7 +40,7 @@ require('ts-node').register({
 });
 
 
-const tsconfig = JSON.parse(readFileSync(tsconfigPath, 'utf8'));
+const tsconfig = JSON.parse(<string>readFileSync(tsconfigPath, {encoding: 'utf8'}));
 
 
 if (!exists(tsconfig[TSCONFIG_SLICKY_COMPILER_OPTIONS])) {
@@ -72,6 +72,18 @@ const slickyCompilerOptions: CompilerSlickyOptions = {
 slickyCompilerOptions.exclude.push('**/*.d.ts');
 
 
+const removeOld = glob.sync('*.ts', {
+	cwd: slickyCompilerOptions.outDir,
+	realpath: true,
+	nosort: true,
+	nodir: true,
+});
+
+forEach(removeOld, (file: string) => {
+	unlinkSync(file);
+});
+
+
 process.send({slickyCompilerOptions: slickyCompilerOptions});
 
 
@@ -80,6 +92,17 @@ const metadataLoader = new DirectiveMetadataLoader(new ExtensionsManager);
 
 
 const processedTemplates: Array<number> = [];
+
+
+function processTemplate(exportAs: string, template: string): string
+{
+	return (
+		`export function ${exportAs}()\n` +
+		`{\n` +
+		`${indent(template)};\n` +
+		`}\n`
+	);
+}
 
 
 glob(path.join('**', '*.ts'), {
@@ -97,7 +120,7 @@ glob(path.join('**', '*.ts'), {
 
 			const fileExports = require(file);
 
-			forEach(fileExports, (obj: any, name: string) => {
+			forEach(fileExports, (obj: any) => {
 				let metadata: DirectiveDefinition;
 
 				try {
@@ -116,15 +139,16 @@ glob(path.join('**', '*.ts'), {
 
 				processedTemplates.push(metadata.hash);
 
-				const template = compiler.compile(metadata);
+				const exportAs = `factory${metadata.hash}`;
 
 				process.send({
 					template: {
 						file: file,
-						name: name,
+						exportAs: exportAs,
 						hash: metadata.hash,
-						template: template,
-					}
+						name: metadata.name,
+						template: processTemplate(exportAs, compiler.compile(metadata)),
+					},
 				});
 			});
 		});

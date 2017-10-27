@@ -1,7 +1,0 @@
-{
-	"extends": "../../tsconfig.json",
-	"slickyCompilerOptions": {
-		"rootDir": "./app",
-		"outDir": "./aot"
-	}
-}

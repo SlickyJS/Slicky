@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as colors from 'colors/safe';
 import {existsSync} from 'fs';
 import {keys} from '@slicky/utils';
-import {Compiler, CompilerTemplatesList} from '../compiler';
+import {Compiler} from '../compiler';
 
 
 const args = yargs
@@ -36,6 +36,7 @@ console.log(`Using typescript config file ${colors.yellow(path.relative(process.
 
 
 const compiler = new Compiler;
+let templatesCount = 0;
 
 compiler.onFile.subscribe((file) => {
 	console.log('');
@@ -44,12 +45,13 @@ compiler.onFile.subscribe((file) => {
 
 compiler.onTemplate.subscribe(() => {
 	process.stdout.write(colors.yellow('+'));
+	templatesCount++;
 });
 
 
-compiler.compileAndWrite(args.tsconfig, (outDir: string, factory: string, templates: CompilerTemplatesList) => {
+compiler.compileAndWrite(args.tsconfig, (outDir) => {
 	console.log('');
 	console.log('');
 
-	console.log(colors.green(`Successfully generated ${keys(templates).length} templates into ${path.relative(process.cwd(), outDir)}`));
+	console.log(colors.green(`Successfully generated ${templatesCount} templates into ${path.relative(process.cwd(), outDir)}`));
 });
