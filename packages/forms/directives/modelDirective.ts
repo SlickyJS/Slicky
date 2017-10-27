@@ -41,6 +41,12 @@ export class ModelDirective<T, U extends Element> implements OnInit, OnTemplateI
 	}
 
 
+	set value(value: T)
+	{
+		this.control.value = value;
+	}
+
+
 	get valid(): boolean
 	{
 		return this.control.valid;
@@ -56,6 +62,24 @@ export class ModelDirective<T, U extends Element> implements OnInit, OnTemplateI
 	get pending(): boolean
 	{
 		return this.control.pending;
+	}
+
+
+	get dirty(): boolean
+	{
+		return this.control.dirty;
+	}
+
+
+	get pristine(): boolean
+	{
+		return this.control.pristine;
+	}
+
+
+	get touched(): boolean
+	{
+		return this.control.touched;
 	}
 
 
@@ -90,6 +114,18 @@ export class ModelDirective<T, U extends Element> implements OnInit, OnTemplateI
 		}
 
 		this.control.value = value;
+	}
+
+
+	public focus(): void
+	{
+		this.control.focus();
+	}
+
+
+	public reset(): void
+	{
+		this.control.reset();
 	}
 
 }

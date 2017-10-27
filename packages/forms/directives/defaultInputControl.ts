@@ -1,4 +1,5 @@
 import {Directive, ElementRef, DirectivesStorageRef} from '@slicky/core';
+import {Renderer} from '@slicky/templates/dom';
 import {AbstractInputControl} from './abstractInputControl';
 
 
@@ -9,9 +10,9 @@ export class DefaultInputControl extends AbstractInputControl<any, any>
 {
 
 
-	constructor(el: ElementRef<any>, directives: DirectivesStorageRef)
+	constructor(renderer: Renderer, el: ElementRef<any>, directives: DirectivesStorageRef)
 	{
-		super(el, directives);
+		super(renderer, el, directives);
 	}
 
 }

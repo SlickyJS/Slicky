@@ -29,6 +29,13 @@ export class RadioInputValueAccessor extends AbstractInputValueAccessor<string, 
 	}
 
 
+	@HostEvent('blur')
+	public onBlur(): void
+	{
+		this.onTouched.emit();
+	}
+
+
 	public getValue(): string
 	{
 		if (this.el.nativeElement.checked) {
@@ -42,6 +49,12 @@ export class RadioInputValueAccessor extends AbstractInputValueAccessor<string, 
 		if (this.el.nativeElement.value === value) {
 			this.el.nativeElement.checked = true;
 		}
+	}
+
+
+	public focus(): void
+	{
+		this.el.nativeElement.focus();
 	}
 
 }

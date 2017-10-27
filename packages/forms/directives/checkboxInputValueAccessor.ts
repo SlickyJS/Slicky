@@ -24,6 +24,13 @@ export class CheckboxInputValueAccessor extends AbstractInputValueAccessor<boole
 	}
 
 
+	@HostEvent('blur')
+	public onBlur(): void
+	{
+		this.onTouched.emit();
+	}
+
+
 	public getValue(): boolean
 	{
 		return this.el.nativeElement.checked;
@@ -33,6 +40,12 @@ export class CheckboxInputValueAccessor extends AbstractInputValueAccessor<boole
 	public setValue(value: boolean): void
 	{
 		this.el.nativeElement.checked = value;
+	}
+
+
+	public focus(): void
+	{
+		this.el.nativeElement.focus();
 	}
 
 }

@@ -302,4 +302,94 @@ describe('#Application.forms.validators', () => {
 		}, 70);
 	});
 
+	it('should update css classes and status', (done) => {
+		@Directive({
+			selector: '[async-test]',
+		})
+		class TestAsyncValidator extends AbstractValidator<string> {
+
+			validate(value: string, done: (errors) => void): void
+			{
+				setTimeout(() => {
+					done(value === 'Clare' ? null : {async: true});
+				}, 50);
+			}
+
+		}
+
+		@Component({
+			name: 'test-component',
+			template: '<input type="text" s:model async-test #i="sModel">',
+			directives: [FORM_DIRECTIVES, TestAsyncValidator],
+		})
+		class TestComponent {}
+
+		const component = Tester.runDirective('<test-component></test-component>', TestComponent);
+		const input = <HTMLInputElement>component.application.document.querySelector('input');
+		const model = <ModelDirective<string, HTMLInputElement>>component.template.getParameter('i');
+
+		expect(input.className).to.be.equal('s-untouched s-pristine s-pending');
+		expect(model.valid).to.be.equal(false);
+		expect(model.invalid).to.be.equal(false);
+		expect(model.pending).to.be.equal(true);
+		expect(model.dirty).to.be.equal(false);
+		expect(model.pristine).to.be.equal(true);
+		expect(model.touched).to.be.equal(false);
+
+		setTimeout(() => {
+			expect(input.className).to.be.equal('s-untouched s-pristine s-invalid');
+			expect(model.valid).to.be.equal(false);
+			expect(model.invalid).to.be.equal(true);
+			expect(model.pending).to.be.equal(false);
+			expect(model.dirty).to.be.equal(false);
+			expect(model.pristine).to.be.equal(true);
+			expect(model.touched).to.be.equal(false);
+
+			model.value = 'Clare';
+			component.template.refresh();
+
+			expect(input.className).to.be.equal('s-untouched s-pristine s-pending');
+			expect(model.valid).to.be.equal(false);
+			expect(model.invalid).to.be.equal(false);
+			expect(model.pending).to.be.equal(true);
+			expect(model.dirty).to.be.equal(false);
+			expect(model.pristine).to.be.equal(true);
+			expect(model.touched).to.be.equal(false);
+
+			setTimeout(() => {
+				expect(input.className).to.be.equal('s-untouched s-pristine s-valid');
+				expect(model.valid).to.be.equal(true);
+				expect(model.invalid).to.be.equal(false);
+				expect(model.pending).to.be.equal(false);
+				expect(model.dirty).to.be.equal(false);
+				expect(model.pristine).to.be.equal(true);
+				expect(model.touched).to.be.equal(false);
+
+				input.value = 'David';
+				component.application.callEvent(input, 'UIEvent', 'input');
+				component.application.callEvent(input, 'FocusEvent', 'blur');
+
+				expect(input.className).to.be.equal('s-dirty s-pending s-touched');
+				expect(model.valid).to.be.equal(false);
+				expect(model.invalid).to.be.equal(false);
+				expect(model.pending).to.be.equal(true);
+				expect(model.dirty).to.be.equal(true);
+				expect(model.pristine).to.be.equal(false);
+				expect(model.touched).to.be.equal(true);
+
+				setTimeout(() => {
+					expect(input.className).to.be.equal('s-dirty s-touched s-invalid');
+					expect(model.valid).to.be.equal(false);
+					expect(model.invalid).to.be.equal(true);
+					expect(model.pending).to.be.equal(false);
+					expect(model.dirty).to.be.equal(true);
+					expect(model.pristine).to.be.equal(false);
+					expect(model.touched).to.be.equal(true);
+
+					done();
+				}, 70);
+			}, 70);
+		}, 70);
+	});
+
 });

@@ -1,17 +1,29 @@
 import {ElementRef, DirectivesStorageRef, OnInit, OnTemplateInit, OnAttach, OnDestroy, Input} from '@slicky/core';
-import {merge, forEach, exists} from '@slicky/utils';
+import {merge, forEach} from '@slicky/utils';
 import {EventEmitter} from '@slicky/event-emitter';
+import {Renderer} from '@slicky/templates/dom';
 import {AbstractInputValueAccessor} from './abstractInputValueAccessor';
 import {FormDirective} from './formDirective';
 import {AbstractValidator, ValidationErrors} from '../validators';
 
 
-export enum ControlState
+export enum ControlStatus
 {
 	Valid,
 	Invalid,
 	Pending,
 }
+
+
+export const ControlStatusClasses = {
+	touched: 's-touched',
+	untouched: 's-untouched',
+	dirty: 's-dirty',
+	pristine: 's-pristine',
+	pending: 's-pending',
+	valid: 's-valid',
+	invalid: 's-invalid',
+};
 
 
 export abstract class AbstractInputControl<T, U extends Element> implements OnInit, OnTemplateInit, OnAttach, OnDestroy
@@ -23,6 +35,8 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 
 	public onChange = new EventEmitter<T>();
 
+	private renderer: Renderer;
+
 	protected el: ElementRef<U>;
 
 	private directives: DirectivesStorageRef;
@@ -33,15 +47,20 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 
 	private parent: FormDirective<any>;
 
-	private status: ControlState;
+	private status: ControlStatus;
 
 	private _errors: ValidationErrors;
 
 	private _value: T;
 
+	private initValue: T;
 
-	constructor(el: ElementRef<U>, directives: DirectivesStorageRef)
+	private _touched: boolean = false;
+
+
+	constructor(renderer: Renderer, el: ElementRef<U>, directives: DirectivesStorageRef)
 	{
+		this.renderer = renderer;
 		this.el = el;
 		this.directives = directives;
 	}
@@ -55,29 +74,45 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 
 	set value(value: T)
 	{
-		this.status = undefined;
-		this._errors = undefined;
-		this._value = value;
-		this.doValidate();
+		this.initValue = value;
+		this.refresh(value);
 		this.valueAccessor.setValue(value);
 	}
 
 
 	get valid(): boolean
 	{
-		return this.status === ControlState.Valid;
+		return this.status === ControlStatus.Valid;
 	}
 
 
 	get invalid(): boolean
 	{
-		return this.status === ControlState.Invalid;
+		return this.status === ControlStatus.Invalid;
 	}
 
 
 	get pending(): boolean
 	{
-		return this.status === ControlState.Pending;
+		return this.status === ControlStatus.Pending;
+	}
+
+
+	get dirty(): boolean
+	{
+		return this._value !== this.initValue;
+	}
+
+
+	get pristine(): boolean
+	{
+		return this._value === this.initValue;
+	}
+
+
+	get touched(): boolean
+	{
+		return this._touched;
 	}
 
 
@@ -93,26 +128,36 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 	}
 
 
+	public focus(): void
+	{
+		this.valueAccessor.focus();
+	}
+
+
 	public onInit(): void
 	{
+		this.renderer.addClass(this.el.nativeElement, ControlStatusClasses.untouched);
+
 		this.validators = this.directives.findAll(<any>AbstractValidator);
 		this.valueAccessor = this.directives.find(<any>AbstractInputValueAccessor);
 
 		this.valueAccessor.onChange.subscribe((value: T) => {
-			this.status = undefined;
-			this._errors = undefined;
-			this._value = value;
-
-			this.doValidate();
+			this.refresh(value);
 			this.onChange.emit(value);
+		});
+
+		this.valueAccessor.onTouched.subscribe(() => {
+			this._touched = true;
+			this.renderer.removeClass(this.el.nativeElement, ControlStatusClasses.untouched);
+			this.renderer.addClass(this.el.nativeElement, ControlStatusClasses.touched);
 		});
 	}
 
 
 	public onTemplateInit(): void
 	{
-		this._value = this.valueAccessor.getValue();
-		this.doValidate();
+		this.initValue = this.valueAccessor.getValue();
+		this.refresh(this.initValue);
 	}
 
 
@@ -143,21 +188,31 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 	}
 
 
-	private doValidate(): void
+	private refresh(value: T): void
 	{
-		if (exists(this.status)) {
-			return;
-		}
+		this._value = value;
+
+		const el = this.el.nativeElement;
+
+		this.renderer.removeClass(el, ControlStatusClasses.pending);
+		this.renderer.removeClass(el, ControlStatusClasses.valid);
+		this.renderer.removeClass(el, ControlStatusClasses.invalid);
+		this.renderer.removeClass(el, ControlStatusClasses.dirty);
+		this.renderer.removeClass(el, ControlStatusClasses.pristine);
+
+		this.renderer.addClass(el, this._value === this.initValue ? ControlStatusClasses.pristine : ControlStatusClasses.dirty);
 
 		if (!this.validators.length) {
-			this.status = ControlState.Valid;
+			this.status = ControlStatus.Valid;
 			this._errors = {};
+			this.renderer.addClass(this.el.nativeElement, ControlStatusClasses.valid);
 
 			return;
 		}
 
-		this.status = ControlState.Pending;
+		this.status = ControlStatus.Pending;
 		this._errors = {};
+		this.renderer.addClass(this.el.nativeElement, ControlStatusClasses.pending);
 
 		const total = this.validators.length;
 		let i = 0;
@@ -167,14 +222,18 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 				i++;
 
 				if (errors !== null) {
-					this.status = ControlState.Invalid;
+					this.status = ControlStatus.Invalid;
 					this._errors = merge(this._errors, errors);
+					this.renderer.addClass(this.el.nativeElement, ControlStatusClasses.invalid);
 				}
 
 				if (i === total) {
-					if (this.status === ControlState.Pending) {
-						this.status = ControlState.Valid;
+					if (this.status === ControlStatus.Pending) {
+						this.status = ControlStatus.Valid;
+						this.renderer.addClass(this.el.nativeElement, ControlStatusClasses.valid);
 					}
+
+					this.renderer.removeClass(this.el.nativeElement, ControlStatusClasses.pending);
 				}
 			});
 		});

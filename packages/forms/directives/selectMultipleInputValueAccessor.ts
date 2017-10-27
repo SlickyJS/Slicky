@@ -24,6 +24,13 @@ export class SelectMultipleInputValueAccessor extends AbstractInputValueAccessor
 	}
 
 
+	@HostEvent('blur')
+	public onBlur(): void
+	{
+		this.onTouched.emit();
+	}
+
+
 	public getValue(): Array<string>
 	{
 		const options = this.el.nativeElement.options;
@@ -46,6 +53,12 @@ export class SelectMultipleInputValueAccessor extends AbstractInputValueAccessor
 		for (let i = 0; i < options.length; i++) {
 			options[i].selected = value.indexOf(options[i].value) >= 0;
 		}
+	}
+
+
+	public focus(): void
+	{
+		this.el.nativeElement.focus();
 	}
 
 }

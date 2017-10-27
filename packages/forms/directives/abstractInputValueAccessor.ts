@@ -8,6 +8,8 @@ export abstract class AbstractInputValueAccessor<T, U extends Element>
 
 	public onChange = new EventEmitter<T>();
 
+	public onTouched = new EventEmitter<void>();
+
 	protected el: ElementRef<U>;
 
 
@@ -21,5 +23,8 @@ export abstract class AbstractInputValueAccessor<T, U extends Element>
 
 
 	public abstract setValue(value: T|null): void;
+
+
+	public abstract focus(): void;
 
 }

@@ -24,6 +24,13 @@ export class NumberInputValueAccessor extends AbstractInputValueAccessor<number,
 	}
 
 
+	@HostEvent('blur')
+	public onBlur(): void
+	{
+		this.onTouched.emit();
+	}
+
+
 	public getValue(): number|null
 	{
 		const value = this.el.nativeElement.value;
@@ -34,6 +41,12 @@ export class NumberInputValueAccessor extends AbstractInputValueAccessor<number,
 	public setValue(value: number|null): void
 	{
 		this.el.nativeElement.value = value === null ? '' : value + '';
+	}
+
+
+	public focus(): void
+	{
+		this.el.nativeElement.focus();
 	}
 
 }

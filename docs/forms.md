@@ -98,3 +98,31 @@ class FormComponent
 
 `(s:submit)` overrides the default `submit` event. It would not be called if form is not valid. Also it passes 
 instance of `FormDirective` instead of event.
+
+## Input status
+
+All inputs get automatically updated by their current state. You can query the state by using the `s:model` directive 
+or style the inputs with automatic css classes.
+
+**Query state:**
+
+```html
+<input s:model #input="sModel">
+
+{{ input.touched }}
+{{ input.dirty }}
+{{ input.pristine }}
+{{ input.pending }}
+{{ input.valid }}
+{{ input.invalid }}
+```
+
+**Automatic CSS classes:**
+
+* `s-touched`: Input was visited
+* `s-untouched`: Input was not yet visited
+* `s-dirty`: Input's value was updated
+* `s-pristine`: Input's values was not changed yet
+* `s-pending`: Processing input's validators
+* `s-valid`: Input's value is valid
+* `s-invalid`: Input's value is invalid

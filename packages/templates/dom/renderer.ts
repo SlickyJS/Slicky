@@ -66,10 +66,13 @@ export class Renderer
 			if (exists(el.classList)) {
 				el.classList.remove(className);
 			} else {
-				let list = el.className.split(' ');
-				list.splice(list.indexOf(className), 1);
+				const list = el.className.split(' ');
+				const pos = list.indexOf(className);
 
-				el.className = list.join(' ');
+				if (pos >= 0) {
+					list.splice(pos, 1);
+					el.className = list.join(' ');
+				}
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-import {Component, HostElement, OnTemplateInit, ChildDirective} from '@slicky/core';
+import {Component, OnTemplateInit, ChildDirective} from '@slicky/core';
 import {FORM_DIRECTIVES, FormDirective} from '@slicky/forms';
 import {List} from 'immutable';
 import {Todo, DEFAULT_TODO_COLOR} from '../todo';
@@ -29,9 +29,6 @@ export class TodoContainerComponent implements OnTemplateInit
 {
 
 
-	@HostElement('input[type="text"]')
-	public inputText: HTMLInputElement;
-
 	@ChildDirective(FormDirective)
 	public form: FormDirective<FormValues>;
 
@@ -54,7 +51,7 @@ export class TodoContainerComponent implements OnTemplateInit
 			color: DEFAULT_TODO_COLOR,
 		};
 
-		this.inputText.focus();
+		this.focusTextInput();
 	}
 
 
@@ -73,14 +70,14 @@ export class TodoContainerComponent implements OnTemplateInit
 			color: DEFAULT_TODO_COLOR,
 		};
 
-		this.inputText.focus();
+		this.focusTextInput();
 	}
 
 
 	public removeTodo(todo: Todo): void
 	{
 		this.todos = this.todos.delete(this.todos.keyOf(todo));
-		this.inputText.focus();
+		this.focusTextInput();
 	}
 
 
@@ -92,7 +89,7 @@ export class TodoContainerComponent implements OnTemplateInit
 			color: todo.color,
 		};
 
-		this.inputText.focus();
+		this.focusTextInput();
 	}
 
 
@@ -137,6 +134,12 @@ export class TodoContainerComponent implements OnTemplateInit
 	public showOnlyDoneTodos(): void
 	{
 		this.todoFilter = (todo) => todo.done;
+	}
+
+
+	private focusTextInput(): void
+	{
+		this.form.get('text').focus();
 	}
 
 }

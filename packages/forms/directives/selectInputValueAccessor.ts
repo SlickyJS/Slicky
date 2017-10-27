@@ -22,6 +22,13 @@ export class SelectInputValueAccessor extends AbstractInputValueAccessor<string,
 	}
 
 
+	@HostEvent('blur')
+	public onBlur(): void
+	{
+		this.onTouched.emit();
+	}
+
+
 	public getValue(): string
 	{
 		return this.el.nativeElement.options[this.el.nativeElement.selectedIndex].value;
@@ -38,6 +45,12 @@ export class SelectInputValueAccessor extends AbstractInputValueAccessor<string,
 				break;
 			}
 		}
+	}
+
+
+	public focus(): void
+	{
+		this.el.nativeElement.focus();
 	}
 
 }
