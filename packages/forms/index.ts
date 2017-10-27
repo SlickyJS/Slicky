@@ -1,5 +1,5 @@
 import {
-	DefaultInputControl, ModelDirective, DefaultInputValueAccessor, CheckboxInputValueAccessor,
+	FormDirective, DefaultInputControl, ModelDirective, DefaultInputValueAccessor, CheckboxInputValueAccessor,
 	NumberInputValueAccessor, SelectInputValueAccessor, SelectMultipleInputValueAccessor, RadioInputValueAccessor
 } from './directives';
 
@@ -8,10 +8,11 @@ import {
 	PatternValidator, MinValidator, MaxValidator
 } from './validators';
 
-export {AbstractInputValueAccessor} from './directives';
+export {AbstractInputValueAccessor, FormDirective} from './directives';
 export {AbstractValidator} from './validators';
 
 export const FORM_DIRECTIVES: Array<any> = [
+	FormDirective,
 	DefaultInputControl,
 	RequiredValidator,
 	CheckboxRequiredValidator,

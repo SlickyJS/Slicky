@@ -1,7 +1,8 @@
-import {ElementRef, DirectivesStorageRef, OnInit, OnTemplateInit} from '@slicky/core';
-import {isFunction, merge, forEach, exists} from '@slicky/utils';
+import {ElementRef, DirectivesStorageRef, OnInit, OnTemplateInit, OnAttach, OnDestroy, Input} from '@slicky/core';
+import {merge, forEach, exists} from '@slicky/utils';
 import {EventEmitter} from '@slicky/event-emitter';
 import {AbstractInputValueAccessor} from './abstractInputValueAccessor';
+import {FormDirective} from './formDirective';
 import {AbstractValidator, ValidationErrors} from '../validators';
 
 
@@ -13,9 +14,12 @@ export enum ControlState
 }
 
 
-export abstract class AbstractInputControl<T, U extends Element> implements OnInit, OnTemplateInit
+export abstract class AbstractInputControl<T, U extends Element> implements OnInit, OnTemplateInit, OnAttach, OnDestroy
 {
 
+
+	@Input()
+	public name: string;
 
 	public onChange = new EventEmitter<T>();
 
@@ -26,6 +30,8 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 	private valueAccessor: AbstractInputValueAccessor<T, U>;
 
 	private validators: Array<AbstractValidator<any>>;
+
+	private parent: FormDirective<any>;
 
 	private status: ControlState;
 
@@ -44,6 +50,16 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 	get value(): T
 	{
 		return this._value;
+	}
+
+
+	set value(value: T)
+	{
+		this.status = undefined;
+		this._errors = undefined;
+		this._value = value;
+		this.doValidate();
+		this.valueAccessor.setValue(value);
 	}
 
 
@@ -71,13 +87,9 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 	}
 
 
-	public setValue(value: T): void
+	public reset(): void
 	{
-		this.status = undefined;
-		this._errors = undefined;
-		this._value = value;
-		this.doValidate();
-		this.valueAccessor.setValue(value);
+		this.valueAccessor.setValue(null);
 	}
 
 
@@ -104,40 +116,68 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 	}
 
 
-	private doValidate(cb?: () => void): void
+	public onAttach(parent): void
+	{
+		if (this.parent) {
+			return;
+		}
+
+		if (parent instanceof FormDirective) {
+			this.parent = parent;
+			this.parent.registerControl(this);
+		}
+	}
+
+
+	public onDestroy(): void
+	{
+		if (this.parent) {
+			this.parent.unregisterControl(this);
+		}
+	}
+
+
+	public getElementRef(): ElementRef<U>
+	{
+		return this.el;
+	}
+
+
+	private doValidate(): void
 	{
 		if (exists(this.status)) {
-			if (isFunction(cb)) {
-				cb();
-			}
-		} else {
-			this.status = ControlState.Pending;
+			return;
+		}
+
+		if (!this.validators.length) {
+			this.status = ControlState.Valid;
 			this._errors = {};
 
-			const total = this.validators.length;
-			let i = 0;
-
-			forEach(this.validators, (validator: AbstractValidator<any>) => {
-				validator.validate(this._value, (errors) => {
-					i++;
-
-					if (errors !== null) {
-						this.status = ControlState.Invalid;
-						this._errors = merge(this._errors, errors);
-					}
-
-					if (i === total) {
-						if (this.status === ControlState.Pending) {
-							this.status = ControlState.Valid;
-						}
-
-						if (isFunction(cb)) {
-							cb();
-						}
-					}
-				});
-			});
+			return;
 		}
+
+		this.status = ControlState.Pending;
+		this._errors = {};
+
+		const total = this.validators.length;
+		let i = 0;
+
+		forEach(this.validators, (validator: AbstractValidator<any>) => {
+			validator.validate(this._value, (errors) => {
+				i++;
+
+				if (errors !== null) {
+					this.status = ControlState.Invalid;
+					this._errors = merge(this._errors, errors);
+				}
+
+				if (i === total) {
+					if (this.status === ControlState.Pending) {
+						this.status = ControlState.Valid;
+					}
+				}
+			});
+		});
 	}
 
 }

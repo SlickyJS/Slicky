@@ -78,7 +78,7 @@ export class ModelDirective<T, U extends Element> implements OnInit, OnTemplateI
 	{
 		// here because we need to have access to inner <option> elements
 		if (this._value) {
-			this.control.setValue(this._value);
+			this.control.value = this._value;
 		}
 	}
 
@@ -89,7 +89,7 @@ export class ModelDirective<T, U extends Element> implements OnInit, OnTemplateI
 			return;
 		}
 
-		this.control.setValue(value);
+		this.control.value = value;
 	}
 
 }

@@ -3,6 +3,7 @@ export * from './abstractInputValueAccessor';
 export * from './checkboxInputValueAccessor';
 export * from './defaultInputControl';
 export * from './defaultInputValueAccessor';
+export * from './formDirective';
 export * from './modelDirective';
 export * from './numberInputValueAccessor';
 export * from './radioInputValueAccessor';

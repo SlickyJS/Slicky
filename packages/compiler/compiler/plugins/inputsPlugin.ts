@@ -88,7 +88,7 @@ export class InputsPlugin extends AbstractSlickyEnginePlugin
 			if (isProperty) {
 				element.properties.splice(element.properties.indexOf(property), 1);
 			} else {
-				element.attributes.splice(element.attributes.indexOf(property), 1);
+				//element.attributes.splice(element.attributes.indexOf(property), 1);
 			}
 		});
 	}

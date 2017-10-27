@@ -9,6 +9,21 @@ import {expect} from 'chai';
 
 describe('#Application.forms.validators', () => {
 
+	it('should be valid when no validators are applied', () => {
+		@Component({
+			name: 'test-component',
+			template: '<input s:model type="text" #i="sModel">',
+			directives: [FORM_DIRECTIVES],
+		})
+		class TestComponent {}
+
+		const component = Tester.runDirective('<test-component></test-component>', TestComponent);
+		const model = <ModelDirective<string, HTMLInputElement>>component.template.getParameter('i');
+
+		expect(model.valid).to.be.equal(true);
+		expect(model.errors).to.be.eql({});
+	});
+
 	it('should check required validator on input[type="text"]', () => {
 		@Component({
 			name: 'test-component',

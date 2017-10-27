@@ -57,10 +57,44 @@ class FormComponent
 
 ***Build in validators:***
 
-* `required`: `<input type="text" s:model required>` - value must not be empty
-* `pattern`: `<input type="text" s:model pattern="[a-z]+">` - value must be allowed by pattern
-* `email`: `<input type="email" s:model>` - value must be a valid email
-* `minLength`: `<input type="text" s:model minlength="10">` - value's length must be greater than 10 letters
-* `maxLength`: `<input type="text" s:model maxlength="10">` - value's length must be smaller than 10 letters
-* `min`: `<input type="number" s:model min="10">` - value number must be larger than 10
-* `max`: `<input type="number" s:model max="10">` - value number must be smaller than 10
+* `required`: `<input type="text" required>` - value must not be empty
+* `pattern`: `<input type="text" pattern="[a-z]+">` - value must be allowed by pattern
+* `email`: `<input type="email">` - value must be a valid email
+* `minLength`: `<input type="text" minlength="10">` - value's length must be greater than 10 letters
+* `maxLength`: `<input type="text" maxlength="10">` - value's length must be smaller than 10 letters
+* `min`: `<input type="number" min="10">` - value number must be larger than 10
+* `max`: `<input type="number" max="10">` - value number must be smaller than 10
+
+## Submitting form
+
+```typescript
+import {Component} from '@slicky/core';
+import {FORM_DIRECTIVES, FormDirective} from '@slicky/forms';
+
+declare interface MyFormValues
+{
+	text?: string,
+}
+
+@Component({
+	name: 'my-form',
+	template:
+	 	'<form (s:submit)="saveForm($event)" novalidate>' +
+			'<input name="text" type="text">' +
+		'</form>'
+	,
+	directives: [FORM_DIRECTIVES],
+})
+class FormComponent
+{
+	
+	public saveForm(form: FormDirective<MyFormValues>): void
+	{
+		console.log(form.values);		// MyFormValues(text: string)
+	}
+	
+}
+```
+
+`(s:submit)` overrides the default `submit` event. It would not be called if form is not valid. Also it passes 
+instance of `FormDirective` instead of event.

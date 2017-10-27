@@ -19,15 +19,15 @@
 		</li>
 	</ul>
 
-	<form (submit.prevent)="saveTodo()" class="uk-grid-collapse" uk-grid>
+	<form #form="sForm" (s:submit)="saveTodo()" class="uk-grid-collapse" uk-grid novalidate>
 		<div class="uk-width-5-6">
 			<div class="uk-inline max-width">
-				<a [hidden]="!currentText.length" (click.prevent)="saveTodo()" class="uk-form-icon uk-form-icon-flip" href="#" [icon]="updating ? 'check' : 'plus'"></a>
-				<input (input)="currentText = $this.value" [value]="currentText" placeholder="{{ 'addNew' | translate }}" class="uk-input" type="text">
+				<input name="text" placeholder="{{ 'addNew' | translate }}" class="uk-input" type="text" autocomplete="off" required>
+				<a [hidden]="!form.valid" (click.prevent)="saveTodo()" class="uk-form-icon uk-form-icon-flip" href="#" [icon]="updating ? 'check' : 'plus'"></a>
 			</div>
 		</div>
 		<div class="uk-width-1-6">
-			<input (input)="currentColor = $this.value" [value]="currentColor" type="color" class="uk-input">
+			<input name="color" type="color" class="uk-input">
 		</div>
 	</form>
 </div>

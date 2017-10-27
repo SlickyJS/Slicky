@@ -1,5 +1,5 @@
 return function(template, el, component) {
-	el.addElement("directive-child", {}, function(el) {
+	el.addElement("directive-child", {"attribute-input": "attr", "attribute-custom": "custom", "attribute-watch": ""}, function(el) {
 		template.root.createDirective(template, el, "@directive_0", 3055171198, function(directive) {
 			directive.attributeInput = "attr";
 			directive.attributeInputCustom = "custom";
@@ -19,8 +19,11 @@ return function(template, el, component) {
 				directive.propertyInputCustom = value;
 			});
 		});
+		el.setDynamicAttribute("attribute-watch", function() {
+			return (null);
+		});
 	});
-	el.addElement("component-child", {}, function(el) {
+	el.addElement("component-child", {"attribute-input": "attr", "attribute-custom": "custom", "attribute-watch": ""}, function(el) {
 		template.root.createComponent(template, el, "@directive_1", 3385287998, function(directive, template, outer) {
 			directive.attributeInput = "attr";
 			directive.attributeInputCustom = "custom";
@@ -42,6 +45,9 @@ return function(template, el, component) {
 				directive.propertyInputCustom = value;
 				template.refresh();
 			});
+		});
+		el.setDynamicAttribute("attribute-watch", function() {
+			return (null);
 		});
 	});
 }

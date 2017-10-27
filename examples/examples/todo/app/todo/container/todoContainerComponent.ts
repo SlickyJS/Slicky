@@ -1,9 +1,18 @@
-import {Component, HostElement, OnInit} from '@slicky/core';
+import {Component, HostElement, OnTemplateInit, ChildDirective} from '@slicky/core';
+import {FORM_DIRECTIVES, FormDirective} from '@slicky/forms';
 import {List} from 'immutable';
 import {Todo, DEFAULT_TODO_COLOR} from '../todo';
 import {TodoComponent, } from '../item/todoComponent';
 import {TODOS_CONTAINER_TRANSLATIONS} from './translations';
 import {IconDirective} from '../../helpers';
+import {JsonFilter} from '../../filters';
+
+
+declare interface FormValues
+{
+	text?: string,
+	color?: string,
+}
 
 
 @Component({
@@ -12,20 +21,19 @@ import {IconDirective} from '../../helpers';
 	styles: [
 		require('./style.css'),
 	],
-	directives: [TodoComponent, IconDirective],
+	directives: [FORM_DIRECTIVES, TodoComponent, IconDirective],
+	filters: [JsonFilter],
 	translations: TODOS_CONTAINER_TRANSLATIONS,
 })
-export class TodoContainerComponent implements OnInit
+export class TodoContainerComponent implements OnTemplateInit
 {
 
 
 	@HostElement('input[type="text"]')
 	public inputText: HTMLInputElement;
 
-
-	public currentText: string = '';
-
-	public currentColor: string = DEFAULT_TODO_COLOR;
+	@ChildDirective(FormDirective)
+	public form: FormDirective<FormValues>;
 
 	public todos: List<Todo> = List();
 
@@ -40,8 +48,12 @@ export class TodoContainerComponent implements OnInit
 	}
 
 
-	public onInit(): void
+	public onTemplateInit(): void
 	{
+		this.form.values = {
+			color: DEFAULT_TODO_COLOR,
+		};
+
 		this.inputText.focus();
 	}
 
@@ -49,15 +61,17 @@ export class TodoContainerComponent implements OnInit
 	public saveTodo(): void
 	{
 		if (this.updating) {
-			this.todos = this.todos.update(this.todos.keyOf(this.updating), (todo: Todo) => todo.update(this.currentText, this.currentColor));
+			this.todos = this.todos.update(this.todos.keyOf(this.updating), (todo: Todo) => todo.update(this.form.values.text, this.form.values.color));
 			this.updating = null;
 
 		} else {
-			this.todos = this.todos.push(new Todo(this.currentText, this.currentColor));
+			this.todos = this.todos.push(new Todo(this.form.values.text, this.form.values.color));
 		}
 
-		this.currentText = '';
-		this.currentColor = DEFAULT_TODO_COLOR;
+		this.form.values = {
+			text: null,
+			color: DEFAULT_TODO_COLOR,
+		};
 
 		this.inputText.focus();
 	}
@@ -73,8 +87,10 @@ export class TodoContainerComponent implements OnInit
 	public updateTodo(todo: Todo): void
 	{
 		this.updating = todo;
-		this.currentText = todo.text;
-		this.currentColor = todo.color;
+		this.form.values = {
+			text: todo.text,
+			color: todo.color,
+		};
 
 		this.inputText.focus();
 	}
