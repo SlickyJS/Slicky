@@ -33,6 +33,7 @@ something else. (Maybe when there'll be router it could be used on SPA's also).
 10. [Extensions](./docs/extensions.md)
 11. [Testing](./docs/testing.md)
 12. [HTTP](./docs/http.md)
+13. [Forms](./docs/forms.md)
 
 ## Examples
 
