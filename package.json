@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/slicky",
 	"description": "Monorepo for slicky framework",
-	"version": "0.5.1",
+	"version": "0.6.0",
 	"license": "MIT",
 	"private": true,
 	"repository": {
@@ -20,7 +20,7 @@
 		"tests/*"
 	],
 	"devDependencies": {
-		"@slicky/webpack-loader": "^0.0.1",
+		"@slicky/webpack-loader": "^0.0.2",
 		"@types/gulp": "^4.0.4",
 		"@types/merge2": "^1.1.1",
 		"gulp": "github:gulpjs/gulp#4.0",
