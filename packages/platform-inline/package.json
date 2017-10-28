@@ -14,8 +14,8 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/application": "^0.7.3",
-		"@slicky/core": "^0.7.1",
+		"@slicky/application": "^0.7.4",
+		"@slicky/core": "^0.7.2",
 		"@slicky/templates": "^1.2.1"
 	},
 	"devDependencies": {
