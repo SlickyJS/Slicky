@@ -10,14 +10,14 @@ import {FilterInterface} from '../filters';
 export declare interface ComponentOptions
 {
 	name: string,
-	template?: string,
-	render?: RenderableTemplateFactory,
+	template?: string|RenderableTemplateFactory,
 	exportAs?: string,
 	directives?: Array<ClassType<any>>,
 	override?: ClassType<any>,
 	filters?: Array<ClassType<FilterInterface>>,
 	styles?: Array<string>,
 	encapsulation?: TemplateEncapsulation,
+	hash?: number,
 	[name: string]: any,
 }
 
@@ -26,9 +26,7 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 {
 
 
-	public template: string;
-
-	public render: RenderableTemplateFactory;
+	public template: string|RenderableTemplateFactory;
 
 	public filters: Array<ClassType<FilterInterface>> = [];
 
@@ -51,10 +49,6 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 
 		if (exists(options.template)) {
 			this.template = options.template;
-		}
-
-		if (exists(options.render)) {
-			this.render = options.render;
 		}
 
 		if (exists(options.filters)) {

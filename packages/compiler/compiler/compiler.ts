@@ -1,6 +1,6 @@
 import {DirectiveDefinitionType, DirectiveDefinition} from '@slicky/core/metadata';
 import {Engine} from '@slicky/templates-compiler';
-import {exists} from '@slicky/utils';
+import {exists, isString} from '@slicky/utils';
 import {SlickyEnginePlugin} from './slickyEnginePlugin';
 
 
@@ -21,9 +21,13 @@ export class Compiler
 			return;
 		}
 
+		if (!isString(metadata.template)) {
+			return;
+		}
+
 		const engine = this.createEngine(metadata);
 
-		this.templates[metadata.hash] = engine.compile(metadata.template, {
+		this.templates[metadata.hash] = engine.compile(<string>metadata.template, {
 			name: metadata.hash + '',
 			styles: metadata.styles,
 			encapsulation: metadata.encapsulation,

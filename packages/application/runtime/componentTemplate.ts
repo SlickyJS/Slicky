@@ -38,6 +38,7 @@ export class ComponentTemplate extends Template
 	public createComponent(template: RenderableTemplate, el: TemplateElement, name: string, hash: number, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): void
 	{
 		const changeDetector = new ChangeDetectorRef;
+
 		const metadata = this.directiveFactory.getMetadataByHash(hash);
 		const componentType = this.directiveFactory.getDirectiveTypeByHash(hash);
 

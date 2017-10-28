@@ -1,8 +1,9 @@
-import {exists, forEach, indent, merge, find} from '@slicky/utils';
+import {exists, forEach, indent, merge, find, startsWith} from '@slicky/utils';
 import {fork} from 'child_process';
 import {writeFileSync, readFileSync, unlinkSync} from 'fs';
 import * as path from 'path';
 import * as glob from 'glob';
+import * as minimatch from 'minimatch';
 
 
 const TSCONFIG_SLICKY_COMPILER_OPTIONS = 'slickyCompilerOptions';
@@ -95,7 +96,6 @@ export class Compiler
 		const worker = fork(path.join(__dirname, 'compilerWorker.js'), [], {
 			env: {
 				COMPILE_FILE: file,
-				COMPILE_TSCONFIG_FILE: this.tsconfigPath,
 			},
 		});
 
@@ -116,6 +116,28 @@ export class Compiler
 
 			done(templates);
 		});
+	}
+
+
+	public isProjectFile(file: string): boolean
+	{
+		const config = this.getConfig();
+
+		if (!startsWith(file, config.rootDir)) {
+			return false;
+		}
+
+		if (startsWith(file, config.outDir)) {
+			return false;
+		}
+
+		for (let i = 0; i < config.exclude.length; i++) {
+			if (minimatch(file, config.exclude[i], {dot: true, matchBase: true})) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 

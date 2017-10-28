@@ -1,0 +1,1 @@
+export {PlatformInline} from './platform';

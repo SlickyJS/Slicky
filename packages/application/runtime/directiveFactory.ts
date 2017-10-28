@@ -28,6 +28,8 @@ export class DirectiveFactory
 
 	private renderer: Renderer;
 
+	private metadataLoader: DirectiveMetadataLoader;
+
 	private directives: {[hash: number]: DirectiveDefinitionDirective} = {};
 
 
@@ -38,6 +40,7 @@ export class DirectiveFactory
 		this.extensions = extensions;
 		this.application = application;
 		this.renderer = renderer;
+		this.metadataLoader = metadataLoader;
 
 		metadataLoader.loaded.subscribe((directive: DirectiveDefinitionDirective) => {
 			this.directives[directive.metadata.hash] = directive;
@@ -89,8 +92,8 @@ export class DirectiveFactory
 	{
 		let templateFactory: TemplateRenderFactory;
 
-		if (isFunction(metadata.render)) {
-			templateFactory = metadata.render;
+		if (isFunction(metadata.template)) {
+			templateFactory = <TemplateRenderFactory>metadata.template;
 		} else {
 			templateFactory = this.platform.compileComponentTemplate(metadata);
 		}

@@ -95,3 +95,66 @@ And run it:
 ```bash
 $ gulp compile:aot
 ```
+
+## With webpack
+
+You can use `@slicky/webpack-loader` to get even better results. That webpack loader will replace the template directly 
+inside of your .ts component file, so the original string template will not be included at all. Also it contains some 
+other optimizations as well.
+
+**Installation:**
+
+```bash
+$ npm install @slicky/webpack-loader
+$ npm install @slicky/platform-inline 
+```
+
+**Configuration:**
+
+*You have to include the `slickyCompilerOptions` in your `tsconfig.json` file described above.*
+
+**bootstrap.ts:**
+
+```typescript
+import {Container} from '@slicky/di';
+import {Application} from '@slicky/application';
+import {PlatformInline} from '@slicky/platform-inline';
+
+const container = new Container;
+const platform = new PlatformInline;
+const app = new Application(container, {
+	directives: [],			// list of your root directives and components
+});
+
+// run application in #app element
+platform.run(app, '#app');
+```
+
+**webpack config:**
+
+```typescript
+const config = {
+	// ...
+	module: {
+		rules: [
+			{
+				test: /\.ts$/,
+				use: [
+					{
+						loader: 'ts-loader',
+						options: {
+							configFile: './tsconfig.json',
+						},
+					},
+					{
+						loader: '@slicky/webpack-loader',
+						options: {
+							configFileName: './tsconfig.json',
+						},
+					},
+				],
+			},
+		],
+	},
+};
+```

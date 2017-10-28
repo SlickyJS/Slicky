@@ -2,5 +2,12 @@
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
 		"rootDir": "."
+	},
+	"slickyCompilerOptions": {
+		"rootDir": "./app",
+		"outDir": "./aot",
+		"exclude": [
+			"bootstrap.ts"
+		]
 	}
 }

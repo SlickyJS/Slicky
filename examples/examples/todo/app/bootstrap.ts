@@ -8,11 +8,9 @@ import * as UIkitIcons from 'uikit/dist/js/uikit-icons';
 import {Container} from '@slicky/di';
 import {Application} from '@slicky/application';
 import {TranslatorExtension} from '@slicky/extension-translator';
-import {PlatformServer} from '@slicky/platform-server';
+import {PlatformInline} from '@slicky/platform-inline';
 //import {PlatformBrowser} from '@slicky/platform-browser';
 import {TodoContainerComponent} from './todo';
-
-import {APP_TEMPLATES_FACTORY} from '../aot/app-templates-factory';
 
 
 const container = new Container;
@@ -30,7 +28,7 @@ window['$'] = window['jQuery'] = jquery;
 UIkit.use(UIkitIcons);
 
 
-const platform = new PlatformServer(APP_TEMPLATES_FACTORY);
+const platform = new PlatformInline;
 //const platform = new PlatformBrowser;
 
 platform.run(app, '#app');

@@ -134,8 +134,7 @@ export declare interface DirectiveDefinition {
 	override?: DirectiveDefinitionDirective,
 	childDirectives: DirectiveDefinitionChildDirectivesList,
 	childrenDirectives: DirectiveDefinitionChildrenDirectivesList,
-	template?: string,
-	render?: RenderableTemplateFactory,
+	template?: string|RenderableTemplateFactory,
 	filters?: DirectiveDefinitionFiltersList,
 	styles?: Array<string>,
 	encapsulation?: TemplateEncapsulation,
@@ -185,7 +184,7 @@ export class DirectiveMetadataLoader
 		}
 
 		let name = stringify(directiveType);
-		let directiveHash = this.getDirectiveHash(name, annotation);
+		let directiveHash = exists(annotation.hash) ? annotation.hash : this.getDirectiveHash(name, annotation);
 
 		if (exists(this.definitions[directiveHash])) {
 			return this.definitions[directiveHash];
@@ -324,7 +323,6 @@ export class DirectiveMetadataLoader
 		if (annotation instanceof ComponentAnnotationDefinition) {
 			definition.type = DirectiveDefinitionType.Component;
 			definition.template = annotation.template;
-			definition.render = annotation.render;
 			definition.styles = annotation.styles;
 			definition.encapsulation = annotation.encapsulation;
 
@@ -365,8 +363,16 @@ export class DirectiveMetadataLoader
 			annotation.selector,
 		];
 
+		if (exists(annotation.exportAs)) {
+			parts.push(annotation.exportAs);
+		}
+
+		if (exists(annotation.override)) {
+			parts.push(stringify(annotation.override));
+		}
+
 		if (annotation instanceof ComponentAnnotationDefinition) {
-			parts.push(annotation.template);
+			parts.push(annotation.encapsulation + '');
 			parts.push(map(annotation.directives, (directive: ClassType<any>) => stringify(directive)).join(''));
 			parts.push(map(annotation.filters, (filter: ClassType<FilterInterface>) => stringify(filter)).join(''));
 		}

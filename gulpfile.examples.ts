@@ -1,8 +1,7 @@
-import {exists} from '@slicky/utils';
-import {Compiler} from '@slicky/compiler-cli';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as webpack from 'webpack';
+
 import * as gulp from 'gulp';
 import * as gutil from 'gulp-util';
 import * as sass from 'gulp-sass';
@@ -32,16 +31,6 @@ fs.readdirSync(ROOT)
 					.pipe(sass().on('error', sass.logError))
 					.pipe(concat('style.css'))
 					.pipe(gulp.dest(path.join(directory, 'public')));
-			});
-		}
-
-		if (exists(tsconfig.slickyCompilerOptions)) {
-			exampleTasks.push(`compile:example:${name}:aot`);
-
-			gulp.task(`compile:example:${name}:aot`, (done) => {
-				(new Compiler(path.join(directory, 'tsconfig.json'))).compile(() => {
-					done();
-				});
 			});
 		}
 

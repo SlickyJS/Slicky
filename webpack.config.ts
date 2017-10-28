@@ -23,12 +23,20 @@ export function getExampleWebpackConfig(root: string): any
 			rules: [
 				{
 					test: /\.ts$/,
-					use: {
-						loader: 'awesome-typescript-loader',
-						options: {
-							configFileName: path.join(root, 'tsconfig.json')
+					use: [
+						{
+							loader: 'ts-loader',
+							options: {
+								configFile: path.join(root, 'tsconfig.json')
+							},
 						},
-					},
+						{
+							loader: '@slicky/webpack-loader',
+							options: {
+								configFileName: path.join(root, 'tsconfig.json')
+							},
+						},
+					],
 				},
 				{test: /\.html$/, use: 'raw-loader'},
 				{test: /\.css$/, use: 'raw-loader'},

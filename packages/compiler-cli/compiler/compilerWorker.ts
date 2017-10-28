@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import {forEach, exists} from '@slicky/utils';
+import {forEach, exists, isFunction} from '@slicky/utils';
 import {DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType} from '@slicky/core/metadata';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {Compiler} from '@slicky/compiler';
@@ -7,17 +7,10 @@ import {readFileSync} from 'fs';
 
 
 const file = process.env.COMPILE_FILE;
-const tsconfigPath = process.env.COMPILE_TSCONFIG_FILE;
 
 
 if (!exists(file)) {
 	process.send({error: 'Missing COMPILE_FILE environment variable.'});
-	process.exit(1);
-}
-
-
-if (!exists(tsconfigPath)) {
-	process.send({error: 'Missing COMPILE_TSCONFIG_FILE environment variable.'});
 	process.exit(1);
 }
 
@@ -32,7 +25,6 @@ require.extensions['.css'] = (module, filename) => {
 
 
 require('ts-node').register({
-	project: tsconfigPath,
 	fast: true,
 });
 
@@ -52,6 +44,10 @@ forEach(fileExports, (obj: any) => {
 	}
 
 	if (metadata.type === DirectiveDefinitionType.Directive) {
+		return;
+	}
+
+	if (isFunction(metadata.template)) {
 		return;
 	}
 
