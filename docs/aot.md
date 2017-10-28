@@ -84,7 +84,7 @@ import {Compiler} from '@slicky/compiler-cli';
 import * as gulp from 'gulp';
 
 gulp.task(`compile:aot`, (done) => {
-	(new Compiler).compileAndWrite('tsconfig.json', () => {
+	(new Compiler('tsconfig.json')).compile(() => {
 		done();
 	});
 });

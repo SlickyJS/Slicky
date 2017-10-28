@@ -39,7 +39,7 @@ fs.readdirSync(ROOT)
 			exampleTasks.push(`compile:example:${name}:aot`);
 
 			gulp.task(`compile:example:${name}:aot`, (done) => {
-				(new Compiler).compileAndWrite(path.join(directory, 'tsconfig.json'), () => {
+				(new Compiler(path.join(directory, 'tsconfig.json'))).compile(() => {
 					done();
 				});
 			});

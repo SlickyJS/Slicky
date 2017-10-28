@@ -4,8 +4,8 @@ import * as yargs from 'yargs';
 import * as path from 'path';
 import * as colors from 'colors/safe';
 import {existsSync} from 'fs';
-import {keys} from '@slicky/utils';
-import {Compiler} from '../compiler';
+import {forEach, exists} from '@slicky/utils';
+import {Compiler, CompiledTemplate} from '../compiler';
 
 
 const args = yargs
@@ -33,25 +33,35 @@ if (args._[0] !== 'compile') {
 
 
 console.log(`Using typescript config file ${colors.yellow(path.relative(process.cwd(), args.tsconfig))}`);
+console.log('');
 
 
-const compiler = new Compiler;
-let templatesCount = 0;
-
-compiler.onFile.subscribe((file) => {
-	console.log('');
-	process.stdout.write(`Processing ${path.relative(process.cwd(), file)} `);
-});
-
-compiler.onTemplate.subscribe(() => {
-	process.stdout.write(colors.yellow('+'));
-	templatesCount++;
-});
+const compiler = new Compiler(args.tsconfig);
 
 
-compiler.compileAndWrite(args.tsconfig, (outDir) => {
-	console.log('');
-	console.log('');
+compiler.compile((templates) => {
+	const files: {[file: string]: Array<CompiledTemplate>} = {};
 
-	console.log(colors.green(`Successfully generated ${templatesCount} templates into ${path.relative(process.cwd(), outDir)}`));
+	forEach(templates, (template: CompiledTemplate) => {
+		if (!exists(files[template.file])) {
+			files[template.file] = [];
+		}
+
+		files[template.file].push(template);
+	});
+
+	forEach(files, (templates: Array<CompiledTemplate>, file: string) => {
+		console.log(colors.yellow(path.relative(process.cwd(), file)));
+
+		forEach(templates, (template: CompiledTemplate) => {
+			console.log(`   - ${template.name}`);
+		});
+	});
+
+	if (templates.length) {
+		console.log('');
+		console.log(colors.green(`Successfully generated ${templates.length} templates into ${path.relative(process.cwd(), compiler.getConfig().outDir)}`));
+	} else {
+		console.log(colors.green('No components found'));
+	}
 });
