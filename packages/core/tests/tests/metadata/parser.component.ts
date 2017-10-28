@@ -76,8 +76,8 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 		expect(definition).to.be.eql({
 			type: DirectiveDefinitionType.Component,
 			name: 'TestComponent',
-			uniqueName: 'TestComponent_1374550497',
-			hash: 1374550497,
+			uniqueName: 'TestComponent_2662991551',
+			hash: 2662991551,
 			selector: 'my-button',
 			onInit: false,
 			onDestroy: false,
@@ -153,8 +153,8 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 		expect(definition).to.be.eql({
 			type: DirectiveDefinitionType.Component,
 			name: 'TestComponent',
-			uniqueName: 'TestComponent_4274089426',
-			hash: 4274089426,
+			uniqueName: 'TestComponent_1878199395',
+			hash: 1878199395,
 			selector: 'my-button',
 			onInit: false,
 			onDestroy: false,
@@ -247,8 +247,8 @@ describe('#Metadata/Parser.component/loader.load()', () => {
 		expect(definition).to.be.eql({
 			type: DirectiveDefinitionType.Component,
 			name: 'TestComponent',
-			uniqueName: 'TestComponent_4274089426',
-			hash: 4274089426,
+			uniqueName: 'TestComponent_1878199395',
+			hash: 1878199395,
 			selector: 'my-button',
 			onInit: false,
 			onDestroy: false,

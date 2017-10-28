@@ -5,6 +5,6 @@ return function(template, el, component) {
 		el.addElement("div");
 	});
 	el.addElement("test-child-component", {}, function(el) {
-		template.root.createComponent(template, el, "@directive_1", 919497546);
+		template.root.createComponent(template, el, "@directive_1", 172249716);
 	});
 }

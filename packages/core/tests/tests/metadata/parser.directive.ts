@@ -35,8 +35,8 @@ describe('#Metadata/Parser.directive/loader.load()', () => {
 		expect(definition).to.be.eql({
 			type: DirectiveDefinitionType.Directive,
 			name: 'TestDirective',
-			uniqueName: 'TestDirective_9386130',
-			hash: 9386130,
+			uniqueName: 'TestDirective_2310870602',
+			hash: 2310870602,
 			selector: 'button',
 			exportAs: 'btn',
 			onInit: false,

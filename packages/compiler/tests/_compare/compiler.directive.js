@@ -3,6 +3,6 @@ return function(template, el, component) {
 		template.root.createDirective(template, el, "@directive_0", 3304418489);
 	});
 	el.addElement("my-child", {}, function(el) {
-		template.root.createComponent(template, el, "@directive_1", 3412574437);
+		template.root.createComponent(template, el, "@directive_1", 3343580980);
 	});
 }
