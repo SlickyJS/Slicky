@@ -4,6 +4,7 @@ import {DefaultInputValueAccessor} from './defaultInputValueAccessor';
 
 
 @Directive({
+	id: 'sForm:CheckboxInputValueAccessor',
 	selector: 'input[type="checkbox"]',
 	override: DefaultInputValueAccessor,
 })

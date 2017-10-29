@@ -4,6 +4,7 @@ import {SelectInputValueAccessor} from './selectInputValueAccessor';
 
 
 @Directive({
+	id: 'sForm:SelectMultipleInputValueAccessor',
 	selector: 'select[multiple]',
 	override: SelectInputValueAccessor,
 })

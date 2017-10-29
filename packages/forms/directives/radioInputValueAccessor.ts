@@ -5,6 +5,7 @@ import {DefaultInputValueAccessor} from './defaultInputValueAccessor';
 
 
 @Directive({
+	id: 'sForm:RadioInputValueAccessor',
 	selector: 'input[type="radio"]',
 	override: DefaultInputValueAccessor,
 })

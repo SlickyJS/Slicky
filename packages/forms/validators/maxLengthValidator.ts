@@ -3,6 +3,7 @@ import {AbstractValidator} from './abstractValidator';
 
 
 @Directive({
+	id: 'sForm:MaxLengthValidator',
 	selector: 'input[maxlength]',
 })
 export class MaxLengthValidator extends AbstractValidator<string>

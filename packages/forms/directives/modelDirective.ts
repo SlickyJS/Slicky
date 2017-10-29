@@ -8,6 +8,7 @@ export type HTMLFormInputElement = HTMLInputElement|HTMLSelectElement|HTMLTextAr
 
 
 @Directive({
+	id: 'sForm:ModelDirective',
 	selector: '[s:model]',
 	exportAs: 'sModel',
 })

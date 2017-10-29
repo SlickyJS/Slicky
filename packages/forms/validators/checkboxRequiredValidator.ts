@@ -4,6 +4,7 @@ import {RequiredValidator} from './requiredValidator';
 
 
 @Directive({
+	id: 'sForm:CheckboxRequiredValidator',
 	selector: 'input[type="checkbox"][required]',
 	override: RequiredValidator,
 })

@@ -6,6 +6,7 @@ import {ValidationErrors} from '../validators';
 
 
 @Directive({
+	id: 'sForm:FormDirective',
 	selector: 'form',
 	exportAs: 'sForm',
 })
