@@ -32,7 +32,7 @@ export class TodoContainerComponent implements OnTemplateInit
 	@ChildDirective(FormDirective)
 	public form: FormDirective<FormValues>;
 
-	public todos: List<Todo> = List();
+	public todos: List<Todo> = List<Todo>();
 
 	public todoFilter: (todo: Todo) => boolean;
 

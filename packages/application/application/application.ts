@@ -32,6 +32,8 @@ export class Application
 
 	private document: Document;
 
+	private runner: RootDirectiveRunner;
+
 
 	constructor(container: Container, options: ApplicationOptions = {})
 	{
@@ -62,9 +64,30 @@ export class Application
 	{
 		const el: Element = isString(elOrSelector) ? this.document.querySelector(<string>elOrSelector) : <Element>elOrSelector;
 
+		this.prepareApplication(platform, el);
+
+		forEach(this.directives, (directiveType: ClassType<any>) => {
+			this.runDirective(directiveType);
+		});
+	}
+
+
+	public runDirective(directiveType: ClassType<any>): void
+	{
+		this.runner.run(directiveType);
+	}
+
+
+	private prepareApplication(platform: PlatformInterface, el: Element): void
+	{
+		if (exists(this.runner)) {
+			throw new Error('Application is already running.');
+		}
+
 		const applicationTemplate = new ApplicationTemplate;
 		const renderer = new Renderer(this.document);
-		const runner = new RootDirectiveRunner(this.document, platform, applicationTemplate, this.container, this.metadataLoader, this.extensions, renderer, el);
+
+		this.runner = new RootDirectiveRunner(this.document, platform, applicationTemplate, this.container, this.metadataLoader, this.extensions, renderer, el);
 
 		forEach(this.extensions.getServices(), (provider: ProviderOptions) => {
 			this.container.addService(provider.service, provider.options);
@@ -77,11 +100,7 @@ export class Application
 		});
 
 		this.container.addService(RootDirectiveRunner, {
-			useValue: runner,
-		});
-
-		forEach(this.directives, (directive: ClassType<any>) => {
-			runner.run(directive);
+			useValue: this.runner,
 		});
 	}
 

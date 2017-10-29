@@ -1,8 +1,13 @@
 import * as path from 'path';
+import * as fs from 'fs';
 
 
 export function getExampleWebpackConfig(root: string): any
 {
+	if (fs.existsSync(path.join(root, 'webpack.config.ts'))) {
+		return require(path.join(root, 'webpack.config.ts')).default;
+	}
+
 	return {
 		devtool: 'source-map',
 
