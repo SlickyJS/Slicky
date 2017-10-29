@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import {forEach, exists, isFunction} from '@slicky/utils';
-import {DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType} from '@slicky/core/metadata';
+import {forEach, exists, isString} from '@slicky/utils';
+import {DirectiveMetadataLoader, DirectiveDefinition} from '@slicky/core/metadata';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {Compiler} from '@slicky/compiler';
 import {readFileSync} from 'fs';
@@ -43,20 +43,13 @@ forEach(fileExports, (obj: any) => {
 		return;
 	}
 
-	if (metadata.type === DirectiveDefinitionType.Directive) {
-		return;
-	}
-
-	if (isFunction(metadata.template)) {
-		return;
-	}
-
 	process.send({
-		template: {
+		directive: {
 			file: file,
+			type: metadata.type,
 			id: metadata.id,
 			name: metadata.name,
-			template: compiler.compile(metadata),
+			template: isString(metadata.template) ? compiler.compile(metadata) : undefined,
 		},
 	});
 });

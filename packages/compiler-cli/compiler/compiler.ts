@@ -1,21 +1,11 @@
-import {exists, forEach, indent, merge, find, startsWith} from '@slicky/utils';
-import {fork} from 'child_process';
+import {exists, forEach, indent} from '@slicky/utils';
 import {writeFileSync, readFileSync, unlinkSync} from 'fs';
 import * as path from 'path';
 import * as glob from 'glob';
-import * as minimatch from 'minimatch';
+import {Parser, ParsedFile, ParsedComponent} from './parser';
 
 
 const TSCONFIG_SLICKY_COMPILER_OPTIONS = 'slickyCompilerOptions';
-
-
-export declare interface CompiledTemplate
-{
-	file: string,
-	id: string,
-	name: string,
-	template: string,
-}
 
 
 export declare interface CompilerSlickyOptions
@@ -41,31 +31,33 @@ export class Compiler
 	}
 
 
-	public compile(done: (templates: Array<CompiledTemplate>) => void): void
+	public compile(done: (files: Array<ParsedFile>) => void): void
 	{
 		const config = this.getConfig();
 
-		this.compileFiles((templates) => {
+		this.compileFiles((files) => {
 			this.removeOldFiles();
 
 			const imports = [];
 			const mappings = [];
 
-			forEach(templates, (template: CompiledTemplate) => {
-				const exportAs = `factory${template.id}`;
-				const fileName = `tmpl_${template.name}_${template.id}`;
+			forEach(files, (file: ParsedFile) => {
+				forEach(file.components, (component: ParsedComponent) => {
+					const exportAs = `factory${component.id}`;
+					const fileName = `tmpl_${component.name}_${component.id}`;
 
-				const templateData = (
-					`export function ${exportAs}()\n` +
-					`{\n` +
-					`${indent(template.template)};\n` +
-					`}\n`
-				);
+					const templateData = (
+						`export function ${exportAs}()\n` +
+						`{\n` +
+						`${indent(component.template)};\n` +
+						`}\n`
+					);
 
-				writeFileSync(path.join(config.outDir, `${fileName}.ts`), templateData, {encoding: 'utf8'});
+					writeFileSync(path.join(config.outDir, `${fileName}.ts`), templateData, {encoding: 'utf8'});
 
-				imports.push(`import {${exportAs}} from './${fileName}';`);
-				mappings.push(`${template.id}: ${exportAs}`);
+					imports.push(`import {${exportAs}} from './${fileName}';`);
+					mappings.push(`${component.id}: ${exportAs}`);
+				});
 			});
 
 			const mainTemplate = (
@@ -84,60 +76,14 @@ export class Compiler
 
 			writeFileSync(path.join(config.outDir, 'app-templates-factory.ts'), mainTemplate, {encoding: 'utf8'});
 
-			done(templates);
+			done(files);
 		});
 	}
 
 
-	public compileFile(file: string, done: (templates: Array<CompiledTemplate>) => void): void
+	public compileFile(file: string, done: (file: ParsedFile) => void): void
 	{
-		const templates: Array<CompiledTemplate> = [];
-
-		const worker = fork(path.join(__dirname, 'compilerWorker.js'), [], {
-			env: {
-				COMPILE_FILE: file,
-			},
-		});
-
-		worker.on('message', (message) => {
-			if (exists(message.error)) {
-				throw new Error(message.error);
-			}
-
-			if (exists(message.template)) {
-				templates.push(message.template);
-			}
-		});
-
-		worker.on('exit', (code: number) => {
-			if (code !== 0) {
-				return;
-			}
-
-			done(templates);
-		});
-	}
-
-
-	public isProjectFile(file: string): boolean
-	{
-		const config = this.getConfig();
-
-		if (!startsWith(file, config.rootDir)) {
-			return false;
-		}
-
-		if (startsWith(file, config.outDir)) {
-			return false;
-		}
-
-		for (let i = 0; i < config.exclude.length; i++) {
-			if (minimatch(file, config.exclude[i], {dot: true, matchBase: true})) {
-				return false;
-			}
-		}
-
-		return true;
+		(new Parser(file)).parse(done);
 	}
 
 
@@ -171,7 +117,7 @@ export class Compiler
 	}
 
 
-	private compileFiles(done: (templates: Array<CompiledTemplate>) => void): void
+	private compileFiles(done: (files: Array<ParsedFile>) => void): void
 	{
 		const config = this.getConfig();
 		const files = glob.sync(path.join('**', '*.ts'), {
@@ -182,31 +128,15 @@ export class Compiler
 			nodir: true,
 		});
 
-		let templates: Array<CompiledTemplate> = [];
+		let parsed: Array<ParsedFile> = [];
 		let i = 0;
 
-		const onDone = () => {
-			const result: Array<CompiledTemplate> = [];
-
-			forEach(templates, (template: CompiledTemplate) => {
-				const prev = find(result, (findTemplate: CompiledTemplate) => {
-					return template.id === findTemplate.id;
-				});
-
-				if (!exists(prev)) {
-					result.push(template);
-				}
-			});
-
-			done(result);
-		};
-
 		forEach(files, (file: string) => {
-			this.compileFile(file, (fileTemplates) => {
-				templates = merge(templates, fileTemplates);
+			this.compileFile(file, (parsedFile) => {
+				parsed.push(parsedFile);
 
 				if (++i === files.length) {
-					onDone();
+					done(parsed);
 				}
 			});
 		});

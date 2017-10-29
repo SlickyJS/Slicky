@@ -4,8 +4,8 @@ import * as yargs from 'yargs';
 import * as path from 'path';
 import * as colors from 'colors/safe';
 import {existsSync} from 'fs';
-import {forEach, exists} from '@slicky/utils';
-import {Compiler, CompiledTemplate} from '../compiler';
+import {forEach} from '@slicky/utils';
+import {Compiler, ParsedFile, ParsedComponent} from '../compiler';
 
 
 const args = yargs
@@ -39,28 +39,25 @@ console.log('');
 const compiler = new Compiler(args.tsconfig);
 
 
-compiler.compile((templates) => {
-	const files: {[file: string]: Array<CompiledTemplate>} = {};
+compiler.compile((files) => {
+	let componentsLength = 0;
 
-	forEach(templates, (template: CompiledTemplate) => {
-		if (!exists(files[template.file])) {
-			files[template.file] = [];
+	forEach(files, (file: ParsedFile) => {
+		if (!file.components.length) {
+			return;
 		}
 
-		files[template.file].push(template);
-	});
+		console.log(colors.yellow(path.relative(process.cwd(), file.file)));
 
-	forEach(files, (templates: Array<CompiledTemplate>, file: string) => {
-		console.log(colors.yellow(path.relative(process.cwd(), file)));
-
-		forEach(templates, (template: CompiledTemplate) => {
-			console.log(`   - ${template.name}`);
+		forEach(file.components, (component: ParsedComponent) => {
+			componentsLength++;
+			console.log(`   - ${component.name}`);
 		});
 	});
 
-	if (templates.length) {
+	if (componentsLength) {
 		console.log('');
-		console.log(colors.green(`Successfully generated ${templates.length} templates into ${path.relative(process.cwd(), compiler.getConfig().outDir)}`));
+		console.log(colors.green(`Successfully generated ${componentsLength} templates into ${path.relative(process.cwd(), compiler.getConfig().outDir)}`));
 	} else {
 		console.log(colors.green('No components found'));
 	}
