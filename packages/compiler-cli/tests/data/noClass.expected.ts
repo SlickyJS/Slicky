@@ -1,3 +1,4 @@
-export function one(): number {
-    return 1;
+export function one(): number
+{
+	return 1;
 }

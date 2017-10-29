@@ -1,2 +1,1 @@
-export class Plain {
-}
+export class Plain {}

@@ -1,7 +1,8 @@
-import { Directive } from "@slicky/core";
+import {Directive} from '@slicky/core';
+
+
 @Directive({
-    id: "custom-id",
-    selector: "test-directive",
+	id: 'custom-id',
+	selector: 'test-directive',
 })
-export class TestDirective {
-}
+export class TestDirective {}
