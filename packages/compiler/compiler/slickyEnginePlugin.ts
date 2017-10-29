@@ -116,7 +116,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 				'template',
 				'el',
 				`"@directive_${processingDirective.id}"`,
-				directive.metadata.hash,
+				`"${directive.metadata.id}"`,
 			];
 
 			if (!processingDirective.setup.body.isEmpty()) {

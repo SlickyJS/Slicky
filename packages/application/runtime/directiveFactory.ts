@@ -30,7 +30,7 @@ export class DirectiveFactory
 
 	private metadataLoader: DirectiveMetadataLoader;
 
-	private directives: {[hash: number]: DirectiveDefinitionDirective} = {};
+	private directives: {[id: number]: DirectiveDefinitionDirective} = {};
 
 
 	constructor(document: Document, platform: PlatformInterface, extensions: ExtensionsManager, metadataLoader: DirectiveMetadataLoader, application: ApplicationTemplate, renderer: Renderer)
@@ -43,20 +43,20 @@ export class DirectiveFactory
 		this.metadataLoader = metadataLoader;
 
 		metadataLoader.loaded.subscribe((directive: DirectiveDefinitionDirective) => {
-			this.directives[directive.metadata.hash] = directive;
+			this.directives[directive.metadata.id] = directive;
 		});
 	}
 
 
-	public getDirectiveTypeByHash<T>(hash: number): ClassType<T>
+	public getDirectiveTypeById<T>(id: string): ClassType<T>
 	{
-		return this.directives[hash].directiveType;
+		return this.directives[id].directiveType;
 	}
 
 
-	public getMetadataByHash(hash: number): DirectiveDefinition
+	public getMetadataById(id: string): DirectiveDefinition
 	{
-		return this.directives[hash].metadata;
+		return this.directives[id].metadata;
 	}
 
 

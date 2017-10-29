@@ -54,7 +54,7 @@ forEach(fileExports, (obj: any) => {
 	process.send({
 		template: {
 			file: file,
-			hash: metadata.hash,
+			id: metadata.id,
 			name: metadata.name,
 			template: compiler.compile(metadata),
 		},

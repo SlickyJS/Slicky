@@ -76,7 +76,7 @@ function replaceTemplate(source: string, sourceFile: ts.SourceFile, template: Co
 		}
 
 		const componentDecoratorArguments = [
-			ts.createPropertyAssignment('hash', ts.createNumericLiteral(template.hash + '')),
+			ts.createPropertyAssignment('id', ts.createNumericLiteral(template.id + '')),
 		];
 
 		let componentTemplate: ts.PropertyAssignment = null;

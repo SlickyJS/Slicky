@@ -26,21 +26,21 @@ export class ComponentTemplate extends Template
 	}
 
 
-	public createDirective<T>(template: RenderableTemplate, el: TemplateElement, name: string, hash: number, setup?: (directive: T) => void): void
+	public createDirective<T>(template: RenderableTemplate, el: TemplateElement, name: string, id: string, setup?: (directive: T) => void): void
 	{
-		const metadata = this.directiveFactory.getMetadataByHash(hash);
-		const directiveType = this.directiveFactory.getDirectiveTypeByHash(hash);
+		const metadata = this.directiveFactory.getMetadataById(id);
+		const directiveType = this.directiveFactory.getDirectiveTypeById(id);
 
 		this._createDirective(template, el._nativeNode, name, this.container, directiveType, metadata, [], setup);
 	}
 
 
-	public createComponent(template: RenderableTemplate, el: TemplateElement, name: string, hash: number, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): void
+	public createComponent(template: RenderableTemplate, el: TemplateElement, name: string, id: string, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): void
 	{
 		const changeDetector = new ChangeDetectorRef;
 
-		const metadata = this.directiveFactory.getMetadataByHash(hash);
-		const componentType = this.directiveFactory.getDirectiveTypeByHash(hash);
+		const metadata = this.directiveFactory.getMetadataById(id);
+		const componentType = this.directiveFactory.getDirectiveTypeById(id);
 
 		const container = this.container.fork();
 		const component = this._createDirective(template, el._nativeNode, name, container, componentType, metadata, [

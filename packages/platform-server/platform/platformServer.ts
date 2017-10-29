@@ -7,10 +7,10 @@ export class PlatformServer implements PlatformInterface
 {
 
 
-	private templatesFactory: (hash: number) => TemplateRenderFactory;
+	private templatesFactory: (id: string) => TemplateRenderFactory;
 
 
-	constructor(templatesFactory: (hash: number) => TemplateRenderFactory)
+	constructor(templatesFactory: (id: string) => TemplateRenderFactory)
 	{
 		this.templatesFactory = templatesFactory;
 	}
@@ -18,7 +18,7 @@ export class PlatformServer implements PlatformInterface
 
 	public compileComponentTemplate(metadata: DirectiveDefinition): TemplateRenderFactory
 	{
-		return this.templatesFactory(metadata.hash);
+		return this.templatesFactory(metadata.id);
 	}
 
 

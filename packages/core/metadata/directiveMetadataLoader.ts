@@ -106,7 +106,7 @@ export declare interface DirectiveDefinitionFilter
 	filterType: ClassType<FilterInterface>,
 	metadata: {
 		name: string,
-		hash: number,
+		id: string,
 	},
 }
 
@@ -118,7 +118,7 @@ export declare interface DirectiveDefinition {
 	type: DirectiveDefinitionType,
 	name: string,
 	uniqueName: string,
-	hash: number,
+	id: string,
 	selector: string,
 	exportAs?: string,
 	onInit: boolean,
@@ -150,7 +150,7 @@ export class DirectiveMetadataLoader
 
 	private extensions: ExtensionsManager;
 
-	private definitions: {[hash: number]: DirectiveDefinition} = {};
+	private definitions: {[id: string]: DirectiveDefinition} = {};
 
 	private filters: Array<ClassType<FilterInterface>> = [];
 
@@ -167,12 +167,6 @@ export class DirectiveMetadataLoader
 	}
 
 
-	public getLoadedByHash(hash: number): DirectiveDefinition		// todo: remove
-	{
-		return this.definitions[hash];
-	}
-
-
 	public load(directiveType: ClassType<any>): DirectiveDefinition
 	{
 		let annotation: DirectiveAnnotationDefinition;
@@ -184,13 +178,13 @@ export class DirectiveMetadataLoader
 		}
 
 		let name = stringify(directiveType);
-		let directiveHash = exists(annotation.hash) ? annotation.hash : this.getDirectiveHash(name, annotation);
+		let directiveId = exists(annotation.id) ? annotation.id : this.getDirectiveId(name, annotation);
 
-		if (exists(this.definitions[directiveHash])) {
-			return this.definitions[directiveHash];
+		if (exists(this.definitions[directiveId])) {
+			return this.definitions[directiveId];
 		}
 
-		let uniqueName = name + '_' + directiveHash;
+		let uniqueName = name + '_' + directiveId;
 
 		let inputs: DirectiveDefinitionInputsList = [];
 		let outputs: DirectiveDefinitionOutputsList = [];
@@ -288,7 +282,7 @@ export class DirectiveMetadataLoader
 			type: DirectiveDefinitionType.Directive,
 			name: name,
 			uniqueName: uniqueName,
-			hash: directiveHash,
+			id: directiveId,
 			selector: annotation.selector,
 			onInit: isFunction(directiveType.prototype.onInit),
 			onDestroy: isFunction(directiveType.prototype.onDestroy),
@@ -339,7 +333,7 @@ export class DirectiveMetadataLoader
 					filterType: filterType,
 					metadata: {
 						name: metadata.name,
-						hash: this.getFilterHash(stringify(filterType), metadata),
+						id: this.getFilterId(stringify(filterType), metadata),
 					},
 				};
 			});
@@ -352,11 +346,11 @@ export class DirectiveMetadataLoader
 			directiveType: directiveType,
 		});
 
-		return this.definitions[directiveHash] = definition;
+		return this.definitions[directiveId] = definition;
 	}
 
 
-	private getDirectiveHash(name: string, annotation: DirectiveAnnotationDefinition): number
+	private getDirectiveId(name: string, annotation: DirectiveAnnotationDefinition): string
 	{
 		let parts = [
 			name,
@@ -377,18 +371,18 @@ export class DirectiveMetadataLoader
 			parts.push(map(annotation.filters, (filter: ClassType<FilterInterface>) => stringify(filter)).join(''));
 		}
 
-		return hash(parts.join(''));
+		return hash(parts.join('')) + '';
 	}
 
 
-	private getFilterHash(name: string, annotation: FilterDefinition): number
+	private getFilterId(name: string, annotation: FilterDefinition): string
 	{
 		let parts = [
 			name,
 			annotation.name,
 		];
 
-		return hash(parts.join(''));
+		return hash(parts.join('')) + '';
 	}
 
 }

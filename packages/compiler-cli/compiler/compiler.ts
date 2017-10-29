@@ -12,7 +12,7 @@ const TSCONFIG_SLICKY_COMPILER_OPTIONS = 'slickyCompilerOptions';
 export declare interface CompiledTemplate
 {
 	file: string,
-	hash: number,
+	id: string,
 	name: string,
 	template: string,
 }
@@ -52,8 +52,8 @@ export class Compiler
 			const mappings = [];
 
 			forEach(templates, (template: CompiledTemplate) => {
-				const exportAs = `factory${template.hash}`;
-				const fileName = `tmpl_${template.name}_${template.hash}`;
+				const exportAs = `factory${template.id}`;
+				const fileName = `tmpl_${template.name}_${template.id}`;
 
 				const templateData = (
 					`export function ${exportAs}()\n` +
@@ -65,7 +65,7 @@ export class Compiler
 				writeFileSync(path.join(config.outDir, `${fileName}.ts`), templateData, {encoding: 'utf8'});
 
 				imports.push(`import {${exportAs}} from './${fileName}';`);
-				mappings.push(`${template.hash}: ${exportAs}`);
+				mappings.push(`${template.id}: ${exportAs}`);
 			});
 
 			const mainTemplate = (
@@ -73,12 +73,12 @@ export class Compiler
 				`const mapping = {\n` +
 				`${indent(mappings.join(',\n'))}\n` +
 				`};\n\n\n` +
-				`export function APP_TEMPLATES_FACTORY(hash: number)\n` +
+				`export function APP_TEMPLATES_FACTORY(id: string)\n` +
 				`{\n` +
-				`	if (typeof mapping[hash] === 'undefined') {\n` +
-				`		throw new Error("Component template " + hash + " does not exists.");\n` +
+				`	if (typeof mapping[id] === 'undefined') {\n` +
+				`		throw new Error("Component template " + id + " does not exists.");\n` +
 				`	}\n\n` +
-				`	return mapping[hash]();\n` +
+				`	return mapping[id]();\n` +
 				`}\n`
 			);
 
@@ -190,7 +190,7 @@ export class Compiler
 
 			forEach(templates, (template: CompiledTemplate) => {
 				const prev = find(result, (findTemplate: CompiledTemplate) => {
-					return template.hash === findTemplate.hash;
+					return template.id === findTemplate.id;
 				});
 
 				if (!exists(prev)) {

@@ -9,7 +9,7 @@ export declare interface DirectiveOptions
 	exportAs?: string,
 	directives?: Array<ClassType<any>>,
 	override?: ClassType<any>,
-	hash?: number,
+	id?: string,
 	[name: string]: any,
 }
 
@@ -28,7 +28,7 @@ export class DirectiveAnnotationDefinition
 
 	public directives: Array<ClassType<any>> = [];
 
-	public hash: number;
+	public id: string;
 
 
 	constructor(options: DirectiveOptions)
@@ -48,8 +48,8 @@ export class DirectiveAnnotationDefinition
 			this.override = options.override;
 		}
 
-		if (exists(options.hash)) {
-			this.hash = options.hash;
+		if (exists(options.id)) {
+			this.id = options.id;
 		}
 	}
 

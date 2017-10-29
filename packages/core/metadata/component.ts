@@ -17,7 +17,7 @@ export declare interface ComponentOptions
 	filters?: Array<ClassType<FilterInterface>>,
 	styles?: Array<string>,
 	encapsulation?: TemplateEncapsulation,
-	hash?: number,
+	id?: string,
 	[name: string]: any,
 }
 

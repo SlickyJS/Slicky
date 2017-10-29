@@ -1,6 +1,6 @@
 return function(template, el, component) {
 	el.addElement("directive-child", {"attribute-input": "attr", "attribute-custom": "custom", "attribute-watch": ""}, function(el) {
-		template.root.createDirective(template, el, "@directive_0", 3055171198, function(directive) {
+		template.root.createDirective(template, el, "@directive_0", "3055171198", function(directive) {
 			directive.attributeInput = "attr";
 			directive.attributeInputCustom = "custom";
 			template.watch(function() {
@@ -24,7 +24,7 @@ return function(template, el, component) {
 		});
 	});
 	el.addElement("component-child", {"attribute-input": "attr", "attribute-custom": "custom", "attribute-watch": ""}, function(el) {
-		template.root.createComponent(template, el, "@directive_1", 3561984975, function(directive, template, outer) {
+		template.root.createComponent(template, el, "@directive_1", "3561984975", function(directive, template, outer) {
 			directive.attributeInput = "attr";
 			directive.attributeInputCustom = "custom";
 			outer.watch(function() {

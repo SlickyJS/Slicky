@@ -8,13 +8,13 @@ export class Compiler
 {
 
 
-	private templates: {[hash: number]: string} = {};
+	private templates: {[id: string]: string} = {};
 
 
 	public compile(metadata: DirectiveDefinition): string
 	{
-		if (exists(this.templates[metadata.hash])) {
-			return this.templates[metadata.hash];
+		if (exists(this.templates[metadata.id])) {
+			return this.templates[metadata.id];
 		}
 
 		if (metadata.type === DirectiveDefinitionType.Directive) {
@@ -27,15 +27,15 @@ export class Compiler
 
 		const engine = this.createEngine(metadata);
 
-		this.templates[metadata.hash] = engine.compile(<string>metadata.template, {
-			name: metadata.hash + '',
+		this.templates[metadata.id] = engine.compile(<string>metadata.template, {
+			name: metadata.id,
 			styles: metadata.styles,
 			encapsulation: metadata.encapsulation,
 		});
 
-		//console.log(this.templates[metadata.hash]);
+		//console.log(this.templates[metadata.id]);
 
-		return this.templates[metadata.hash];
+		return this.templates[metadata.id];
 	}
 
 
