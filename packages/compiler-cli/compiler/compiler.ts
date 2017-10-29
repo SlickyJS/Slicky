@@ -25,9 +25,11 @@ export class Compiler
 	private config: CompilerSlickyOptions;
 
 
-	constructor(tsconfigPath: string)
+	constructor(tsconfigPath?: string)
 	{
-		this.tsconfigPath = path.resolve(tsconfigPath);
+		if (exists(tsconfigPath)) {
+			this.tsconfigPath = path.resolve(tsconfigPath);
+		}
 	}
 
 
@@ -91,6 +93,10 @@ export class Compiler
 	{
 		if (exists(this.config)) {
 			return this.config;
+		}
+
+		if (!exists(this.tsconfigPath)) {
+			throw new Error('CompilerCLI: please, specify your tsconfig.json file');
 		}
 
 		const tsconfigRoot = path.dirname(this.tsconfigPath);

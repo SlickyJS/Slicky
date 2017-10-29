@@ -109,10 +109,6 @@ $ npm install @slicky/webpack-loader
 $ npm install @slicky/platform-inline 
 ```
 
-**Configuration:**
-
-*You have to include the `slickyCompilerOptions` in your `tsconfig.json` file described above.*
-
 **bootstrap.ts:**
 
 ```typescript
@@ -148,9 +144,6 @@ const config = {
 					},
 					{
 						loader: '@slicky/webpack-loader',
-						options: {
-							configFileName: './tsconfig.json',
-						},
 					},
 				],
 			},

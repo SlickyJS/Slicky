@@ -32,9 +32,6 @@ export function getExampleWebpackConfig(root: string): any
 						},
 						{
 							loader: '@slicky/webpack-loader',
-							options: {
-								configFileName: path.join(root, 'tsconfig.json')
-							},
 						},
 					],
 				},
