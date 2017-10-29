@@ -16,7 +16,7 @@ const ROOT = path.join(__dirname, 'examples', 'examples');
 const tasks = [];
 fs.readdirSync(ROOT)
 	.map((file) => path.join(ROOT, file))
-	.filter((file) => fs.statSync(file).isDirectory())
+	.filter((file) => fs.statSync(file).isDirectory() && path.basename(file) !== 'node_modules')
 	.forEach((directory: string) => {
 		const name = path.basename(directory);
 		const tsconfig = JSON.parse(<string>fs.readFileSync(path.join(directory, 'tsconfig.json'), {encoding: 'utf-8'}));
