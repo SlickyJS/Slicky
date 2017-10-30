@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/platform-inline",
 	"description": "",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -14,7 +14,7 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/application": "^0.8.0",
+		"@slicky/application": "^0.8.1",
 		"@slicky/core": "^0.8.0",
 		"@slicky/templates": "^1.2.1"
 	},

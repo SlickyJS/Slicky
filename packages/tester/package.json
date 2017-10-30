@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/tester",
 	"description": "Tester utils for simple slicky tests",
-	"version": "0.0.10",
+	"version": "0.0.11",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -14,10 +14,10 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/application": "^0.8.0",
+		"@slicky/application": "^0.8.1",
 		"@slicky/di": "^1.0.1",
 		"@slicky/lang": "^1.0.0",
-		"@slicky/platform-browser": "^0.1.15",
+		"@slicky/platform-browser": "^0.1.16",
 		"jsdom": "^11.3.0"
 	},
 	"devDependencies": {
