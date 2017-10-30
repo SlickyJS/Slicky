@@ -20,7 +20,7 @@
 		"@slicky/di": "^1.0.1",
 		"@slicky/event-emitter": "^1.0.1",
 		"@slicky/extension-translator": "^0.1.9",
-		"@slicky/forms": "^0.1.2",
+		"@slicky/forms": "^0.2.0",
 		"@slicky/lang": "^1.0.0",
 		"@slicky/platform-browser": "^0.1.17",
 		"@slicky/platform-inline": "^0.0.1",
