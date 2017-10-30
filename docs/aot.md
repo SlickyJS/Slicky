@@ -22,7 +22,7 @@ $ npm install --save-prod @slicky/platform-server
 ## Configuration
 
 **Your files can't contain any code outside of classes or functions which uses browser API. It wound't work when 
-compiled on server.**
+compiled on server. Also all directives and components you want to precompile must be exported.**
 
 **bootstrap.ts:**
 
