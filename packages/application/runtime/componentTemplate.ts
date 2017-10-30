@@ -43,14 +43,12 @@ export class ComponentTemplate extends Template
 		const componentType = this.directiveFactory.getDirectiveTypeById(id);
 
 		const container = this.container.fork();
-		const component = this._createDirective(template, el._nativeNode, name, container, componentType, metadata, [
-			{
-				service: ChangeDetectorRef,
-				options: {
-					useValue: changeDetector,
-				},
-			},
-		]);
+
+		container.addService(ChangeDetectorRef, {
+			useValue: changeDetector,
+		});
+
+		const component = this._createDirective(template, el._nativeNode, name, container, componentType, metadata);
 
 		this.directiveFactory.runComponent(container, component, metadata, template, el._nativeNode, changeDetector, setup);
 	}
@@ -58,7 +56,7 @@ export class ComponentTemplate extends Template
 
 	private _createDirective<T>(template: RenderableTemplate, el: Element, name: string, container: Container, directiveType: ClassType<T>, metadata: DirectiveDefinition, providers: Array<ProviderOptions> = [], setup?: (directive: T) => void): T
 	{
-		const directive = <T>this.directiveFactory.createDirective(container, directiveType, metadata, el);
+		const directive = <T>this.directiveFactory.createDirective(container, directiveType, metadata, el, providers);
 
 		if (isFunction(setup)) {
 			setup(directive);

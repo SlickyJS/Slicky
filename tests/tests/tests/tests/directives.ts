@@ -1,7 +1,7 @@
 import '../bootstrap';
 
 import {Tester} from '@slicky/tester';
-import {Component, Directive, OnInit, DirectivesStorageRef} from '@slicky/core';
+import {Component, Directive, OnInit, DirectivesStorageRef, ChangeDetectorRef} from '@slicky/core';
 import {forEach} from '@slicky/utils';
 import {expect} from 'chai';
 
@@ -313,6 +313,34 @@ describe('#Application.directives', () => {
 		Tester.runDirective('<test-component></test-component>', TestComponent);
 
 		expect(directives).to.be.eql(['a']);
+	});
+
+	it('should autowire ChangeDetectorRef into inner directive', () => {
+		let directiveChangeDetector = null;
+
+		@Directive({
+			selector: 'test-directive',
+		})
+		class TestDirective
+		{
+
+			constructor(changeDetector: ChangeDetectorRef)
+			{
+				directiveChangeDetector = changeDetector;
+			}
+
+		}
+
+		@Component({
+			name: 'test-component',
+			template: '<test-directive></test-directive>',
+			directives: [TestDirective],
+		})
+		class TestComponent {}
+
+		Tester.runDirective('<test-component></test-component>', TestComponent);
+
+		expect(directiveChangeDetector).to.be.an.instanceOf(ChangeDetectorRef);
 	});
 
 });
