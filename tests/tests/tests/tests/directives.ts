@@ -1,7 +1,9 @@
 import '../bootstrap';
 
 import {Tester} from '@slicky/tester';
-import {Component, Directive, OnInit, DirectivesStorageRef, ChangeDetectorRef} from '@slicky/core';
+import {Component, Directive, OnInit, DirectivesStorageRef, ChangeDetectorRef, ElementRef} from '@slicky/core';
+import {RootDirectiveRunner, RootDirectiveRef} from '@slicky/application/runtime';
+import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {forEach} from '@slicky/utils';
 import {expect} from 'chai';
 
@@ -369,6 +371,51 @@ describe('#Application.directives', () => {
 		Tester.runRootDirective('<test-component></test-component>', TestComponent);
 
 		expect(directiveChangeDetector).to.be.an.instanceOf(ChangeDetectorRef);
+	});
+
+	it('should add dynamically new root directive', () => {
+		@Directive({
+			selector: 'test-child-directive',
+		})
+		class TestChildDirective {}
+
+		let directive: RootDirectiveRef<TestChildDirective> = null;
+
+		@Directive({
+			selector: 'test-parent-directive',
+		})
+		class TestParentDirective implements OnInit
+		{
+
+			private runner: RootDirectiveRunner;
+
+			private metadata: DirectiveMetadataLoader;
+
+			private el: ElementRef<HTMLElement>;
+
+			constructor(runner: RootDirectiveRunner, metadata: DirectiveMetadataLoader, el: ElementRef<HTMLElement>)
+			{
+				this.runner = runner;
+				this.metadata = metadata;
+				this.el = el;
+			}
+
+			public onInit(): void
+			{
+				const metadata = this.metadata.load(TestChildDirective);
+				const el = this.el.nativeElement.ownerDocument.querySelector('test-child-directive');
+
+				directive = this.runner.runDirective(TestChildDirective, metadata, el);
+			}
+
+		}
+
+		Tester.run('<test-parent-directive></test-parent-directive><test-child-directive></test-child-directive>', {
+			directives: [TestParentDirective],
+		});
+
+		expect(directive).to.be.an.instanceOf(RootDirectiveRef);
+		expect(directive.getDirective()).to.be.an.instanceOf(TestChildDirective);
 	});
 
 });
