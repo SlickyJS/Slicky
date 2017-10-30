@@ -4,7 +4,7 @@ import {AbstractInputValueAccessor} from './abstractInputValueAccessor';
 
 @Directive({
 	id: 'sForm:DefaultInputValueAccessor',
-	selector: 'input,textarea',
+	selector: 'input[s:model],textarea[s:model]',
 })
 export class DefaultInputValueAccessor extends AbstractInputValueAccessor<string, HTMLInputElement|HTMLTextAreaElement>
 {

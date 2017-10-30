@@ -11,7 +11,7 @@ describe('#Application.forms', () => {
 	it('should throw an error when name attribute is missing on input', () => {
 		@Component({
 			name: 'test-component',
-			template: '<form><input></form>',
+			template: '<form><input s:model></form>',
 			directives: [FORM_DIRECTIVES],
 		})
 		class TestComponent {}
@@ -24,7 +24,7 @@ describe('#Application.forms', () => {
 	it('should get values from form', () => {
 		@Component({
 			name: 'test-component',
-			template: '<form #form="sForm"><input name="text" value="hello world"></form>',
+			template: '<form #form="sForm"><input s:model name="text" value="hello world"></form>',
 			directives: [FORM_DIRECTIVES],
 		})
 		class TestComponent {}
@@ -42,7 +42,7 @@ describe('#Application.forms', () => {
 			name: 'test-component',
 			template:
 				'<form #form="sForm">' +
-					'<input name="text" required>' +
+					'<input s:model name="text" required>' +
 					'<div *s:if="!form.valid">' +
 						'<div *s:if="form.errors.text.required">Text is required.</div>' +
 					'</div>' +
@@ -74,7 +74,7 @@ describe('#Application.forms', () => {
 			name: 'test-component',
 			template:
 			'<form (s:submit)="submit($event)">' +
-				'<input name="text" required>' +
+				'<input s:model name="text" required>' +
 			'</form>',
 			directives: [FORM_DIRECTIVES],
 		})

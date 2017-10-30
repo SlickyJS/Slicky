@@ -4,7 +4,7 @@ import {AbstractValidator} from './abstractValidator';
 
 @Directive({
 	id: 'sForm:RequiredValidator',
-	selector: 'input[required]',
+	selector: '[required][s:model]',
 })
 export class RequiredValidator extends AbstractValidator<string>
 {

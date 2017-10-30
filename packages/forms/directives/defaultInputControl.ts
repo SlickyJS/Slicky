@@ -5,7 +5,7 @@ import {AbstractInputControl} from './abstractInputControl';
 
 @Directive({
 	id: 'sForm:DefaultInputControl',
-	selector: 'input,textarea,select',
+	selector: '[s:model]',
 })
 export class DefaultInputControl extends AbstractInputControl<any, any>
 {

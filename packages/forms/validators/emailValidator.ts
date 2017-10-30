@@ -8,7 +8,7 @@ const EMAIL_REGEXP = /^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(
 
 @Directive({
 	id: 'sForm:EmailValidator',
-	selector: 'input[type="email"]',
+	selector: 'input[type="email"][s:model]',
 })
 export class EmailValidator extends AbstractValidator<string>
 {

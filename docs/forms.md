@@ -57,13 +57,13 @@ class FormComponent
 
 ***Build in validators:***
 
-* `required`: `<input type="text" required>` - value must not be empty
-* `pattern`: `<input type="text" pattern="[a-z]+">` - value must be allowed by pattern
-* `email`: `<input type="email">` - value must be a valid email
-* `minLength`: `<input type="text" minlength="10">` - value's length must be greater than 10 letters
-* `maxLength`: `<input type="text" maxlength="10">` - value's length must be smaller than 10 letters
-* `min`: `<input type="number" min="10">` - value number must be larger than 10
-* `max`: `<input type="number" max="10">` - value number must be smaller than 10
+* `required`: `<input type="text" s:model required>` - value must not be empty
+* `pattern`: `<input type="text" s:model pattern="[a-z]+">` - value must be allowed by pattern
+* `email`: `<input type="email" s:model>` - value must be a valid email
+* `minLength`: `<input type="text" s:model minlength="10">` - value's length must be greater than 10 letters
+* `maxLength`: `<input type="text" s:model maxlength="10">` - value's length must be smaller than 10 letters
+* `min`: `<input type="number" s:model min="10">` - value number must be larger than 10
+* `max`: `<input type="number" s:model max="10">` - value number must be smaller than 10
 
 ## Submitting form
 
@@ -80,7 +80,7 @@ declare interface MyFormValues
 	name: 'my-form',
 	template:
 	 	'<form (s:submit)="saveForm($event)" novalidate>' +
-			'<input name="text" type="text">' +
+			'<input name="text" type="text" s:model>' +
 		'</form>'
 	,
 	directives: [FORM_DIRECTIVES],

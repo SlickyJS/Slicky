@@ -4,7 +4,7 @@ import {AbstractValidator} from './abstractValidator';
 
 @Directive({
 	id: 'sForm:MinValidator',
-	selector: 'input[min]',
+	selector: '[min][s:model]',
 })
 export class MinValidator extends AbstractValidator<number>
 {

@@ -4,7 +4,7 @@ import {AbstractValidator} from './abstractValidator';
 
 @Directive({
 	id: 'sForm:MaxValidator',
-	selector: 'input[max]',
+	selector: '[max][s:model]',
 })
 export class MaxValidator extends AbstractValidator<number>
 {

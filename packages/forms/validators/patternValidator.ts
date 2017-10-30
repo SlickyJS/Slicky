@@ -5,7 +5,7 @@ import {AbstractValidator} from './abstractValidator';
 
 @Directive({
 	id: 'sForm:PatternValidator',
-	selector: 'input[pattern]',
+	selector: '[pattern][s:model]',
 })
 export class PatternValidator extends AbstractValidator<string>
 {

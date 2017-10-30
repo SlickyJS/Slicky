@@ -5,7 +5,7 @@ import {RequiredValidator} from './requiredValidator';
 
 @Directive({
 	id: 'sForm:CheckboxRequiredValidator',
-	selector: 'input[type="checkbox"][required]',
+	selector: 'input[type="checkbox"][required][s:model]',
 	override: RequiredValidator,
 })
 export class CheckboxRequiredValidator extends AbstractValidator<boolean>

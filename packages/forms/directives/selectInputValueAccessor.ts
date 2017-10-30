@@ -4,7 +4,7 @@ import {AbstractInputValueAccessor} from './abstractInputValueAccessor';
 
 @Directive({
 	id: 'sForm:SelectInputValueAccessor',
-	selector: 'select',
+	selector: 'select[s:model]',
 })
 export class SelectInputValueAccessor extends AbstractInputValueAccessor<string, HTMLSelectElement>
 {

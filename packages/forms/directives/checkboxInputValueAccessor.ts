@@ -5,7 +5,7 @@ import {DefaultInputValueAccessor} from './defaultInputValueAccessor';
 
 @Directive({
 	id: 'sForm:CheckboxInputValueAccessor',
-	selector: 'input[type="checkbox"]',
+	selector: 'input[type="checkbox"][s:model]',
 	override: DefaultInputValueAccessor,
 })
 export class CheckboxInputValueAccessor extends AbstractInputValueAccessor<boolean, HTMLInputElement>

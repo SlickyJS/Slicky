@@ -5,7 +5,7 @@ import {DefaultInputValueAccessor} from './defaultInputValueAccessor';
 
 @Directive({
 	id: 'sForm:NumberInputValueAccessor',
-	selector: 'input[type="number"],input[type="range"]',
+	selector: 'input[type="number"][s:model],input[type="range"][s:model]',
 	override: DefaultInputValueAccessor,
 })
 export class NumberInputValueAccessor extends AbstractInputValueAccessor<number, HTMLInputElement>

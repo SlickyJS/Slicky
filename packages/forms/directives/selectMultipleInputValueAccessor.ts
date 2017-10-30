@@ -5,7 +5,7 @@ import {SelectInputValueAccessor} from './selectInputValueAccessor';
 
 @Directive({
 	id: 'sForm:SelectMultipleInputValueAccessor',
-	selector: 'select[multiple]',
+	selector: 'select[multiple][s:model]',
 	override: SelectInputValueAccessor,
 })
 export class SelectMultipleInputValueAccessor extends AbstractInputValueAccessor<Array<string>, HTMLSelectElement>
