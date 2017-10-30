@@ -136,10 +136,16 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 
 	public onInit(): void
 	{
+		this.valueAccessor = this.directives.find(<any>AbstractInputValueAccessor);
+
+		if (!this.valueAccessor) {
+			const tagName = this.el.nativeElement.nodeName.toLowerCase();
+			throw new Error(`AbstractInputControl: missing form value accessor on <${tagName}> element.`);
+		}
+
 		this.renderer.addClass(this.el.nativeElement, ControlStatusClasses.untouched);
 
 		this.validators = this.directives.findAll(<any>AbstractValidator);
-		this.valueAccessor = this.directives.find(<any>AbstractInputValueAccessor);
 
 		this.valueAccessor.onChange.subscribe((value: T) => {
 			this.refresh(value);

@@ -9,6 +9,19 @@ import {expect} from 'chai';
 
 describe('#Application.forms.model', () => {
 
+	it('should throw an error when value accessor is missing on s:model', () => {
+		@Component({
+			name: 'test-component',
+			template: '<div s:model></div>',
+			directives: [FORM_DIRECTIVES],
+		})
+		class TestComponent {}
+
+		expect(() => {
+			Tester.runDirective('<test-component></test-component>', TestComponent);
+		}).to.throw(Error, 'AbstractInputControl: missing form value accessor on <div> element.');
+	});
+
 	it('should use model directive on textarea', () => {
 		@Component({
 			name: 'test-component',
