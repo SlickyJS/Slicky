@@ -69,11 +69,8 @@ export class RootDirectiveRunner
 		if (metadata.type === DirectiveDefinitionType.Component) {
 			changeDetector = new ChangeDetectorRef;
 
-			providers.push({
-				service: ChangeDetectorRef,
-				options: {
-					useValue: changeDetector,
-				},
+			container.addService(ChangeDetectorRef, {
+				useValue: changeDetector,
 			});
 		}
 

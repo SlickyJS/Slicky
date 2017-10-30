@@ -343,4 +343,32 @@ describe('#Application.directives', () => {
 		expect(directiveChangeDetector).to.be.an.instanceOf(ChangeDetectorRef);
 	});
 
+	it('should autowire ChangeDetectorRef into inner directive in root component', () => {
+		let directiveChangeDetector = null;
+
+		@Directive({
+			selector: 'test-directive',
+		})
+		class TestDirective
+		{
+
+			constructor(changeDetector: ChangeDetectorRef)
+			{
+				directiveChangeDetector = changeDetector;
+			}
+
+		}
+
+		@Component({
+			name: 'test-component',
+			template: '<test-directive></test-directive>',
+			directives: [TestDirective],
+		})
+		class TestComponent {}
+
+		Tester.runRootDirective('<test-component></test-component>', TestComponent);
+
+		expect(directiveChangeDetector).to.be.an.instanceOf(ChangeDetectorRef);
+	});
+
 });
