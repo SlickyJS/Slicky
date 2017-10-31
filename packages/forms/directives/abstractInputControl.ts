@@ -49,7 +49,7 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 
 	private status: ControlStatus;
 
-	private _errors: ValidationErrors;
+	private _errors: ValidationErrors = {};
 
 	private _value: T;
 
@@ -125,6 +125,9 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 	public reset(): void
 	{
 		this.valueAccessor.setValue(null);
+		this.status = undefined;
+		this._touched = false;
+		this._errors = {};
 	}
 
 
