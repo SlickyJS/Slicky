@@ -65,9 +65,7 @@ export class Application
 
 	public run(platform: PlatformInterface, elOrSelector: Element|string): void
 	{
-		const el: Element = isString(elOrSelector) ? this.document.querySelector(<string>elOrSelector) : <Element>elOrSelector;
-
-		this.prepareApplication(platform, el);
+		this.prepareApplication(platform, elOrSelector);
 
 		forEach(this.directives, (directiveType: ClassType<any>) => {
 			this.runDirective(directiveType);
@@ -85,7 +83,7 @@ export class Application
 	}
 
 
-	private prepareApplication(platform: PlatformInterface, el: Element): void
+	private prepareApplication(platform: PlatformInterface, elOrSelector: Element|string): void
 	{
 		if (exists(this.runner)) {
 			throw new Error('Application is already running.');
@@ -95,6 +93,7 @@ export class Application
 			this.document = document;
 		}
 
+		const el: Element = isString(elOrSelector) ? this.document.querySelector(<string>elOrSelector) : <Element>elOrSelector;
 		const applicationTemplate = new ApplicationTemplate;
 		const renderer = new Renderer(this.document);
 
