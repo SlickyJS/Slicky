@@ -18,12 +18,6 @@
     "@slicky/utils" "^1.0.11"
     reflect-metadata "^0.1.0"
 
-"@slicky/event-emitter@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@slicky/event-emitter/-/event-emitter-1.0.1.tgz#24daa03a1c82445490eccb7505b23969b8984618"
-  dependencies:
-    rxjs "^5.4.3"
-
 "@slicky/lang@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@slicky/lang/-/lang-1.0.0.tgz#00591e6d3c764d057a8fe464f625b501259cf425"
@@ -334,8 +328,8 @@ arrify@^1.0.0:
   resolved "https://registry.yarnpkg.com/arrify/-/arrify-1.0.1.tgz#898508da2226f380df904728456849c1501a4b0d"
 
 asn1.js@^4.0.0:
-  version "4.9.1"
-  resolved "https://registry.yarnpkg.com/asn1.js/-/asn1.js-4.9.1.tgz#48ba240b45a9280e94748990ba597d216617fd40"
+  version "4.9.2"
+  resolved "https://registry.yarnpkg.com/asn1.js/-/asn1.js-4.9.2.tgz#8117ef4f7ed87cd8f89044b5bff97ac243a16c9a"
   dependencies:
     bn.js "^4.0.0"
     inherits "^2.0.1"
@@ -3760,7 +3754,7 @@ rx-lite@*, rx-lite@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/rx-lite/-/rx-lite-4.0.8.tgz#0b1e11af8bc44836f04a6407e92da42467b79444"
 
-rxjs@^5.4.3:
+rxjs@^5.4.3, rxjs@^5.5.2:
   version "5.5.2"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.2.tgz#28d403f0071121967f18ad665563255d54236ac3"
   dependencies:
