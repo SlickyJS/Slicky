@@ -77,6 +77,10 @@ export class Application
 
 	public runDirective(directiveType: ClassType<any>): void
 	{
+		if (!exists(this.runner)) {
+			throw new Error('Can not run directive before running whole application.');
+		}
+
 		this.runner.run(directiveType);
 	}
 
