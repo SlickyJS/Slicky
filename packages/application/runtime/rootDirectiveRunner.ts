@@ -115,12 +115,8 @@ export class RootDirectiveRunner
 			setup(directive);
 		}
 
-		if (metadata.onInit) {
-			if (template) {
-				template.run(() => (<any>directive).onInit());
-			} else {
-				(<any>directive).onInit();
-			}
+		if (metadata.onInit && !template) {
+			(<any>directive).onInit();
 		}
 
 		return new RootDirectiveRef(el, directive, metadata, template === null ? undefined : template);

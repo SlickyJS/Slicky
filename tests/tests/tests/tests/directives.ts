@@ -418,4 +418,26 @@ describe('#Application.directives', () => {
 		expect(directive.getDirective()).to.be.an.instanceOf(TestChildDirective);
 	});
 
+	it('should call onInit on root components only once', () => {
+		let called = 0;
+
+		@Component({
+			name: 'test-component',
+			template: '',
+		})
+		class TestComponent implements OnInit
+		{
+
+			public onInit(): void
+			{
+				called++;
+			}
+
+		}
+
+		Tester.runRootDirective('<test-component></test-component>', TestComponent);
+
+		expect(called).to.be.equal(1);
+	});
+
 });
