@@ -22,7 +22,7 @@
 		"@slicky/extension-translator": "^0.1.10",
 		"@slicky/forms": "^0.2.2",
 		"@slicky/lang": "^1.0.0",
-		"@slicky/platform-browser": "^0.1.20",
+		"@slicky/platform-browser": "^0.1.21",
 		"@slicky/platform-inline": "^0.0.8",
 		"@slicky/platform-server": "^0.1.17",
 		"immutable": "^3.8.1",
