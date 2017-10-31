@@ -177,9 +177,14 @@ export class Engine
 		let value = text.value;
 
 		// replace non-breaking whitespaces with one whitespace
+		// replace dangerous characters
 		value = value
 			.replace(/[\u000d\u0009\u000a\u0020]/g, '\u0020')
 			.replace(/\u0020{2,}/g, '\u0020')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&apos;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
 		;
 
 		if (value === '') {

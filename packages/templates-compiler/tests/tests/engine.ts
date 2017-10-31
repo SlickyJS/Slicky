@@ -189,7 +189,13 @@ describe('#Engine', () => {
 		it('should create new local variable inside of template', () => {
 			let template = engine.compile('{{ let greeting = "hello world" }} {{ greeting }}');
 
-			expect(template).to.be.equal(compareWith('compiler.localVariable'));
+			expect(template).to.be.equal(compareWith('engine.compiler.localVariable'));
+		});
+
+		it('should correctly escape characters', () => {
+			let template = engine.compile('"\'<>');
+
+			expect(template).to.be.equal(compareWith('engine.compiler.quotes'));
 		});
 
 	});
