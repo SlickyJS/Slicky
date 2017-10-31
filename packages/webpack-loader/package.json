@@ -14,11 +14,9 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
+		"@slicky/compiler-cli": "^0.3.0",
 		"@slicky/utils": "^1.3.1",
 		"loader-utils": "^1.1.0"
-	},
-	"peerDependencies": {
-		"@slicky/compiler-cli": "^0.1.11"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.3",

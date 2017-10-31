@@ -28,14 +28,6 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@slicky/lang/-/lang-1.0.0.tgz#00591e6d3c764d057a8fe464f625b501259cf425"
 
-"@slicky/platform-inline@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@slicky/platform-inline/-/platform-inline-0.0.1.tgz#e7e5a305b94f41a46fe83a3340adef401ef20f7a"
-  dependencies:
-    "@slicky/application" "^0.7.4"
-    "@slicky/core" "^0.7.2"
-    "@slicky/templates" "^1.2.1"
-
 "@slicky/query-selector@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@slicky/query-selector/-/query-selector-1.2.0.tgz#7cfaa7709b1dfed019875ca43ab69d79d4fc0323"
@@ -181,8 +173,8 @@ acorn@^4.0.3:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-4.0.13.tgz#105495ae5361d697bd195c825192e1ad7f253787"
 
 acorn@^5.0.0, acorn@^5.1.2:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.2.0.tgz#39fd0cf9d2dd4c82068602a404019d8ed5167b1c"
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.2.1.tgz#317ac7821826c22c702d66189ab8359675f135d7"
 
 add-stream@^1.0.0:
   version "1.0.0"
@@ -4208,8 +4200,8 @@ trim-off-newlines@^1.0.0:
   resolved "https://registry.yarnpkg.com/trim-off-newlines/-/trim-off-newlines-1.0.1.tgz#9f9ba9d9efa8764c387698bcbfeb2c848f11adb3"
 
 ts-loader@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/ts-loader/-/ts-loader-3.1.0.tgz#d59bed512ee1dfc2636184f437714baad08c7ca1"
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/ts-loader/-/ts-loader-3.1.1.tgz#602d93c12029eaf8fa1ee478a90785d40c5f6658"
   dependencies:
     chalk "^2.3.0"
     enhanced-resolve "^3.0.0"

@@ -23,7 +23,7 @@
 		"@slicky/forms": "^0.2.0",
 		"@slicky/lang": "^1.0.0",
 		"@slicky/platform-browser": "^0.1.17",
-		"@slicky/platform-inline": "^0.0.1",
+		"@slicky/platform-inline": "^0.0.5",
 		"@slicky/platform-server": "^0.1.14",
 		"immutable": "^3.8.1",
 		"jquery": "^3.2.1",
