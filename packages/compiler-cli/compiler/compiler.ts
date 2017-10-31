@@ -33,11 +33,15 @@ export class Compiler
 	}
 
 
-	public compile(done: (files: Array<ParsedFile>) => void): void
+	public compile(done: (err: Error, files: Array<ParsedFile>) => void): void
 	{
 		const config = this.getConfig();
 
-		this.compileFiles((files) => {
+		this.compileFiles((err, files) => {
+			if (err) {
+				return done(err, undefined);
+			}
+
 			this.removeOldFiles();
 
 			const imports = [];
@@ -78,12 +82,12 @@ export class Compiler
 
 			writeFileSync(path.join(config.outDir, 'app-templates-factory.ts'), mainTemplate, {encoding: 'utf8'});
 
-			done(files);
+			done(undefined, files);
 		});
 	}
 
 
-	public compileFile(file: string, done: (file: ParsedFile) => void): void
+	public compileFile(file: string, done: (err: Error, file: ParsedFile) => void): void
 	{
 		(new Parser(file)).parse(done);
 	}
@@ -123,7 +127,7 @@ export class Compiler
 	}
 
 
-	private compileFiles(done: (files: Array<ParsedFile>) => void): void
+	private compileFiles(done: (err: Error, files: Array<ParsedFile>) => void): void
 	{
 		const config = this.getConfig();
 		const files = glob.sync(path.join('**', '*.ts'), {
@@ -135,14 +139,28 @@ export class Compiler
 		});
 
 		let parsed: Array<ParsedFile> = [];
+		let error: Error;
 		let i = 0;
 
 		forEach(files, (file: string) => {
-			this.compileFile(file, (parsedFile) => {
+			if (error) {
+				return;
+			}
+
+			this.compileFile(file, (err, parsedFile) => {
+				if (error) {
+					return;
+				}
+
+				if (err) {
+					error = err;
+					return done(err, undefined);
+				}
+
 				parsed.push(parsedFile);
 
 				if (++i === files.length) {
-					done(parsed);
+					done(undefined, parsed);
 				}
 			});
 		});

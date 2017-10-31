@@ -1,6 +1,7 @@
-import { Directive } from "@slicky/core";
+import {Directive} from '@slicky/core';
+
+
 @Directive({
-    selector: "test-directive",
+	selector: 'test-directive',
 })
-class TestDirective {
-}
+class TestDirective {}

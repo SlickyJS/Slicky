@@ -4,12 +4,16 @@ import {readFileSync} from 'fs';
 import * as path from 'path';
 
 
-function parse(name: string, done: (file: ParsedFile, path: string, expected: string) => void): void
+function parse(name: string, done: (err: Error, file: ParsedFile, path: string, expected: string) => void): void
 {
 	const originalPath = path.resolve(`${__dirname}/../data/${name}.original.ts`);
 
-	(new Parser(originalPath)).parse((file) => {
-		done(file, originalPath, <string>readFileSync(`${__dirname}/../data/${name}.expected.ts`, {encoding: 'utf8'}));
+	(new Parser(originalPath)).parse((err, file) => {
+		if (err) {
+			done(err, undefined, undefined, undefined);
+		} else {
+			done(undefined, file, originalPath, <string>readFileSync(`${__dirname}/../data/${name}.expected.ts`, {encoding: 'utf8'}));
+		}
 	});
 }
 
@@ -19,7 +23,7 @@ describe('#Parser', () => {
 	describe('parse()', () => {
 
 		it('should not parse plain class', (done) => {
-			parse('plain', (file, path, expected) => {
+			parse('plain', (err, file, path, expected) => {
 				expect(file).to.be.eql({
 					file: path,
 					source: expected,
@@ -31,7 +35,7 @@ describe('#Parser', () => {
 		});
 
 		it('should not parse file without classes', (done) => {
-			parse('noClass', (file, path, expected) => {
+			parse('noClass', (err, file, path, expected) => {
 				expect(file).to.be.eql({
 					file: path,
 					source: expected,
@@ -43,7 +47,7 @@ describe('#Parser', () => {
 		});
 
 		it('should not parse not exported directive', (done) => {
-			parse('directive.noExport', (file, path, expected) => {
+			parse('directive.noExport', (err, file, path, expected) => {
 				expect(file).to.be.eql({
 					file: path,
 					source: expected,
@@ -55,7 +59,7 @@ describe('#Parser', () => {
 		});
 
 		it('should parse directive without id', (done) => {
-			parse('directive.noId', (file, path, expected) => {
+			parse('directive.noId', (err, file, path, expected) => {
 				expect(file).to.be.eql({
 					file: path,
 					source: expected,
@@ -67,7 +71,7 @@ describe('#Parser', () => {
 		});
 
 		it('should parse directive with id', (done) => {
-			parse('directive.withId', (file, path, expected) => {
+			parse('directive.withId', (err, file, path, expected) => {
 				expect(file).to.be.eql({
 					file: path,
 					source: expected,
@@ -79,7 +83,7 @@ describe('#Parser', () => {
 		});
 
 		it('should parse component with functional template', (done) => {
-			parse('component.functionalTemplate', (file, path, expected) => {
+			parse('component.functionalTemplate', (err, file, path, expected) => {
 				expect(file).to.be.eql({
 					file: path,
 					source: expected,
@@ -91,7 +95,7 @@ describe('#Parser', () => {
 		});
 
 		it('should parse component with string template', (done) => {
-			parse('component.template', (file, path, expected) => {
+			parse('component.template', (err, file, path, expected) => {
 				expect(file).to.be.eql({
 					file: path,
 					source: expected,
@@ -111,7 +115,7 @@ describe('#Parser', () => {
 		});
 
 		it('should parsed mixed content', (done) => {
-			parse('mixed', (file, path, expected) => {
+			parse('mixed', (err, file, path, expected) => {
 				expect(file).to.be.eql({
 					file: path,
 					source: expected,
@@ -125,6 +129,24 @@ describe('#Parser', () => {
 						}
 					],
 				});
+
+				done();
+			});
+		});
+
+		it('should throw an error from metadata loader', (done) => {
+			parse('component.metadata.invalid', (err) => {
+				expect(err).to.be.an.instanceOf(Error);
+				expect(err.message).to.be.equal('Class "TestFilter" is not a valid filter and can not be used in "TestComponent" directive.');
+
+				done();
+			});
+		});
+
+		it('should throw an error from template compiler', (done) => {
+			parse('component.template.invalid', (err) => {
+				expect(err).to.be.an.instanceOf(Error);
+				expect(err.message).to.be.equal('Element <include> must have the "selector" attribute for specific <template>.');
 
 				done();
 			});

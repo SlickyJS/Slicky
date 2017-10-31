@@ -38,12 +38,14 @@ export class Parser
 	}
 
 
-	public parse(done: (file: ParsedFile) => void): void
+	public parse(done: (err: Error, file: ParsedFile) => void): void
 	{
 		const source = <string>fs.readFileSync(this.file, {encoding: 'utf8'});
 		const sourceFile = this.getSourceFile(source);
 
 		const classes: Array<ts.ClassDeclaration> = [];
+		const exports: Array<string> = [];
+
 		let components: Array<ParsedComponent> = [];
 		let needDirectives = false;
 
@@ -55,20 +57,23 @@ export class Parser
 			if (this.needDirectivesFromWorker(node)) {
 				needDirectives = true;
 				classes.push(node);
+				exports.push(node.name.escapedText.toString());
 			}
 		});
 
 		if (!needDirectives) {
-			done({
+			return done(undefined, {
 				file: this.file,
 				source: source,
 				components: components,
 			});
-
-			return;
 		}
 
-		this.worker.processFile(this.file, (directives) => {
+		this.worker.processFile(this.file, exports, (err, directives) => {
+			if (err) {
+				return done(err, undefined);
+			}
+
 			forEach(classes, (classDeclaration: ts.ClassDeclaration) => {
 				const name = classDeclaration.name.escapedText;
 				const directive = <WorkerDirective>find(directives, (directive: WorkerDirective) => {
@@ -82,7 +87,7 @@ export class Parser
 				components = merge(components, this.processDirective(classDeclaration, directive));
 			});
 
-			done({
+			done(undefined, {
 				file: this.file,
 				source: this.stringifySourceFile(sourceFile),
 				components: components,
@@ -137,6 +142,10 @@ export class Parser
 
 	private needDirectivesFromWorker(classDeclaration: ts.ClassDeclaration): boolean
 	{
+		if (!this.findClassModifier(classDeclaration, ts.SyntaxKind.ExportKeyword)) {
+			return false;
+		}
+
 		let directive = this.findDecoratorWithName(classDeclaration, 'Directive');
 		let isComponent = false;
 
@@ -204,6 +213,18 @@ export class Parser
 		});
 
 		return found;
+	}
+
+
+	private findClassModifier(classDeclaration: ts.ClassDeclaration, kind: ts.SyntaxKind): ts.Modifier
+	{
+		if (!classDeclaration.modifiers) {
+			return;
+		}
+
+		return find(classDeclaration.modifiers, (modifier: ts.Modifier) => {
+			return modifier.kind === kind;
+		});
 	}
 
 
