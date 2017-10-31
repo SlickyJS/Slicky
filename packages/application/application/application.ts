@@ -39,7 +39,10 @@ export class Application
 	{
 		this.container = container;
 		this.directives = exists(options.directives) ? flatten<ClassType<any>>(options.directives) : [];
-		this.document = exists(options.document) ? options.document : document;
+
+		if (exists(options.document)) {
+			this.document = options.document;
+		}
 
 		this.extensions = new ExtensionsManager;
 		this.metadataLoader = new DirectiveMetadataLoader(this.extensions);
@@ -82,6 +85,10 @@ export class Application
 	{
 		if (exists(this.runner)) {
 			throw new Error('Application is already running.');
+		}
+
+		if (!exists(this.document)) {
+			this.document = document;
 		}
 
 		const applicationTemplate = new ApplicationTemplate;
