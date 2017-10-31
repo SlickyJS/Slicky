@@ -9,7 +9,7 @@ function parse(name: string, done: (file: ParsedFile, path: string, expected: st
 	const originalPath = path.resolve(`${__dirname}/../data/${name}.original.ts`);
 
 	(new Parser(originalPath)).parse((file) => {
-		done(file, originalPath, readFileSync(`${__dirname}/../data/${name}.expected.ts`, {encoding: 'utf8'}));
+		done(file, originalPath, <string>readFileSync(`${__dirname}/../data/${name}.expected.ts`, {encoding: 'utf8'}));
 	});
 }
 

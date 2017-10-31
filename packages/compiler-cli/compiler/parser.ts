@@ -40,14 +40,14 @@ export class Parser
 
 	public parse(done: (file: ParsedFile) => void): void
 	{
-		const source = fs.readFileSync(this.file, {encoding: 'utf8'});
+		const source = <string>fs.readFileSync(this.file, {encoding: 'utf8'});
 		const sourceFile = this.getSourceFile(source);
 
 		const classes: Array<ts.ClassDeclaration> = [];
 		let components: Array<ParsedComponent> = [];
 		let needDirectives = false;
 
-		ts.forEachChild(sourceFile, (node) => {
+		ts.forEachChild(sourceFile, (node: ts.ClassDeclaration) => {
 			if (!ts.isClassDeclaration(node)) {
 				return;
 			}
@@ -103,7 +103,7 @@ export class Parser
 		const newArguments: Array<ts.PropertyAssignment> = [];
 
 		if (!this.findPropertyAssignmentExpressionInDecorator(directiveDecorator, 'id')) {
-			newArguments.push(ts.createPropertyAssignment('id', ts.createLiteral(directive.id)));
+			newArguments.push(<ts.PropertyAssignment>ts.createPropertyAssignment('id', ts.createLiteral(directive.id)));
 		}
 
 		this.eachPropertyAssignmentInDecorator(directiveDecorator, (name, property) => {
@@ -209,8 +209,8 @@ export class Parser
 
 	private stringifySourceFile(sourceFile: ts.SourceFile): string
 	{
-		const resultFile = ts.createSourceFile('component.ts', '', ts.ScriptTarget.Latest, false, ts.ScriptKind.TS);
-		const printer = ts.createPrinter({
+		const resultFile = <ts.SourceFile>ts.createSourceFile('component.ts', '', ts.ScriptTarget.Latest, false, ts.ScriptKind.TS);
+		const printer = <ts.Printer>ts.createPrinter({
 			newLine: ts.NewLineKind.LineFeed,
 		});
 
