@@ -733,41 +733,6 @@ describe('#Compiler', () => {
 			}).to.throw(Error, 'More than 1 component is attached to element <test-child-component></test-child-component>: TestChildComponentA, TestChildComponentC.');
 		});
 
-		it('should throw an error when directive and component is attached to one element', () => {
-			@Directive({
-				selector: 'test-child-component',
-			})
-			class TestChildDirectiveA {}
-
-			@Directive({
-				selector: 'test-child-component',
-			})
-			class TestChildDirectiveB {}
-
-			@Directive({
-				selector: 'test-child-component',
-				override: TestChildDirectiveB,
-			})
-			class TestChildDirectiveC {}
-
-			@Component({
-				name: 'test-child-component',
-				template: '',
-			})
-			class TestChildComponent {}
-
-			@Component({
-				name: 'test-component',
-				template: '<test-child-component></test-child-component>',
-				directives: [TestChildDirectiveA, TestChildDirectiveB, TestChildDirectiveC, TestChildComponent],
-			})
-			class TestComponent {}
-
-			expect(() => {
-				compiler.compile(metadataLoader.load(TestComponent));
-			}).to.throw(Error, 'Both component and directive are attached to element <test-child-component></test-child-component>: TestChildComponent, TestChildDirectiveA, TestChildDirectiveC.');
-		});
-
 		it('should initialize directive before all inner elements', () => {
 			@Directive({
 				selector: 'test-child-directive',
