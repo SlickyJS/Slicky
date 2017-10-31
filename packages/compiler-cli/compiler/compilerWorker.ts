@@ -15,6 +15,10 @@ if (!exists(file)) {
 }
 
 
+require('ts-node').register({
+	fast: true,
+});
+
 require.extensions['.html'] = (module, filename) => {
 	module.exports = readFileSync(filename, 'utf8');
 };
@@ -22,11 +26,6 @@ require.extensions['.html'] = (module, filename) => {
 require.extensions['.css'] = (module, filename) => {
 	module.exports = readFileSync(filename, 'utf8');
 };
-
-
-require('ts-node').register({
-	fast: true,
-});
 
 
 const compiler = new Compiler;
