@@ -1,6 +1,7 @@
 import {ElementRef, Input} from '@slicky/core';
 import {forEach, find, exists} from '@slicky/utils';
 import {AbstractFormControl} from './abstractFormControl';
+import {AbstractInputControl} from './abstractInputControl';
 import {ValidationErrors} from '../validators';
 
 
@@ -86,7 +87,7 @@ export abstract class AbstractFormContainerDirective<T> extends AbstractFormCont
 	}
 
 
-	public get(name: string): AbstractFormControl<any, any>
+	public get(name: string): AbstractFormControl<any, any>|AbstractInputControl<any, any>
 	{
 		const input = find(this.controls, (control: AbstractFormControl<any, any>) => {
 			return control.name === name;
