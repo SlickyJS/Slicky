@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/extension-translator",
 	"description": "Translator integration for slicky framework",
-	"version": "0.1.10",
+	"version": "0.1.11",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -14,7 +14,7 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/core": "^0.8.1",
+		"@slicky/core": "^0.9.0",
 		"@slicky/di": "^1.0.1",
 		"@slicky/lang": "^1.0.0",
 		"@slicky/translator": "^1.0.2",

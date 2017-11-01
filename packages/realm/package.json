@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/realm",
 	"description": "Zone.js wrapper",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
