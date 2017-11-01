@@ -5,7 +5,9 @@ export class Realm
 {
 
 
-	private zone: Zone;
+	protected zone: Zone;
+
+	protected outerZone: Zone;
 
 	private onEnter: (realm: Realm) => void;
 
@@ -17,6 +19,10 @@ export class Realm
 		if (!Zone) {
 			throw new Error('Please, install the zone.js polyfill.');
 		}
+
+		this.outerZone = parent ? parent.outerZone : Zone.current.fork({
+			name: 'slicky_realm_outer',
+		});
 
 		this.onEnter = onEnter;
 		this.onLeave = onLeave;
@@ -48,6 +54,12 @@ export class Realm
 	public run(fn: () => any): any
 	{
 		return this.zone.run(fn);
+	}
+
+
+	public runOutside(fn: () => any): any
+	{
+		return this.outerZone.run(fn);
 	}
 
 

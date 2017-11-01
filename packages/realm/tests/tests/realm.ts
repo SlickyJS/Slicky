@@ -38,6 +38,49 @@ describe('#Realm', () => {
 
 	});
 
+	describe('runOutside()', () => {
+
+		it('should run function outside of realm', (done) => {
+			let onLeave = 0;
+
+			const realm = new Realm(null, (realm) => {
+				onLeave++;
+
+				realm.runOutside(() => {
+					setTimeout(() => {}, 0);
+				});
+			});
+
+			realm.run(() => {});
+
+			setTimeout(() => {
+				expect(onLeave).to.be.equal(1);
+				done();
+			}, 50);
+		});
+
+		it('should run function outside of child realm', (done) => {
+			let onLeave = 0;
+
+			const realm = new Realm;
+			const child = realm.fork(null, (realm) => {
+				onLeave++;
+
+				realm.runOutside(() => {
+					setTimeout(() => {}, 0);
+				});
+			});
+
+			child.run(() => {});
+
+			setTimeout(() => {
+				expect(onLeave).to.be.equal(1);
+				done();
+			}, 50);
+		});
+
+	});
+
 	describe('fork()', () => {
 
 		it('should fork realm', () => {
