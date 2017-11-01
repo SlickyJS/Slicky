@@ -7,12 +7,12 @@ export class Realm
 
 	private zone: Zone;
 
-	private onEnter: () => void;
+	private onEnter: (realm: Realm) => void;
 
-	private onLeave: () => void;
+	private onLeave: (realm: Realm) => void;
 
 
-	constructor(onEnter?: () => void, onLeave?: () => void, parent?: Realm)
+	constructor(onEnter?: (realm: Realm) => void, onLeave?: (realm: Realm) => void, parent?: Realm)
 	{
 		if (!Zone) {
 			throw new Error('Please, install the zone.js polyfill.');
@@ -27,18 +27,18 @@ export class Realm
 			name: 'slicky_realm',
 			onInvoke: (delegate: ZoneDelegate, current: Zone, target: Zone, callback: Function, applyThis: any, applyArgs: Array<any>, source: string): any => {
 				try {
-					if (this.onEnter && current === target) this.onEnter();
+					if (this.onEnter && current === target) this.onEnter(this);
 					return delegate.invoke(target, callback, applyThis, applyArgs, source);
 				} finally {
-					if (this.onLeave && current === target) this.onLeave();
+					if (this.onLeave && current === target) this.onLeave(this);
 				}
 			},
 			onInvokeTask: (delegate: ZoneDelegate, current: Zone, target: Zone, task: Task, applyThis: any, applyArgs: any): any => {
 				try {
-					if (this.onEnter && current === target) this.onEnter();
+					if (this.onEnter && current === target) this.onEnter(this);
 					return delegate.invokeTask(target, task, applyThis, applyArgs);
 				} finally {
-					if (this.onLeave && current === target) this.onLeave();
+					if (this.onLeave && current === target) this.onLeave(this);
 				}
 			},
 		});
@@ -51,7 +51,7 @@ export class Realm
 	}
 
 
-	public fork(onEnter?: () => void, onLeave?: () => void): Realm
+	public fork(onEnter?: (parent: Realm) => void, onLeave?: (parent: Realm) => void): Realm
 	{
 		return new Realm(onEnter, onLeave, this);
 	}
