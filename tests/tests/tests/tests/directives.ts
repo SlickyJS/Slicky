@@ -1,7 +1,7 @@
 import '../bootstrap';
 
 import {Tester} from '@slicky/tester';
-import {Component, Directive, OnInit, DirectivesStorageRef, ChangeDetectorRef, ElementRef} from '@slicky/core';
+import {Component, Directive, OnInit, DirectivesStorageRef, ChangeDetectorRef, ElementRef, RealmRef} from '@slicky/core';
 import {RootDirectiveRunner, RootDirectiveRef} from '@slicky/application/runtime';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {forEach} from '@slicky/utils';
@@ -438,6 +438,50 @@ describe('#Application.directives', () => {
 		Tester.runRootDirective('<test-component></test-component>', TestComponent);
 
 		expect(called).to.be.equal(1);
+	});
+
+	it('should inject RealmRef into root component', () => {
+		let realm: RealmRef = null;
+
+		@Component({
+			name: 'test-component',
+			template: '',
+		})
+		class TestComponent
+		{
+
+			constructor(r: RealmRef)
+			{
+				realm = r;
+			}
+
+		}
+
+		Tester.runRootDirective('<test-component></test-component>', TestComponent);
+
+		expect(realm).to.be.an.instanceOf(RealmRef);
+	});
+
+	it('should inject RealmRef into non-root component', () => {
+		let realm: RealmRef = null;
+
+		@Component({
+			name: 'test-component',
+			template: '',
+		})
+		class TestComponent
+		{
+
+			constructor(r: RealmRef)
+			{
+				realm = r;
+			}
+
+		}
+
+		Tester.runDirective('<test-component></test-component>', TestComponent);
+
+		expect(realm).to.be.an.instanceOf(RealmRef);
 	});
 
 });

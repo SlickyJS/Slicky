@@ -1,4 +1,4 @@
-import {ChangeDetectorRef} from '@slicky/core';
+import {ChangeDetectorRef, RealmRef} from '@slicky/core';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {ChangeDetector} from '@slicky/core/directives';
 import {DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionInput} from '@slicky/core/metadata';
@@ -64,14 +64,20 @@ export class RootDirectiveRunner
 		}
 
 		let changeDetector: ChangeDetector;
+		let realm: RealmRef;
 
 		const container = metadata.type === DirectiveDefinitionType.Component ? this.container.fork() : this.container;
 
 		if (metadata.type === DirectiveDefinitionType.Component) {
 			changeDetector = new ChangeDetector;
+			realm = new RealmRef;
 
 			container.addService(ChangeDetectorRef, {
 				useFactory: () => new ChangeDetectorRef(changeDetector),
+			});
+
+			container.addService(RealmRef, {
+				useValue: realm,
 			});
 		}
 
@@ -109,7 +115,7 @@ export class RootDirectiveRunner
 		let template: ComponentTemplate = null;
 
 		if (metadata.type === DirectiveDefinitionType.Component) {
-			template = this.runComponentTemplate(container, metadata, directive, el, changeDetector);
+			template = this.runComponentTemplate(container, metadata, directive, el, changeDetector, realm);
 		}
 
 		if (isFunction(setup)) {
@@ -124,11 +130,11 @@ export class RootDirectiveRunner
 	}
 
 
-	private runComponentTemplate<T>(container: Container, metadata: DirectiveDefinition, component: T, el: Element, changeDetector: ChangeDetector): ComponentTemplate
+	private runComponentTemplate<T>(container: Container, metadata: DirectiveDefinition, component: T, el: Element, changeDetector: ChangeDetector, realm: RealmRef): ComponentTemplate
 	{
 		this.extensions.doInitComponentContainer(container, metadata, component);
 
-		return this.directiveFactory.runComponent(container, component, metadata, this.template, el, changeDetector);
+		return this.directiveFactory.runComponent(container, component, metadata, this.template, el, changeDetector, realm);
 	}
 
 

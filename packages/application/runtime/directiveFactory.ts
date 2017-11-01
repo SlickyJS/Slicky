@@ -1,6 +1,6 @@
 import {BaseTemplate, ApplicationTemplate, TemplateRenderFactory, TemplateEncapsulation} from '@slicky/templates/templates';
 import {Renderer} from '@slicky/templates/dom';
-import {ElementRef, FilterInterface, DirectivesStorageRef} from '@slicky/core';
+import {ElementRef, FilterInterface, DirectivesStorageRef, RealmRef} from '@slicky/core';
 import {DirectiveMetadataLoader, DirectiveDefinitionDirective, DirectiveDefinition, DirectiveDefinitionFilter} from '@slicky/core/metadata';
 import {DirectivesStorage, ChangeDetector} from '@slicky/core/directives';
 import {ExtensionsManager} from '@slicky/core/extensions';
@@ -88,7 +88,7 @@ export class DirectiveFactory
 	}
 
 
-	public runComponent<T>(container: Container, component: T, metadata: DirectiveDefinition, parent: BaseTemplate, el: Element, changeDetector: ChangeDetector, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): ComponentTemplate
+	public runComponent<T>(container: Container, component: T, metadata: DirectiveDefinition, parent: BaseTemplate, el: Element, changeDetector: ChangeDetector, realm: RealmRef, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): ComponentTemplate
 	{
 		let templateFactory: TemplateRenderFactory;
 
@@ -101,6 +101,7 @@ export class DirectiveFactory
 		const template = new ComponentTemplate(this.document, this.renderer, container, this, this.application, parent);
 
 		changeDetector.setTemplate(template);
+		realm._initialize(template.realm);
 
 		forEach(metadata.filters, (filterData: DirectiveDefinitionFilter) => {
 			const filter = <FilterInterface>container.create(filterData.filterType);

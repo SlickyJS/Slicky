@@ -1,7 +1,7 @@
 import {BaseTemplate, ApplicationTemplate, Template, RenderableTemplate, TemplateElement, TemplateParametersList} from '@slicky/templates/templates';
 import {Renderer} from '@slicky/templates/dom';
 import {ChangeDetector} from '@slicky/core/directives';
-import {ChangeDetectorRef} from '@slicky/core';
+import {ChangeDetectorRef, RealmRef} from '@slicky/core';
 import {DirectiveDefinition} from '@slicky/core/metadata';
 import {Container, ProviderOptions} from '@slicky/di';
 import {isFunction} from '@slicky/utils';
@@ -39,6 +39,7 @@ export class ComponentTemplate extends Template
 	public createComponent(template: RenderableTemplate, el: TemplateElement, name: string, id: string, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): void
 	{
 		const changeDetector = new ChangeDetector;
+		const realm = new RealmRef;
 
 		const metadata = this.directiveFactory.getMetadataById(id);
 		const componentType = this.directiveFactory.getDirectiveTypeById(id);
@@ -49,9 +50,13 @@ export class ComponentTemplate extends Template
 			useFactory: () => new ChangeDetectorRef(changeDetector),
 		});
 
+		container.addService(RealmRef, {
+			useValue: realm,
+		});
+
 		const component = this._createDirective(template, el._nativeNode, name, container, componentType, metadata);
 
-		this.directiveFactory.runComponent(container, component, metadata, template, el._nativeNode, changeDetector, setup);
+		this.directiveFactory.runComponent(container, component, metadata, template, el._nativeNode, changeDetector, realm, setup);
 	}
 
 

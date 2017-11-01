@@ -17,9 +17,9 @@ export abstract class BaseTemplate
 
 	public parent: BaseTemplate;
 
-	protected application: ApplicationTemplate;
+	public realm: Realm;
 
-	protected realm: Realm;
+	protected application: ApplicationTemplate;
 
 	protected children: Array<BaseTemplate> = [];
 

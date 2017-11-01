@@ -17,6 +17,7 @@
 		"@slicky/di": "^1.0.1",
 		"@slicky/event-emitter": "^1.0.2",
 		"@slicky/lang": "^1.0.0",
+		"@slicky/realm": "^1.0.1",
 		"@slicky/reflection": "^1.0.3",
 		"@slicky/templates": "^1.2.2",
 		"@slicky/utils": "^1.3.1"
