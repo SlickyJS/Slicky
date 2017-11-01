@@ -31,7 +31,7 @@ describe('#PlatformInline', () => {
 
 			expect(() => {
 				platform.compileComponentTemplate(metadata);
-			}).to.throw(Error, '@slicky/platform-inline can not compile component TestComponent. Precompile your templates with @slicky/compiler-cli or use @slicky/platform-browser instead.');
+			}).to.throw(Error, '@slicky/platform-inline can not compile component TestComponent. Precompile your templates with @slicky/compiler-cli or @slicky/webpack-loader. Or you can use @slicky/platform-browser instead.');
 		});
 
 	});
