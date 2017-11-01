@@ -259,7 +259,7 @@ describe('#Application.forms.model', () => {
 		expect(model.value).to.be.eql(['a', 'c']);
 	});
 
-	it('should use model directive on radio', () => {
+	it('should use model directive on radio', (done) => {
 		@Component({
 			name: 'test-component',
 			template: '<input [(s:model)]="option" name="a" value="a" type="radio" #i-a="sModel"><input [(s:model)]="option" name="a" value="b" type="radio" #i-b="sModel">',
@@ -289,9 +289,13 @@ describe('#Application.forms.model', () => {
 		inputB.checked = true;
 		component.application.callEvent(inputB, 'Event', 'change');
 
-		expect(component.directive.option).to.be.equal('b');
-		expect(modelA.value).to.be.equal('b');
-		expect(modelB.value).to.be.equal('b');
+		setTimeout(() => {
+			expect(component.directive.option).to.be.equal('b');
+			expect(modelA.value).to.be.equal('b');
+			expect(modelB.value).to.be.equal('b');
+
+			done();
+		}, 10);
 	});
 
 	it('should use model without connection to directive', () => {

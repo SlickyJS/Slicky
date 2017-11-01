@@ -65,7 +65,7 @@ export class TemplateElement extends TemplateNode
 			listener(e);
 
 			if (this.template) {
-				this.template.refresh();
+				this.template.markForRefresh();
 			}
 		};
 

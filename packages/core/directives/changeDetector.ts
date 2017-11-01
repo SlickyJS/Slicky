@@ -24,7 +24,7 @@ export class ChangeDetector
 			return;
 		}
 
-		this.template.refresh();
+		this.template.markForRefresh();
 	}
 
 }

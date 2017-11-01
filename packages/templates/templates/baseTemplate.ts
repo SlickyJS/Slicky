@@ -3,6 +3,7 @@ import {Realm} from '@slicky/realm';
 import {Template} from './template';
 import {ApplicationTemplate} from './applicationTemplate';
 import {Watcher} from './watcher';
+import nextTick = require('next-tick');
 
 
 export type TemplateParametersList = {[name: string]: any};
@@ -31,6 +32,8 @@ export abstract class BaseTemplate
 
 	protected useFiltersFromParent: boolean = true;
 
+	protected refreshing: boolean = false;
+
 	private watcher: Watcher;
 
 	private parameters: TemplateParametersList;
@@ -47,7 +50,16 @@ export abstract class BaseTemplate
 		this.parent = parent;
 		this.parameters = parameters;
 
-		this.realm = new Realm(null, () => this.refresh(), this.parent ? this.parent.realm : null);
+		this.realm = new Realm(
+			null,
+			(realm) => {
+				realm.runOutside(() => {
+					this.markForRefresh();
+				});
+			},
+			this.parent ? this.parent.realm : null
+		);
+
 		this.watcher = new Watcher;
 
 		if (this.parent) {
@@ -79,21 +91,32 @@ export abstract class BaseTemplate
 	}
 
 
-	public refresh(caller?: BaseTemplate): void
+	public markForRefresh(): void
 	{
-		if (!this.initialized) {
+		if (!this.initialized || this.refreshing) {
 			return;
 		}
 
-		if (!caller && this !== <any>this.root) {
-			return this.root.refresh();
+		if (!this.isRootTemplate() && !this.parent.refreshing) {
+			return this.root.markForRefresh();
 		}
 
+		this.refreshing = true;
+
+		nextTick(() => {
+			this.refresh();
+			this.refreshing = false;
+		});
+	}
+
+
+	public refresh(): void
+	{
 		this.watcher.check();
 
 		forEach(this.children, (child: BaseTemplate) => {
 			if (child.useRefreshFromParent) {
-				child.refresh(this);
+				child.markForRefresh();
 			}
 		});
 	}
@@ -207,6 +230,12 @@ export abstract class BaseTemplate
 	public filter(name: string, modify: any, ...args: Array<any>): any
 	{
 		return this.getFilter(name)(modify, ...args);
+	}
+
+
+	private isRootTemplate(): boolean
+	{
+		return this === <any>this.root;
 	}
 
 }

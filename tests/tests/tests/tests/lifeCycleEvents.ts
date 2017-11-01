@@ -25,7 +25,7 @@ describe('#Application.lifeCycleEvents', () => {
 
 					setTimeout(() => {
 						this.count++;
-					}, 50);
+					}, 25);
 				}
 
 			}

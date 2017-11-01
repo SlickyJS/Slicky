@@ -58,7 +58,7 @@ export class InputsPlugin extends AbstractSlickyEnginePlugin
 				}
 
 				if (directive.directive.metadata.type === DirectiveDefinitionType.Component) {
-					watchUpdate.push('template.refresh();');
+					watchUpdate.push('template.markForRefresh();');
 				}
 
 				directive.setup.body.add(

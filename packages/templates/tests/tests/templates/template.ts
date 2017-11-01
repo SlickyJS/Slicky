@@ -173,7 +173,7 @@ describe('#Templates/Template', () => {
 			);
 		});
 
-		it('should update loop and use iterator', () => {
+		it('should update loop and use iterator', (done) => {
 			const root = document.createElement('mock-root');
 
 			let loop = ['a', 'b', 'c'];
@@ -195,15 +195,20 @@ describe('#Templates/Template', () => {
 			loop = ['a', 'b'];
 			template.refresh();
 
-			expect(root.textContent).to.be.equal('a, b');
+			setTimeout(() => {
+				expect(root.textContent).to.be.equal('a, b');
 
-			loop = ['a', 'b', 'c', 'd', 'e'];
-			template.refresh();
+				loop = ['a', 'b', 'c', 'd', 'e'];
+				template.refresh();
 
-			expect(root.textContent).to.be.equal('a, b, c, d, e');
+				setTimeout(() => {
+					expect(root.textContent).to.be.equal('a, b, c, d, e');
+					done();
+				}, 10);
+			}, 10);
 		});
 
-		it('should refresh template on dom event', () => {
+		it('should refresh template on dom event', (done) => {
 			const root = document.createElement('mock-root');
 
 			template.render(root, (template, el) => {
@@ -225,14 +230,19 @@ describe('#Templates/Template', () => {
 
 			callMouseEvent(document, btn, 'click');
 
-			expect(root.textContent).to.be.equal('1');
+			setTimeout(() => {
+				expect(root.textContent).to.be.equal('1');
 
-			callMouseEvent(document, btn, 'click');
+				callMouseEvent(document, btn, 'click');
 
-			expect(root.textContent).to.be.equal('2');
+				setTimeout(() => {
+					expect(root.textContent).to.be.equal('2');
+					done();
+				}, 10);
+			}, 10);
 		});
 
-		it('should refresh whole template from embedded template', () => {
+		it('should refresh whole template from embedded template', (done) => {
 			const root = document.createElement('mock-root');
 
 			template.render(root, (template, el) => {
@@ -258,10 +268,13 @@ describe('#Templates/Template', () => {
 
 			callMouseEvent(document, btn, 'click');
 
-			expect(root.textContent).to.be.equal('1');
+			setTimeout(() => {
+				expect(root.textContent).to.be.equal('1');
+				done();
+			}, 10);
 		});
 
-		it('should refresh inner template from parent', () => {
+		it('should refresh inner template from parent', (done) => {
 			const root = document.createElement('mock-root');
 
 			template.render(root, (template, el) => {
@@ -288,7 +301,10 @@ describe('#Templates/Template', () => {
 
 			callMouseEvent(document, btn, 'click');
 
-			expect(root.textContent).to.be.equal('1');
+			setTimeout(() => {
+				expect(root.textContent).to.be.equal('1');
+				done();
+			}, 10);
 		});
 
 		it('should include styles', () => {
@@ -412,7 +428,7 @@ describe('#Templates/Template', () => {
 			);
 		});
 
-		it('should render and refresh passed parameter in template', () => {
+		it('should render and refresh passed parameter in template', (done) => {
 			const root = document.createElement('mock-root');
 
 			template.render(root, (template) => {
@@ -434,12 +450,17 @@ describe('#Templates/Template', () => {
 			template.setParameter('name', 'Clare');
 			template.refresh();
 
-			expect(root.textContent).to.be.equal('Clare');
+			setTimeout(() => {
+				expect(root.textContent).to.be.equal('Clare');
 
-			template.setParameter('name', 'David');
-			template.refresh();
+				template.setParameter('name', 'David');
+				template.refresh();
 
-			expect(root.textContent).to.be.equal('David');
+				setTimeout(() => {
+					expect(root.textContent).to.be.equal('David');
+					done();
+				}, 10);
+			}, 10);
 		});
 
 		it('should throw an error when filter does not exists', () => {

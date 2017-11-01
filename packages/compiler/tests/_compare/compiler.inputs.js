@@ -31,19 +31,19 @@ return function(template, el, component) {
 				return (null);
 			}, function(value) {
 				directive.attributeInputWatch = value;
-				template.refresh();
+				template.markForRefresh();
 			});
 			outer.watch(function() {
 				return true;
 			}, function(value) {
 				directive.propertyInput = value;
-				template.refresh();
+				template.markForRefresh();
 			});
 			outer.watch(function() {
 				return false;
 			}, function(value) {
 				directive.propertyInputCustom = value;
-				template.refresh();
+				template.markForRefresh();
 			});
 		});
 		el.setDynamicAttribute("attribute-watch", function() {
