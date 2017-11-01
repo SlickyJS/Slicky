@@ -1,9 +1,9 @@
-import {ElementRef, DirectivesStorageRef, OnInit, OnTemplateInit, OnAttach, OnDestroy, Input} from '@slicky/core';
+import {ElementRef, DirectivesStorageRef, OnInit, OnTemplateInit, Input} from '@slicky/core';
 import {merge, forEach} from '@slicky/utils';
 import {EventEmitter} from '@slicky/event-emitter';
 import {Renderer} from '@slicky/templates/dom';
+import {AbstractFormControl} from './abstractFormControl';
 import {AbstractInputValueAccessor} from './abstractInputValueAccessor';
-import {FormDirective} from './formDirective';
 import {AbstractValidator, ValidationErrors} from '../validators';
 
 
@@ -26,7 +26,7 @@ export const ControlStatusClasses = {
 };
 
 
-export abstract class AbstractInputControl<T, U extends Element> implements OnInit, OnTemplateInit, OnAttach, OnDestroy
+export abstract class AbstractInputControl<T, U extends Element> extends AbstractFormControl<T, U> implements OnInit, OnTemplateInit
 {
 
 
@@ -45,8 +45,6 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 
 	private validators: Array<AbstractValidator<any>>;
 
-	private parent: FormDirective<any>;
-
 	private status: ControlStatus;
 
 	private _errors: ValidationErrors = {};
@@ -60,6 +58,8 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 
 	constructor(renderer: Renderer, el: ElementRef<U>, directives: DirectivesStorageRef)
 	{
+		super();
+
 		this.renderer = renderer;
 		this.el = el;
 		this.directives = directives;
@@ -167,27 +167,6 @@ export abstract class AbstractInputControl<T, U extends Element> implements OnIn
 	{
 		this.initValue = this.valueAccessor.getValue();
 		this.refresh(this.initValue);
-	}
-
-
-	public onAttach(parent): void
-	{
-		if (this.parent) {
-			return;
-		}
-
-		if (parent instanceof FormDirective) {
-			this.parent = parent;
-			this.parent.registerControl(this);
-		}
-	}
-
-
-	public onDestroy(): void
-	{
-		if (this.parent) {
-			this.parent.unregisterControl(this);
-		}
 	}
 
 
