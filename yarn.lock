@@ -29,12 +29,6 @@
     "@slicky/ast-query-selector" "^1.2.0"
     "@slicky/utils" "^1.0.11"
 
-"@slicky/realm@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@slicky/realm/-/realm-1.0.1.tgz#ee0fb189190ccc50f752e557f34945ec3c26a219"
-  dependencies:
-    zone.js "^0.7.8"
-
 "@slicky/reflection@^1.0.2", "@slicky/reflection@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@slicky/reflection/-/reflection-1.0.3.tgz#9229aa54ad94b5ac9b661e1abc06b50c1db2cead"
@@ -4253,8 +4247,8 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
 typescript@^2.4.2:
-  version "2.5.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.5.3.tgz#df3dcdc38f3beb800d4bc322646b04a3f6ca7f0d"
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.6.1.tgz#ef39cdea27abac0b500242d6726ab90e0c846631"
 
 uglify-js@^2.6, uglify-js@^2.8.29:
   version "2.8.29"
@@ -4677,10 +4671,6 @@ yargs@~3.10.0:
 yn@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/yn/-/yn-2.0.0.tgz#e5adabc8acf408f6385fc76495684c88e6af689a"
-
-zone.js@^0.7.8:
-  version "0.7.8"
-  resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.7.8.tgz#4f3fe8834d44597f2639053a0fa438df34fffded"
 
 zone.js@^0.8.16, zone.js@^0.8.17, zone.js@^0.8.18:
   version "0.8.18"
