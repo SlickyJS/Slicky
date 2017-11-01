@@ -1,8 +1,8 @@
 import {BaseTemplate, ApplicationTemplate, TemplateRenderFactory, TemplateEncapsulation} from '@slicky/templates/templates';
 import {Renderer} from '@slicky/templates/dom';
-import {ElementRef, FilterInterface, ChangeDetectorRef, DirectivesStorageRef} from '@slicky/core';
+import {ElementRef, FilterInterface, DirectivesStorageRef} from '@slicky/core';
 import {DirectiveMetadataLoader, DirectiveDefinitionDirective, DirectiveDefinition, DirectiveDefinitionFilter} from '@slicky/core/metadata';
-import {DirectivesStorage} from '@slicky/core/directives';
+import {DirectivesStorage, ChangeDetector} from '@slicky/core/directives';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {forEach, isFunction, exists} from '@slicky/utils';
 import {Container, ProviderOptions} from '@slicky/di';
@@ -88,7 +88,7 @@ export class DirectiveFactory
 	}
 
 
-	public runComponent<T>(container: Container, component: T, metadata: DirectiveDefinition, parent: BaseTemplate, el: Element, changeDetector: ChangeDetectorRef, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): ComponentTemplate
+	public runComponent<T>(container: Container, component: T, metadata: DirectiveDefinition, parent: BaseTemplate, el: Element, changeDetector: ChangeDetector, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): ComponentTemplate
 	{
 		let templateFactory: TemplateRenderFactory;
 
@@ -100,7 +100,7 @@ export class DirectiveFactory
 
 		const template = new ComponentTemplate(this.document, this.renderer, container, this, this.application, parent);
 
-		changeDetector._initialize(template);
+		changeDetector.setTemplate(template);
 
 		forEach(metadata.filters, (filterData: DirectiveDefinitionFilter) => {
 			const filter = <FilterInterface>container.create(filterData.filterType);

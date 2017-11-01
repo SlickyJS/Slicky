@@ -1,30 +1,22 @@
-import {Template} from '@slicky/templates';
+import {ChangeDetector} from './changeDetector';
 
 
 export class ChangeDetectorRef
 {
 
 
-	private template: Template;
+	private changeDetector: ChangeDetector;
 
 
-	public _initialize(template: Template): void
+	constructor(changeDetector: ChangeDetector)
 	{
-		if (this.template) {
-			throw new Error('ChangeDetectorRef is already initialized.');
-		}
-
-		this.template = template;
+		this.changeDetector = changeDetector;
 	}
 
 
 	public refresh(): void
 	{
-		if (!this.template) {
-			return;
-		}
-
-		this.template.refresh();
+		this.changeDetector.refresh();
 	}
 
 }

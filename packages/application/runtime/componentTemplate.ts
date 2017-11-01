@@ -1,5 +1,6 @@
 import {BaseTemplate, ApplicationTemplate, Template, RenderableTemplate, TemplateElement, TemplateParametersList} from '@slicky/templates/templates';
 import {Renderer} from '@slicky/templates/dom';
+import {ChangeDetector} from '@slicky/core/directives';
 import {ChangeDetectorRef} from '@slicky/core';
 import {DirectiveDefinition} from '@slicky/core/metadata';
 import {Container, ProviderOptions} from '@slicky/di';
@@ -37,7 +38,7 @@ export class ComponentTemplate extends Template
 
 	public createComponent(template: RenderableTemplate, el: TemplateElement, name: string, id: string, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): void
 	{
-		const changeDetector = new ChangeDetectorRef;
+		const changeDetector = new ChangeDetector;
 
 		const metadata = this.directiveFactory.getMetadataById(id);
 		const componentType = this.directiveFactory.getDirectiveTypeById(id);
@@ -45,7 +46,7 @@ export class ComponentTemplate extends Template
 		const container = this.container.fork();
 
 		container.addService(ChangeDetectorRef, {
-			useValue: changeDetector,
+			useFactory: () => new ChangeDetectorRef(changeDetector),
 		});
 
 		const component = this._createDirective(template, el._nativeNode, name, container, componentType, metadata);

@@ -1,5 +1,6 @@
 import {ChangeDetectorRef} from '@slicky/core';
 import {ExtensionsManager} from '@slicky/core/extensions';
+import {ChangeDetector} from '@slicky/core/directives';
 import {DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionType, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionInput} from '@slicky/core/metadata';
 import {forEach, exists, isFunction} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
@@ -62,15 +63,15 @@ export class RootDirectiveRunner
 			return;
 		}
 
-		let changeDetector: ChangeDetectorRef;
+		let changeDetector: ChangeDetector;
 
 		const container = metadata.type === DirectiveDefinitionType.Component ? this.container.fork() : this.container;
 
 		if (metadata.type === DirectiveDefinitionType.Component) {
-			changeDetector = new ChangeDetectorRef;
+			changeDetector = new ChangeDetector;
 
 			container.addService(ChangeDetectorRef, {
-				useValue: changeDetector,
+				useFactory: () => new ChangeDetectorRef(changeDetector),
 			});
 		}
 
@@ -123,7 +124,7 @@ export class RootDirectiveRunner
 	}
 
 
-	private runComponentTemplate<T>(container: Container, metadata: DirectiveDefinition, component: T, el: Element, changeDetector: ChangeDetectorRef): ComponentTemplate
+	private runComponentTemplate<T>(container: Container, metadata: DirectiveDefinition, component: T, el: Element, changeDetector: ChangeDetector): ComponentTemplate
 	{
 		this.extensions.doInitComponentContainer(container, metadata, component);
 
