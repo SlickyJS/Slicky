@@ -809,6 +809,77 @@ describe('#Compiler', () => {
 			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.templateInit'));
 		});
 
+		it('should pass same property into 2 directives', () => {
+			@Directive({
+				selector: 'test-directive',
+			})
+			class TestDirective1
+			{
+
+				@Input()
+				public name: string;
+
+			}
+
+			@Directive({
+				selector: 'test-directive',
+			})
+			class TestDirective2
+			{
+
+				@Input()
+				public name: string;
+
+			}
+
+			@Component({
+				name: 'test-component',
+				template: '<test-directive [name]="name"></test-directive>',
+				directives: [TestDirective1, TestDirective2],
+			})
+			class TestComponent
+			{
+
+				public name = 'David';
+
+			}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.inputs.sameProperties'));
+		});
+
+		it('should pass same attribute into 2 directives', () => {
+			@Directive({
+				selector: 'test-directive',
+			})
+			class TestDirective1
+			{
+
+				@Input()
+				public name: string;
+
+			}
+
+			@Directive({
+				selector: 'test-directive',
+			})
+			class TestDirective2
+			{
+
+				@Input()
+				public name: string;
+
+			}
+
+			@Component({
+				name: 'test-component',
+				template: '<test-directive name="David"></test-directive>',
+				directives: [TestDirective1, TestDirective2],
+			})
+			class TestComponent {}
+
+			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.inputs.sameAttributes'));
+		});
+
 	});
 
 });

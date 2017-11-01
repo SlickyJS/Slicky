@@ -10,8 +10,13 @@ export class InputsPlugin extends AbstractSlickyEnginePlugin
 {
 
 
+	private properties: Array<_.ASTHTMLNodeExpressionAttribute>;
+
+
 	public onBeforeProcessDirective(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, arg: OnProcessElementArgument): void
 	{
+		this.properties = [];
+
 		forEach(directive.directive.metadata.inputs, (input: DirectiveDefinitionInput) => {
 			let property: _.ASTHTMLNodeAttribute;
 			let isProperty: boolean = false;
@@ -86,10 +91,17 @@ export class InputsPlugin extends AbstractSlickyEnginePlugin
 			}
 
 			if (isProperty) {
-				element.properties.splice(element.properties.indexOf(property), 1);
-			} else {
-				//element.attributes.splice(element.attributes.indexOf(property), 1);
+				this.properties.push(property);
 			}
+		});
+	}
+
+
+	public onAfterProcessDirective(element: _.ASTHTMLNodeElement): void
+	{
+		forEach(this.properties, (property: _.ASTHTMLNodeExpressionAttribute) => {
+			const pos = element.properties.indexOf(property);
+			element.properties.splice(pos, 1);
 		});
 	}
 
