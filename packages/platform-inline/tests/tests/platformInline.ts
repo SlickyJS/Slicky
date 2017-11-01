@@ -1,0 +1,39 @@
+import '../bootstrap';
+
+import {Component} from '@slicky/core';
+import {DirectiveMetadataLoader} from '@slicky/core/metadata';
+import {ExtensionsManager} from '@slicky/core/extensions';
+import {PlatformInline} from '../../';
+import {expect} from 'chai';
+
+
+let platform: PlatformInline;
+let metadataLoader: DirectiveMetadataLoader;
+
+
+describe('#PlatformInline', () => {
+
+	beforeEach(() => {
+		platform = new PlatformInline;
+		metadataLoader = new DirectiveMetadataLoader(new ExtensionsManager);
+	});
+
+	describe('compileComponentTemplate()', () => {
+
+		it('should throw an error', () => {
+			@Component({
+				name: 'test-component',
+				template: '',
+			})
+			class TestComponent {}
+
+			const metadata = metadataLoader.load(TestComponent);
+
+			expect(() => {
+				platform.compileComponentTemplate(metadata);
+			}).to.throw(Error, '@slicky/platform-inline can not compile component TestComponent. Precompile your templates with @slicky/compiler-cli or use @slicky/platform-browser instead.');
+		});
+
+	});
+
+});
