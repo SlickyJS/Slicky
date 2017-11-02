@@ -1,3 +1,4 @@
+import {exists} from '@slicky/utils';
 import {isValidHttpMethod} from '../utils';
 
 
@@ -64,6 +65,16 @@ export class HTTPRequest
 
 		if (options.jsonp && method !== 'GET') {
 			throw new Error('JSONP can be used only with GET HTTP method.');
+		}
+
+		if (method === 'POST' && data !== null) {
+			if (!exists(options.headers)) {
+				options.headers = {};
+			}
+
+			if (!exists(options.headers['Content-Type'])) {
+				options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+			}
 		}
 
 		this.url = url;
