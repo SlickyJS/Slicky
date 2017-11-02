@@ -1,4 +1,4 @@
-import {Directive, OnInit, OnTemplateInit, OnUpdate, Input, Output, ElementRef, DirectivesStorageRef} from '@slicky/core';
+import {Directive, OnInit, OnTemplateInit, OnUpdate, Input, Output, ElementRef, DirectivesStorageRef, ChangeDetectorRef} from '@slicky/core';
 import {EventEmitter} from '@slicky/event-emitter';
 import {AbstractInputControl} from './abstractInputControl';
 import {ValidationErrors} from '../validators';
@@ -26,13 +26,16 @@ export class ModelDirective<T, U extends Element> implements OnInit, OnTemplateI
 
 	private directives: DirectivesStorageRef;
 
+	private changeDetector: ChangeDetectorRef;
+
 	private control: AbstractInputControl<T, U>;
 
 
-	constructor(el: ElementRef<HTMLFormInputElement>, directives: DirectivesStorageRef)
+	constructor(el: ElementRef<HTMLFormInputElement>, directives: DirectivesStorageRef, changeDetector: ChangeDetectorRef)
 	{
 		this.el = el;
 		this.directives = directives;
+		this.changeDetector = changeDetector;
 	}
 
 
@@ -95,6 +98,7 @@ export class ModelDirective<T, U extends Element> implements OnInit, OnTemplateI
 		this.control = this.directives.find(<any>AbstractInputControl);
 		this.control.onChange.subscribe((value) => {
 			this.onChange.emit(value);
+			this.changeDetector.refresh();
 		});
 	}
 
