@@ -16,7 +16,7 @@
 	"types": "./lib/index.d.ts",
 	"dependencies": {
 		"@slicky/core": "^0.9.0",
-		"@slicky/forms": "^0.3.1",
+		"@slicky/forms": "^0.3.2",
 		"@slicky/tester": "^0.0.18",
 		"@slicky/utils": "^1.3.1",
 		"reflect-metadata": "^0.1.10",
