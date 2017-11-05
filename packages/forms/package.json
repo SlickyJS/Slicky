@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/forms",
 	"description": "Forms module for slicky framework",
-	"version": "0.3.2",
+	"version": "0.3.3",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -14,7 +14,7 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/core": "^0.9.0",
+		"@slicky/core": "^0.9.1",
 		"@slicky/event-emitter": "^1.0.2",
 		"@slicky/templates": "^1.3.0",
 		"@slicky/utils": "^1.3.1",

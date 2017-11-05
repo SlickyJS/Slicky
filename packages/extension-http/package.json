@@ -1,7 +1,7 @@
 {
 	"name": "@slicky/extension-http",
 	"description": "HTTP extension for slicky framework",
-	"version": "0.0.19",
+	"version": "0.0.20",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -14,13 +14,13 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/core": "^0.9.0",
-		"@slicky/di": "^1.0.1",
+		"@slicky/core": "^0.9.1",
+		"@slicky/di": "^1.0.2",
 		"@slicky/http": "^0.0.5"
 	},
 	"devDependencies": {
 		"@slicky/http": "^0.0.5",
-		"@slicky/tester": "^0.0.18",
+		"@slicky/tester": "^0.0.19",
 		"@types/chai": "^4.0.3",
 		"@types/mocha": "^2.2.41",
 		"@types/node": "^8.0.20",
