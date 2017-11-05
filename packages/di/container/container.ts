@@ -53,22 +53,7 @@ export class Container
 
 	public addService(type: ClassType<any>, options: ServiceOptions = {}): void
 	{
-		let realType = options.useClass ? options.useClass : type;
-
-		if (!options.useExisting && !options.useFactory && !options.useValue && !findAnnotation(realType, InjectableDefinition)) {
-			if (realType === type) {
-				throw new Error(`DI: Can not register service "${stringify(type)}" without @Injectable() annotation.`);
-			} else {
-				throw new Error(`DI: Can not register service "${stringify(type)}". Class "${stringify(realType)}" is without @Injectable() annotation.`);
-			}
-		}
-
-		this.services.push({
-			type: type,
-			options: options,
-			instance: undefined,
-			providers: [],
-		});
+		this._addService(type, options);
 	}
 
 
@@ -78,6 +63,22 @@ export class Container
 
 		if (!service) {
 			throw new Error(`DI: Service of type "${stringify(type)}" is not registered in DI container.`);
+		}
+
+		if (typeof service.instance === 'undefined') {
+			service.instance = this.createInstance(service);
+		}
+
+		return service.instance;
+	}
+
+
+	public addServiceAndGet(type: ClassType<any>, options: ServiceOptions = {}): any
+	{
+		let service = this.findService(type);
+
+		if (!service) {
+			service = this._addService(type, options);
 		}
 
 		if (typeof service.instance === 'undefined') {
@@ -120,6 +121,31 @@ export class Container
 		}
 
 		return null;
+	}
+
+
+	public _addService(type: ClassType<any>, options: ServiceOptions = {}): Service
+	{
+		const realType = options.useClass ? options.useClass : type;
+
+		if (!options.useExisting && !options.useFactory && !options.useValue && !findAnnotation(realType, InjectableDefinition)) {
+			if (realType === type) {
+				throw new Error(`DI: Can not register service "${stringify(type)}" without @Injectable() annotation.`);
+			} else {
+				throw new Error(`DI: Can not register service "${stringify(type)}". Class "${stringify(realType)}" is without @Injectable() annotation.`);
+			}
+		}
+
+		const service = {
+			type: type,
+			options: options,
+			instance: undefined,
+			providers: [],
+		};
+
+		this.services.push(service);
+
+		return service;
 	}
 
 

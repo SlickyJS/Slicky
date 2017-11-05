@@ -200,6 +200,35 @@ describe('#Container', () => {
 
 	});
 
+	describe('addServiceAndGet()', () => {
+
+		it('should create and get a service', () => {
+			@Injectable()
+			class TestService {}
+
+			let created = 0;
+
+			expect(container.addServiceAndGet(TestService, {
+				useFactory: () => {
+					created++;
+					return new TestService;
+				},
+			})).to.be.an.instanceOf(TestService);
+
+			expect(container.get(TestService)).to.be.an.instanceOf(TestService);
+
+			expect(container.addServiceAndGet(TestService, {
+				useFactory: () => {
+					created++;
+					return new TestService;
+				},
+			})).to.be.an.instanceOf(TestService);
+
+			expect(created).to.be.equal(1);
+		});
+
+	});
+
 	describe('create()', () => {
 
 		it('should create new instance of service', () => {
