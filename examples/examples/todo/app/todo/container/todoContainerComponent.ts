@@ -1,5 +1,6 @@
 import {Component, OnTemplateInit, ChildDirective} from '@slicky/core';
 import {FORM_DIRECTIVES, FormDirective} from '@slicky/forms';
+import {AbstractInputControl} from '@slicky/forms/directives';
 import {List} from 'immutable';
 import {Todo, DEFAULT_TODO_COLOR} from '../todo';
 import {TodoComponent, } from '../item/todoComponent';
@@ -139,7 +140,7 @@ export class TodoContainerComponent implements OnTemplateInit
 
 	private focusTextInput(): void
 	{
-		this.form.get('text').focus();
+		(<AbstractInputControl<any, any>>this.form.get('text')).focus();
 	}
 
 }

@@ -1,7 +1,7 @@
 import {Container} from '@slicky/di';
 import {Application} from '@slicky/application';
 import {ApplicationOptions} from '@slicky/application/application';
-import {RootDirectiveRunner, ComponentTemplate} from '@slicky/application/runtime';
+import {RootDirectiveRunner, ComponentTemplate, DirectivesStorageTemplate} from '@slicky/application/runtime';
 import {PlatformBrowser} from '@slicky/platform-browser';
 import {ClassType} from '@slicky/lang';
 import {isFunction} from '@slicky/utils';
@@ -79,8 +79,10 @@ export class Tester
 
 		let innerTemplate: ComponentTemplate;
 
-		rootDirective.template.eachChild((template: ComponentTemplate) => {
-			innerTemplate = template;
+		rootDirective.template.eachChild((template: DirectivesStorageTemplate) => {
+			template.eachChild((template: ComponentTemplate) => {
+				innerTemplate = template;
+			});
 		});
 
 		return new DirectiveRef(rootDirective.application, rootDirective.directive.directive, innerTemplate);

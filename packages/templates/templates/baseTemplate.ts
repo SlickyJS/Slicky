@@ -50,16 +50,7 @@ export abstract class BaseTemplate
 		this.parent = parent;
 		this.parameters = parameters;
 
-		this.realm = new Realm(
-			null,
-			(realm) => {
-				realm.runOutside(() => {
-					this.markForRefresh();
-				});
-			},
-			this.parent ? this.parent.realm : null
-		);
-
+		this.realm = new Realm(null, () => this.markForRefresh(), this.parent ? this.parent.realm : null);
 		this.watcher = new Watcher;
 
 		if (this.parent) {
@@ -97,26 +88,34 @@ export abstract class BaseTemplate
 			return;
 		}
 
-		if (!this.isRootTemplate() && !this.parent.refreshing) {
-			return this.root.markForRefresh();
-		}
-
 		this.refreshing = true;
 
-		nextTick(() => {
-			this.refresh();
-			this.refreshing = false;
+		this.realm.runOutside(() => {
+			nextTick(() => {
+				this.refresh();
+				this.refreshing = false;
+			});
 		});
 	}
 
 
 	public refresh(): void
 	{
+		if (!this.isRootTemplate()) {
+			return this.root.doRefresh();
+		}
+
+		this.doRefresh();
+	}
+
+
+	protected doRefresh(): void
+	{
 		this.watcher.check();
 
 		forEach(this.children, (child: BaseTemplate) => {
 			if (child.useRefreshFromParent) {
-				child.markForRefresh();
+				child.doRefresh();
 			}
 		});
 	}
@@ -140,9 +139,15 @@ export abstract class BaseTemplate
 	}
 
 
+	public hasOwnParameter(name: string): boolean
+	{
+		return exists(this.parameters[name]);
+	}
+
+
 	public getParameter(name: string): any
 	{
-		if (exists(this.parameters[name])) {
+		if (this.hasOwnParameter(name)) {
 			return this.parameters[name];
 		}
 
@@ -158,6 +163,14 @@ export abstract class BaseTemplate
 	}
 
 
+	public removeParameter(name: string): void
+	{
+		if (this.hasOwnParameter(name)) {
+			delete this.parameters[name];
+		}
+	}
+
+
 	public setDynamicParameter(name: string, valueCallback: () => any): void
 	{
 		this.watch(valueCallback, (value) => {
@@ -168,19 +181,11 @@ export abstract class BaseTemplate
 
 	public updateParameter(name: string, update: (value: any) => any): void
 	{
-		if (exists(this.parameters[name])) {
+		if (this.hasOwnParameter(name)) {
 			this.setParameter(name, update(this.getParameter(name)));
 
 		} else if (exists(this.parent) && this.useParentParameters) {
 			this.parent.updateParameter(name, update);
-		}
-	}
-
-
-	public removeParameter(name: string): void
-	{
-		if (exists(this.parameters[name])) {
-			delete this.parameters[name];
 		}
 	}
 

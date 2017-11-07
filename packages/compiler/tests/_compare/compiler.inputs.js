@@ -1,22 +1,24 @@
 return function(template, el, component) {
 	el.addElement("directive-child", {"attribute-input": "attr", "attribute-custom": "custom", "attribute-watch": ""}, function(el) {
-		template.root.createDirective(template, el, "@directive_0", "3055171198", function(directive) {
-			directive.attributeInput = "attr";
-			directive.attributeInputCustom = "custom";
-			template.watch(function() {
-				return (null);
-			}, function(value) {
-				directive.attributeInputWatch = value;
-			});
-			template.watch(function() {
-				return true;
-			}, function(value) {
-				directive.propertyInput = value;
-			});
-			template.watch(function() {
-				return false;
-			}, function(value) {
-				directive.propertyInputCustom = value;
+		template.root.createDirectivesStorageTemplate(template, el, function(template) {
+			template.addDirective("@directive_0", "3055171198", function(directive) {
+				directive.attributeInput = "attr";
+				directive.attributeInputCustom = "custom";
+				template.watch(function() {
+					return (null);
+				}, function(value) {
+					directive.attributeInputWatch = value;
+				});
+				template.watch(function() {
+					return true;
+				}, function(value) {
+					directive.propertyInput = value;
+				});
+				template.watch(function() {
+					return false;
+				}, function(value) {
+					directive.propertyInputCustom = value;
+				});
 			});
 		});
 		el.setDynamicAttribute("attribute-watch", function() {
@@ -24,26 +26,28 @@ return function(template, el, component) {
 		});
 	});
 	el.addElement("component-child", {"attribute-input": "attr", "attribute-custom": "custom", "attribute-watch": ""}, function(el) {
-		template.root.createComponent(template, el, "@directive_1", "3561984975", function(directive, template, outer) {
-			directive.attributeInput = "attr";
-			directive.attributeInputCustom = "custom";
-			outer.watch(function() {
-				return (null);
-			}, function(value) {
-				directive.attributeInputWatch = value;
-				template.markForRefresh();
-			});
-			outer.watch(function() {
-				return true;
-			}, function(value) {
-				directive.propertyInput = value;
-				template.markForRefresh();
-			});
-			outer.watch(function() {
-				return false;
-			}, function(value) {
-				directive.propertyInputCustom = value;
-				template.markForRefresh();
+		template.root.createDirectivesStorageTemplate(template, el, function(template) {
+			template.addComponent("@directive_1", "3561984975", function(directive, template, outer) {
+				directive.attributeInput = "attr";
+				directive.attributeInputCustom = "custom";
+				outer.watch(function() {
+					return (null);
+				}, function(value) {
+					directive.attributeInputWatch = value;
+					template.markForRefresh();
+				});
+				outer.watch(function() {
+					return true;
+				}, function(value) {
+					directive.propertyInput = value;
+					template.markForRefresh();
+				});
+				outer.watch(function() {
+					return false;
+				}, function(value) {
+					directive.propertyInputCustom = value;
+					template.markForRefresh();
+				});
 			});
 		});
 		el.setDynamicAttribute("attribute-watch", function() {

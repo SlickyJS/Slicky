@@ -77,6 +77,13 @@ export class SlickyEnginePlugin extends EnginePlugin
 		this.hook('onProcessElement', element, arg);
 
 		const directives = this.getDirectives(element, arg.matcher);
+
+		if (!directives.length) {
+			return element;
+		}
+
+		const directivesStorageSetup = createFunction(null, ['template']);
+
 		const elementInnerDirectives = {
 			element: element,
 			directives: [],
@@ -107,14 +114,12 @@ export class SlickyEnginePlugin extends EnginePlugin
 				processingDirective.setup.args.push('template');
 				processingDirective.setup.args.push('outer');
 
-				factoryMethod = 'createComponent';
+				factoryMethod = 'addComponent';
 			} else {
-				factoryMethod = 'createDirective';
+				factoryMethod = 'addDirective';
 			}
 
 			const factoryArguments = [
-				'template',
-				'el',
 				`"@directive_${processingDirective.id}"`,
 				`"${directive.metadata.id}"`,
 			];
@@ -123,10 +128,14 @@ export class SlickyEnginePlugin extends EnginePlugin
 				factoryArguments.push(processingDirective.setup.render());
 			}
 
-			arg.render.body.add(
-				`template.root.${factoryMethod}(${factoryArguments.join(', ')});`
+			directivesStorageSetup.body.add(
+				`template.${factoryMethod}(${factoryArguments.join(', ')});`
 			);
 		});
+
+		arg.render.body.add(
+			`template.root.createDirectivesStorageTemplate(template, el, ${directivesStorageSetup.render()});`
+		);
 
 		forEach(processingDirectives, (processingDirective: ElementProcessingDirective) => {
 			this.hook('onProcessDirective', element, processingDirective, arg);

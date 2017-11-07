@@ -3,7 +3,9 @@ return function(template, el, component) {
 		component.onInit();
 	});
 	el.addElement("test-directive", {}, function(el) {
-		template.root.createDirective(template, el, "@directive_0", "2518409384");
+		template.root.createDirectivesStorageTemplate(template, el, function(template) {
+			template.addDirective("@directive_0", "2518409384");
+		});
 		template.getParameter("@directive_0").onInit();
 		el.addElement("div");
 		template.getParameter("@directive_0").onTemplateInit();
