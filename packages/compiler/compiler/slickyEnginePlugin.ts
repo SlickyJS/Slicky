@@ -13,7 +13,7 @@ import * as plugins from './plugins';
 declare interface ElementInnerDirectives
 {
 	element: _.ASTHTMLNodeElement;
-	directives: Array<c.DirectiveDefinitionDirective>;
+	directives: Array<c.DirectiveDefinitionInnerDirective>;
 }
 
 
@@ -21,7 +21,7 @@ export declare interface ElementProcessingDirective
 {
 	id: number;
 	setup: BuilderFunction;
-	directive: c.DirectiveDefinitionDirective;
+	directive: c.DirectiveDefinitionInnerDirective;
 }
 
 
@@ -62,6 +62,8 @@ export class SlickyEnginePlugin extends EnginePlugin
 	public onBeforeCompile(arg: OnBeforeCompileArgument): void
 	{
 		arg.render.args.push('component');
+		arg.render.args.push('directivesProvider');
+
 		this.hook('onBeforeCompile', arg);
 	}
 
@@ -82,7 +84,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 			return element;
 		}
 
-		const directivesStorageSetup = createFunction(null, ['template']);
+		const directivesStorageSetup = createFunction(null, ['template', 'directivesProvider']);
 
 		const elementInnerDirectives = {
 			element: element,
@@ -93,7 +95,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 
 		const processingDirectives: Array<ElementProcessingDirective> = [];
 
-		forEach(directives, (directive: c.DirectiveDefinitionDirective) => {
+		forEach(directives, (directive: c.DirectiveDefinitionInnerDirective) => {
 			if (directive.metadata.type === c.DirectiveDefinitionType.Directive) {
 				elementInnerDirectives.directives = unique(merge(elementInnerDirectives.directives, directive.metadata.directives));
 			}
@@ -121,7 +123,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 
 			const factoryArguments = [
 				`"@directive_${processingDirective.id}"`,
-				`"${directive.metadata.id}"`,
+				`directivesProvider.getDirectiveTypeByName("${directive.metadata.id}")`,
 			];
 
 			if (!processingDirective.setup.body.isEmpty()) {
@@ -134,7 +136,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 		});
 
 		arg.render.body.add(
-			`template.root.createDirectivesStorageTemplate(template, el, ${directivesStorageSetup.render()});`
+			`template.root.createDirectivesStorageTemplate(template, directivesProvider, el, ${directivesStorageSetup.render()});`
 		);
 
 		forEach(processingDirectives, (processingDirective: ElementProcessingDirective) => {
@@ -176,7 +178,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 	}
 
 
-	private getDirectives(element: _.ASTHTMLNodeElement, matcher: Matcher): Array<c.DirectiveDefinitionDirective>
+	private getDirectives(element: _.ASTHTMLNodeElement, matcher: Matcher): Array<c.DirectiveDefinitionInnerDirective>
 	{
 		let directives = clone(this.metadata.directives);
 
@@ -186,7 +188,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 
 		directives = unique(directives);
 
-		directives = filter(directives, (directive: c.DirectiveDefinitionDirective) => {
+		directives = filter(directives, (directive: c.DirectiveDefinitionInnerDirective) => {
 			if (!matcher.matches(element, directive.metadata.selector)) {
 				return false;
 			}
@@ -194,11 +196,11 @@ export class SlickyEnginePlugin extends EnginePlugin
 			return true;
 		});
 
-		const result: Array<c.DirectiveDefinitionDirective> = [];
+		const result: Array<c.DirectiveDefinitionInnerDirective> = [];
 		const componentNames: Array<string> = [];
 
-		forEach(directives, (directive: c.DirectiveDefinitionDirective) => {
-			const dependencyFor: c.DirectiveDefinitionDirective = find(directives, (dependencyFor: c.DirectiveDefinitionDirective) => {
+		forEach(directives, (directive: c.DirectiveDefinitionInnerDirective) => {
+			const dependencyFor: c.DirectiveDefinitionInnerDirective = find(directives, (dependencyFor: c.DirectiveDefinitionInnerDirective) => {
 				if (
 					dependencyFor.metadata.override &&
 					(

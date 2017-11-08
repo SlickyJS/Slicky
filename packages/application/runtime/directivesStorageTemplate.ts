@@ -3,6 +3,7 @@ import {
 	RenderableEmbeddedTemplateFactory, EmbeddedTemplatesContainer
 } from '@slicky/templates/templates';
 import {Renderer} from '@slicky/templates/dom';
+import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {Container, ProviderOptions} from '@slicky/di';
 import {isFunction} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
@@ -10,25 +11,34 @@ import {ChangeDetector, ChangeDetectorRef, RealmRef} from '@slicky/core/directiv
 import {DirectiveDefinition} from '@slicky/core/metadata';
 import {ComponentTemplate} from './componentTemplate';
 import {DirectiveFactory} from './directiveFactory';
+import {DirectiveTypesProvider} from './directiveTypesProvider';
 
 
 export class DirectivesStorageTemplate extends RenderableTemplate
 {
 
 
+	public root: ComponentTemplate;
+
 	private container: Container;
 
 	private directiveFactory: DirectiveFactory;
 
+	private metadataLoader: DirectiveMetadataLoader;
+
+	private parentDirectivesProvider: DirectiveTypesProvider;
+
 	private el: TemplateElement;
 
 
-	constructor(document: Document, renderer: Renderer, application: ApplicationTemplate, root: ComponentTemplate, parent: BaseTemplate, container: Container, directiveFactory: DirectiveFactory, el: TemplateElement, parameters: TemplateParametersList = {})
+	constructor(document: Document, renderer: Renderer, application: ApplicationTemplate, root: ComponentTemplate, parent: BaseTemplate, container: Container, directiveFactory: DirectiveFactory, metadataLoader: DirectiveMetadataLoader, parentDirectivesProvider: DirectiveTypesProvider, el: TemplateElement, parameters: TemplateParametersList = {})
 	{
 		super(document, renderer, application, root, parent, parameters);
 
 		this.container = container;
 		this.directiveFactory = directiveFactory;
+		this.metadataLoader = metadataLoader;
+		this.parentDirectivesProvider = parentDirectivesProvider;
 		this.el = el;
 
 		this.initialized = true;
@@ -59,23 +69,22 @@ export class DirectivesStorageTemplate extends RenderableTemplate
 	}
 
 
-	public addDirective<T>(name: string, id: string, setup?: (directive: T) => void): void
+	public addDirective<T>(localParameterName: string, directiveType: ClassType<any>, setup?: (directive: T) => void): void
 	{
-		const metadata = this.directiveFactory.getMetadataById(id);
-		const directiveType = this.directiveFactory.getDirectiveTypeById(id);
+		const metadata = this.metadataLoader.loadDirective(directiveType);
 
-		this._createDirective(name, this.container, directiveType, metadata, [], setup);
+		this.parentDirectivesProvider.registerInnerDirectives(metadata.directives);
+
+		this._createDirective(localParameterName, this.container, directiveType, metadata, [], setup);
 	}
 
 
-	public addComponent(name: string, id: string, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): void
+	public addComponent(localParameterName: string, componentType: ClassType<any>, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): void
 	{
 		const changeDetector = new ChangeDetector;
 		const realm = new RealmRef;
 
-		const metadata = this.directiveFactory.getMetadataById(id);
-		const componentType = this.directiveFactory.getDirectiveTypeById(id);
-
+		const metadata = this.metadataLoader.loadDirective(componentType);
 		const container = this.container.fork();
 
 		container.addService(ChangeDetectorRef, {
@@ -86,13 +95,19 @@ export class DirectivesStorageTemplate extends RenderableTemplate
 			useValue: realm,
 		});
 
-		const component = this._createDirective(name, container, componentType, metadata);
+		const component = this._createDirective(localParameterName, container, componentType, metadata);
 
 		this.directiveFactory.runComponent(container, component, metadata, this, this.el._nativeNode, changeDetector, realm, setup);
 	}
 
 
-	private _createDirective<T>(name: string, container: Container, directiveType: ClassType<T>, metadata: DirectiveDefinition, providers: Array<ProviderOptions> = [], setup?: (directive: T) => void): T
+	protected createEmbeddedTemplatesContainer(factory: RenderableEmbeddedTemplateFactory, marker: Comment): EmbeddedTemplatesContainer
+	{
+		return new EmbeddedTemplatesContainer(this.application, this.root, this, this.document, this.renderer, factory, marker);
+	}
+
+
+	private _createDirective<T>(localParameterName: string, container: Container, directiveType: ClassType<T>, metadata: DirectiveDefinition, providers: Array<ProviderOptions> = [], setup?: (directive: T) => void): T
 	{
 		const directive = <T>this.directiveFactory.createDirective(container, directiveType, metadata, this.el._nativeNode, providers);
 
@@ -100,23 +115,17 @@ export class DirectivesStorageTemplate extends RenderableTemplate
 			setup(directive);
 		}
 
-		this.setParameter(name, directive);
+		this.setParameter(localParameterName, directive);
 
 		this.onDestroy(() => {
 			if (isFunction(directive['onDestroy'])) {
 				this.run(() => directive['onDestroy']());
 			}
 
-			this.removeParameter(name);
+			this.removeParameter(localParameterName);
 		});
 
 		return directive;
-	}
-
-
-	protected createEmbeddedTemplatesContainer(factory: RenderableEmbeddedTemplateFactory, marker: Comment): EmbeddedTemplatesContainer
-	{
-		return new EmbeddedTemplatesContainer(this.application, this.root, this, this.document, this.renderer, factory, marker);
 	}
 
 }

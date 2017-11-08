@@ -27,7 +27,7 @@ describe('#PlatformInline', () => {
 			})
 			class TestComponent {}
 
-			const metadata = metadataLoader.load(TestComponent);
+			const metadata = metadataLoader.loadDirective(TestComponent);
 
 			expect(() => {
 				platform.compileComponentTemplate(metadata);

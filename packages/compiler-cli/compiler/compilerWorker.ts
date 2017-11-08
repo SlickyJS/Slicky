@@ -47,7 +47,7 @@ forEach(directives, (directiveExport: string) => {
 	let template: string;
 
 	try {
-		metadata = metadataLoader.load(directive);
+		metadata = metadataLoader.loadDirective(directive);
 	} catch (e) {
 		process.send({error: e.message});
 		process.exit(1);
@@ -66,7 +66,6 @@ forEach(directives, (directiveExport: string) => {
 		directive: {
 			file: file,
 			type: metadata.type,
-			id: metadata.id,
 			name: metadata.name,
 			template: template,
 		},

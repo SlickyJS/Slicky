@@ -1,7 +1,7 @@
-return function(template, el, component) {
+return function(template, el, component, directivesProvider) {
 	el.addElement("directive", {}, function(el) {
-		template.root.createDirectivesStorageTemplate(template, el, function(template) {
-			template.addDirective("@directive_0", "1776634003", function(directive) {
+		template.root.createDirectivesStorageTemplate(template, directivesProvider, el, function(template, directivesProvider) {
+			template.addDirective("@directive_0", directivesProvider.getDirectiveTypeByName("TestDirective"), function(directive) {
 				template.onDestroy(function() {
 					directive.onDestroy();
 				});

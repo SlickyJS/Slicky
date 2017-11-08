@@ -1,11 +1,11 @@
-return function(template, el, component) {
+return function(template, el, component, directivesProvider) {
 	el.addElement("parent-directive", {}, function(el) {
-		template.root.createDirectivesStorageTemplate(template, el, function(template) {
-			template.addDirective("@directive_0", "2408510398");
+		template.root.createDirectivesStorageTemplate(template, directivesProvider, el, function(template, directivesProvider) {
+			template.addDirective("@directive_0", directivesProvider.getDirectiveTypeByName("TestParentDirective"));
 		});
 		el.addElement("child-component", {}, function(el) {
-			template.root.createDirectivesStorageTemplate(template, el, function(template) {
-				template.addComponent("@directive_1", "4115505327", function(directive, template, outer) {
+			template.root.createDirectivesStorageTemplate(template, directivesProvider, el, function(template, directivesProvider) {
+				template.addComponent("@directive_1", directivesProvider.getDirectiveTypeByName("TestChildComponent"), function(directive, template, outer) {
 					template.getParameter("@directive_0").directive = directive;
 				});
 			});

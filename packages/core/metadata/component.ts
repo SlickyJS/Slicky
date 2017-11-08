@@ -44,7 +44,7 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 		}
 
 		if (!exists(options.template) && !exists(options.render)) {
-			throw new Error(`Component "${options.name}": missing template or render function.`);
+			throw new Error(`Component "${options.name}": missing template.`);
 		}
 
 		if (exists(options.template)) {

@@ -1,7 +1,7 @@
 import {BaseTemplate, ApplicationTemplate, TemplateRenderFactory, TemplateEncapsulation} from '@slicky/templates/templates';
 import {Renderer} from '@slicky/templates/dom';
 import {ElementRef, FilterInterface, DirectivesStorageRef, RealmRef} from '@slicky/core';
-import {DirectiveMetadataLoader, DirectiveDefinitionDirective, DirectiveDefinition, DirectiveDefinitionFilter} from '@slicky/core/metadata';
+import {DirectiveMetadataLoader, DirectiveDefinition, DirectiveDefinitionFilterMetadata} from '@slicky/core/metadata';
 import {DirectivesStorage, ChangeDetector} from '@slicky/core/directives';
 import {ExtensionsManager} from '@slicky/core/extensions';
 import {forEach, isFunction, exists} from '@slicky/utils';
@@ -9,6 +9,7 @@ import {Container, ProviderOptions} from '@slicky/di';
 import {ClassType} from '@slicky/lang';
 import {PlatformInterface} from '../platform';
 import {ComponentTemplate} from './componentTemplate';
+import {DirectiveTypesProvider} from './directiveTypesProvider';
 
 
 export class DirectiveFactory
@@ -30,8 +31,6 @@ export class DirectiveFactory
 
 	private metadataLoader: DirectiveMetadataLoader;
 
-	private directives: {[id: number]: DirectiveDefinitionDirective} = {};
-
 
 	constructor(document: Document, platform: PlatformInterface, extensions: ExtensionsManager, metadataLoader: DirectiveMetadataLoader, application: ApplicationTemplate, renderer: Renderer)
 	{
@@ -41,22 +40,6 @@ export class DirectiveFactory
 		this.application = application;
 		this.renderer = renderer;
 		this.metadataLoader = metadataLoader;
-
-		metadataLoader.loaded.subscribe((directive: DirectiveDefinitionDirective) => {
-			this.directives[directive.metadata.id] = directive;
-		});
-	}
-
-
-	public getDirectiveTypeById<T>(id: string): ClassType<T>
-	{
-		return this.directives[id].directiveType;
-	}
-
-
-	public getMetadataById(id: string): DirectiveDefinition
-	{
-		return this.directives[id].metadata;
 	}
 
 
@@ -98,12 +81,12 @@ export class DirectiveFactory
 			templateFactory = this.platform.compileComponentTemplate(metadata);
 		}
 
-		const template = new ComponentTemplate(this.document, this.renderer, container, this, this.application, parent);
+		const template = new ComponentTemplate(this.document, this.renderer, container, this, this.metadataLoader, this.application, parent);
 
 		changeDetector.setTemplate(template);
 		realm._initialize(template.realm);
 
-		forEach(metadata.filters, (filterData: DirectiveDefinitionFilter) => {
+		forEach(metadata.filters, (filterData: DirectiveDefinitionFilterMetadata) => {
 			const filter = <FilterInterface>container.create(filterData.filterType);
 
 			template.addFilter(filterData.metadata.name, (modify: any, ...args: Array<any>) => {
@@ -111,13 +94,15 @@ export class DirectiveFactory
 			});
 		});
 
+		const directivesProvider = new DirectiveTypesProvider(metadata.directives);
+
 		if (isFunction(setup)) {
 			setup(component, template, parent);
 		}
 
 		template.render(el, {
 			useShadowDOM: metadata.encapsulation === TemplateEncapsulation.Native,
-		}, templateFactory, component);
+		}, templateFactory, component, directivesProvider);
 
 		return template;
 	}

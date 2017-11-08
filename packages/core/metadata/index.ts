@@ -3,6 +3,7 @@ export * from './childrenDirective';
 export * from './component';
 export * from './directive';
 export * from './directiveMetadataLoader';
+export * from './filterMetadataLoader';
 export * from './filter';
 export * from './hostElement';
 export * from './hostEvent';

@@ -49,8 +49,8 @@ export class Compiler
 
 			forEach(files, (file: ParsedFile) => {
 				forEach(file.components, (component: ParsedComponent) => {
-					const exportAs = `factory${component.id}`;
-					const fileName = `tmpl_${component.name}_${component.id}`;
+					const exportAs = `factory${component.name}`;
+					const fileName = `tmpl_${component.name}_${component.name}`;
 
 					const templateData = (
 						`export function ${exportAs}()\n` +
@@ -62,7 +62,7 @@ export class Compiler
 					writeFileSync(path.join(config.outDir, `${fileName}.ts`), templateData, {encoding: 'utf8'});
 
 					imports.push(`import {${exportAs}} from './${fileName}';`);
-					mappings.push(`${component.id}: ${exportAs}`);
+					mappings.push(`${component.name}: ${exportAs}`);
 				});
 			});
 
@@ -71,12 +71,12 @@ export class Compiler
 				`const mapping = {\n` +
 				`${indent(mappings.join(',\n'))}\n` +
 				`};\n\n\n` +
-				`export function APP_TEMPLATES_FACTORY(id: string)\n` +
+				`export function APP_TEMPLATES_FACTORY(name: string)\n` +
 				`{\n` +
-				`	if (typeof mapping[id] === 'undefined') {\n` +
-				`		throw new Error("Component template " + id + " does not exists.");\n` +
+				`	if (typeof mapping[name] === 'undefined') {\n` +
+				`		throw new Error("Component template " + name + " does not exists.");\n` +
 				`	}\n\n` +
-				`	return mapping[id]();\n` +
+				`	return mapping[name]();\n` +
 				`}\n`
 			);
 

@@ -52,7 +52,7 @@ export class Tester
 		const rootRunner = <RootDirectiveRunner>app.container.get(RootDirectiveRunner);
 
 		const elNode = app.document.body.childNodes[0];
-		const directive = rootRunner.runDirective(directiveType, metadataLoader.load(directiveType), <Element>elNode);
+		const directive = rootRunner.runDirective(directiveType, metadataLoader.loadDirective(directiveType), <Element>elNode);
 
 		return new DirectiveRef(app, directive.getDirective(), directive.getTemplate());
 	}

@@ -1,3 +1,3 @@
-return function(template, el, component) {
+return function(template, el, component, directivesProvider) {
 
 }

@@ -1,21 +1,22 @@
-import {findAnnotation, getPropertiesMetadata} from '@slicky/reflection';
-import {exists, forEach, stringify, hash, map, isFunction, merge, unique, camelCaseToHyphens, flatten} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
-import {EventEmitter} from '@slicky/event-emitter';
-import {TemplateEncapsulation} from '@slicky/templates/templates';
-import {RenderableTemplateFactory} from '@slicky/templates/templates';
+import {stringify, isFunction, forEach, exists, camelCaseToHyphens, flatten, map, unique, merge, find} from '@slicky/utils';
+import {findAnnotation, getPropertiesMetadata} from '@slicky/reflection';
+import {RenderableTemplateFactory, TemplateEncapsulation} from '@slicky/templates/templates';
+import {DirectiveAnnotationDefinition} from './directive';
+import {ComponentAnnotationDefinition} from './component';
 import {InputDefinition} from './input';
-import {RequiredDefinition} from './required';
 import {OutputDefinition} from './output';
+import {RequiredDefinition} from './required';
 import {HostElementDefinition} from './hostElement';
 import {HostEventDefinition} from './hostEvent';
 import {ChildDirectiveDefinition} from './childDirective';
 import {ChildrenDirectiveDefinition} from './childrenDirective';
-import {DirectiveAnnotationDefinition} from './directive';
-import {ComponentAnnotationDefinition} from './component';
-import {FilterDefinition} from './filter';
 import {FilterInterface} from '../filters';
 import {ExtensionsManager} from '../extensions';
+import {FilterMetadata, FilterMetadataLoader} from './filterMetadataLoader';
+
+
+const STATIC_DIRECTIVE_METADATA_STORAGE = '__slicky__directive__metadata__';
 
 
 export enum DirectiveDefinitionType
@@ -33,9 +34,6 @@ export declare interface DirectiveDefinitionInput
 }
 
 
-export type DirectiveDefinitionInputsList = Array<DirectiveDefinitionInput>;
-
-
 export declare interface DirectiveDefinitionOutput
 {
 	property: string,
@@ -43,18 +41,12 @@ export declare interface DirectiveDefinitionOutput
 }
 
 
-export type DirectiveDefinitionOutputsList = Array<DirectiveDefinitionOutput>;
-
-
 export declare interface DirectiveDefinitionElement
 {
 	property: string,
-	selector?: string,
+	selector: string,
 	required: boolean,
 }
-
-
-export type DirectiveDefinitionElementsList = Array<DirectiveDefinitionElement>;
 
 
 export declare interface DirectiveDefinitionEvent
@@ -66,59 +58,42 @@ export declare interface DirectiveDefinitionEvent
 }
 
 
-export type DirectiveDefinitionEventsList = Array<DirectiveDefinitionEvent>;
-
-
 export declare interface DirectiveDefinitionChildDirective
 {
 	property: string,
-	directiveType: ClassType<any>,
 	required: boolean,
+	directiveType: ClassType<any>,
 	metadata: DirectiveDefinition,
 }
-
-
-export type DirectiveDefinitionChildDirectivesList = Array<DirectiveDefinitionChildDirective>;
 
 
 export declare interface DirectiveDefinitionChildrenDirective
 {
 	property: string,
 	directiveType: ClassType<any>,
+	metadata: DirectiveDefinition,
 }
 
 
-export type DirectiveDefinitionChildrenDirectivesList = Array<DirectiveDefinitionChildrenDirective>;
-
-
-export declare interface DirectiveDefinitionDirective
+export declare interface DirectiveDefinitionInnerDirective
 {
 	directiveType: ClassType<any>,
 	metadata: DirectiveDefinition,
 }
 
 
-export type DirectiveDefinitionDirectivesList = Array<DirectiveDefinitionDirective>;
-
-
-export declare interface DirectiveDefinitionFilter
+export declare interface DirectiveDefinitionFilterMetadata
 {
 	filterType: ClassType<FilterInterface>,
-	metadata: {
-		name: string,
-		id: string,
-	},
+	metadata: FilterMetadata,
 }
 
 
-export type DirectiveDefinitionFiltersList = Array<DirectiveDefinitionFilter>;
-
-
-export declare interface DirectiveDefinition {
+export declare interface DirectiveDefinition
+{
 	type: DirectiveDefinitionType,
-	name: string,
-	uniqueName: string,
 	id: string,
+	name: string,
 	selector: string,
 	exportAs?: string,
 	onInit: boolean,
@@ -126,16 +101,16 @@ export declare interface DirectiveDefinition {
 	onTemplateInit: boolean,
 	onUpdate: boolean,
 	onAttach: boolean,
-	inputs: DirectiveDefinitionInputsList,
-	outputs: DirectiveDefinitionOutputsList,
-	elements: DirectiveDefinitionElementsList,
-	events: DirectiveDefinitionEventsList,
-	directives: DirectiveDefinitionDirectivesList,
-	override?: DirectiveDefinitionDirective,
-	childDirectives: DirectiveDefinitionChildDirectivesList,
-	childrenDirectives: DirectiveDefinitionChildrenDirectivesList,
+	inputs: Array<DirectiveDefinitionInput>,
+	outputs: Array<DirectiveDefinitionOutput>,
+	elements: Array<DirectiveDefinitionElement>,
+	events: Array<DirectiveDefinitionEvent>,
+	directives: Array<DirectiveDefinitionInnerDirective>,
+	override?: DirectiveDefinitionInnerDirective,
+	childDirectives: Array<DirectiveDefinitionChildDirective>,
+	childrenDirectives: Array<DirectiveDefinitionChildrenDirective>,
 	template?: string|RenderableTemplateFactory,
-	filters?: DirectiveDefinitionFiltersList,
+	filters?: Array<DirectiveDefinitionFilterMetadata>,
 	styles?: Array<string>,
 	encapsulation?: TemplateEncapsulation,
 	[name: string]: any,
@@ -146,111 +121,183 @@ export class DirectiveMetadataLoader
 {
 
 
-	public loaded = new EventEmitter<DirectiveDefinitionDirective>();
-
 	private extensions: ExtensionsManager;
 
-	private definitions: {[id: string]: DirectiveDefinition} = {};
+	private filterMetadataLoader: FilterMetadataLoader;
 
-	private filters: Array<ClassType<FilterInterface>> = [];
+	private globalFilters: Array<ClassType<FilterInterface>> = [];
 
 
 	constructor(extensions: ExtensionsManager)
 	{
 		this.extensions = extensions;
+		this.filterMetadataLoader = new FilterMetadataLoader;
 	}
 
 
 	public addGlobalFilters(filters: Array<ClassType<FilterInterface>>): void
 	{
-		this.filters = merge(this.filters, filters);
+		this.globalFilters = unique(merge(this.globalFilters, filters));
 	}
 
 
-	public load(directiveType: ClassType<any>): DirectiveDefinition
+	public loadDirective(directiveType: ClassType<any>): DirectiveDefinition
+	{
+		if (!exists(directiveType[STATIC_DIRECTIVE_METADATA_STORAGE])) {
+			directiveType[STATIC_DIRECTIVE_METADATA_STORAGE] = this._loadMetadata(directiveType);
+		}
+
+		return directiveType[STATIC_DIRECTIVE_METADATA_STORAGE];
+	}
+
+
+	private _loadMetadata(directiveType: ClassType<any>): DirectiveDefinition
 	{
 		let annotation: DirectiveAnnotationDefinition;
+		let type: DirectiveDefinitionType = DirectiveDefinitionType.Directive;
 
 		if (!(annotation = findAnnotation(directiveType, ComponentAnnotationDefinition))) {
 			if (!(annotation = findAnnotation(directiveType, DirectiveAnnotationDefinition))) {
 				throw new Error(`Class "${stringify(directiveType)}" is not a directive. Please add @Directive() or @Component() annotation.`);
 			}
+		} else {
+			type = DirectiveDefinitionType.Component;
 		}
 
-		let name = stringify(directiveType);
-		let directiveId = exists(annotation.id) ? annotation.id : this.getDirectiveId(name, annotation);
+		const name = stringify(directiveType);
 
-		if (exists(this.definitions[directiveId])) {
-			return this.definitions[directiveId];
+		const metadata: DirectiveDefinition = {
+			type: type,
+			id: exists(annotation.id) ? annotation.id : name,
+			name: name,
+			selector: annotation.selector,
+			onInit: isFunction(directiveType.prototype.onInit),
+			onDestroy: isFunction(directiveType.prototype.onDestroy),
+			onTemplateInit: isFunction(directiveType.prototype.onTemplateInit),
+			onUpdate: isFunction(directiveType.prototype.onUpdate),
+			onAttach: isFunction(directiveType.prototype.onAttach),
+			directives: this.loadDirectivesMetadata(annotation),
+			inputs: [],
+			outputs: [],
+			elements: [],
+			events: [],
+			childDirectives: [],
+			childrenDirectives: [],
+		};
+
+		this.loadPropertiesMetadata(metadata, directiveType);
+
+		if (annotation.exportAs) {
+			metadata.exportAs = annotation.exportAs;
 		}
 
-		let uniqueName = name + '_' + directiveId;
+		if (annotation.override) {
+			metadata.override = {
+				directiveType: annotation.override,
+				metadata: this.loadDirective(annotation.override),
+			};
+		}
 
-		let inputs: DirectiveDefinitionInputsList = [];
-		let outputs: DirectiveDefinitionOutputsList = [];
-		let elements: DirectiveDefinitionElementsList = [];
-		let events: DirectiveDefinitionEventsList = [];
-		let childDirectives: DirectiveDefinitionChildDirectivesList = [];
-		let childrenDirectives: DirectiveDefinitionChildrenDirectivesList = [];
+		if (annotation instanceof ComponentAnnotationDefinition) {
+			metadata.encapsulation = annotation.encapsulation;
+			metadata.template = annotation.template;
+			metadata.styles = annotation.styles;
+			metadata.filters = this.loadFiltersMetadata(annotation);
+		}
 
+		this.validate(metadata);
+
+		this.extensions.doUpdateDirectiveMetadata(directiveType, metadata, annotation._options);
+
+		return metadata;
+	}
+
+
+	private loadDirectivesMetadata(annotation: DirectiveAnnotationDefinition): Array<DirectiveDefinitionInnerDirective>
+	{
+		return map(unique(flatten(annotation.directives)), (directiveType: ClassType<any>): DirectiveDefinitionInnerDirective => {
+			return {
+				directiveType: directiveType,
+				metadata: this.loadDirective(directiveType),
+			};
+		});
+	}
+
+
+	private loadFiltersMetadata(annotation: ComponentAnnotationDefinition): Array<DirectiveDefinitionFilterMetadata>
+	{
+		const filters = merge(this.globalFilters, annotation.filters);
+
+		return map(unique(filters), (filterType: ClassType<FilterInterface>): DirectiveDefinitionFilterMetadata => {
+			return {
+				filterType: filterType,
+				metadata: this.filterMetadataLoader.loadFilter(filterType),
+			};
+		});
+	}
+
+
+	private loadPropertiesMetadata(metadata: DirectiveDefinition, directiveType: ClassType<any>): void
+	{
 		forEach(getPropertiesMetadata(directiveType), (metadataList: Array<any>, property: string) => {
 			let input: DirectiveDefinitionInput;
-			let childDirective: DirectiveDefinitionChildDirective;
 			let element: DirectiveDefinitionElement;
+			let childDirective: DirectiveDefinitionChildDirective;
 
 			let required: boolean = false;
 
-			forEach(metadataList, (metadata: any) => {
-				if (metadata instanceof InputDefinition) {
+			forEach(metadataList, (propertyMetadata: any) => {
+				if (propertyMetadata instanceof InputDefinition) {
 					input = {
 						property: property,
-						name: camelCaseToHyphens(exists(metadata.name) ? metadata.name : property),
+						name: camelCaseToHyphens(exists(propertyMetadata.name) ? propertyMetadata.name : property),
 						required: false,
 					};
 
-				} else if (metadata instanceof RequiredDefinition) {
+				} else if (propertyMetadata instanceof RequiredDefinition) {
 					required = true;
 
-				} else if (metadata instanceof OutputDefinition) {
-					outputs.push({
+				} else if (propertyMetadata instanceof OutputDefinition) {
+					metadata.outputs.push({
 						property: property,
-						name: camelCaseToHyphens(exists(metadata.name) ? metadata.name : property),
+						name: camelCaseToHyphens(exists(propertyMetadata.name) ? propertyMetadata.name : property),
 					});
 
-				} else if (metadata instanceof HostElementDefinition) {
+				} else if (propertyMetadata instanceof HostElementDefinition) {
 					element = {
 						property: property,
 						required: false,
-						selector: metadata.selector
+						selector: propertyMetadata.selector,
 					};
 
-				} else if (metadata instanceof HostEventDefinition) {
+				} else if (propertyMetadata instanceof HostEventDefinition) {
 					let event: DirectiveDefinitionEvent = {
 						method: property,
-						event: metadata.event,
+						event: propertyMetadata.event,
 					};
 
-					if (metadata.selector && metadata.selector.charAt(0) === '@') {
-						event.hostElement = metadata.selector.substring(1);
+					if (propertyMetadata.selector && propertyMetadata.selector.charAt(0) === '@') {
+						event.hostElement = propertyMetadata.selector.substring(1);
 
-					} else if (metadata.selector) {
-						event.selector = metadata.selector;
+					} else if (propertyMetadata.selector) {
+						event.selector = propertyMetadata.selector;
 					}
 
-					events.push(event);
+					metadata.events.push(event);
 
-				} else if (metadata instanceof ChildDirectiveDefinition) {
+				} else if (propertyMetadata instanceof ChildDirectiveDefinition) {
 					childDirective = {
 						property: property,
-						directiveType: metadata.directiveType,
 						required: false,
-						metadata: this.load(metadata.directiveType),
+						directiveType: propertyMetadata.directiveType,
+						metadata: this.loadDirective(propertyMetadata.directiveType),
 					};
 
-				} else if (metadata instanceof ChildrenDirectiveDefinition) {
-					childrenDirectives.push({
+				} else if (propertyMetadata instanceof ChildrenDirectiveDefinition) {
+					metadata.childrenDirectives.push({
 						property: property,
-						directiveType: metadata.directiveType,
+						directiveType: propertyMetadata.directiveType,
+						metadata: this.loadDirective(propertyMetadata.directiveType),
 					});
 				}
 			});
@@ -260,129 +307,39 @@ export class DirectiveMetadataLoader
 					input.required = true;
 				}
 
-				inputs.push(input);
+				metadata.inputs.push(input);
 
 			} else if (childDirective) {
 				if (required) {
 					childDirective.required = true;
 				}
 
-				childDirectives.push(childDirective);
+				metadata.childDirectives.push(childDirective);
 
 			} else if (element) {
 				if (required) {
 					element.required = true;
 				}
 
-				elements.push(element);
+				metadata.elements.push(element);
 			}
 		});
+	}
 
-		let definition: DirectiveDefinition = {
-			type: DirectiveDefinitionType.Directive,
-			name: name,
-			uniqueName: uniqueName,
-			id: directiveId,
-			selector: annotation.selector,
-			onInit: isFunction(directiveType.prototype.onInit),
-			onDestroy: isFunction(directiveType.prototype.onDestroy),
-			onTemplateInit: isFunction(directiveType.prototype.onTemplateInit),
-			onUpdate: isFunction(directiveType.prototype.onUpdate),
-			onAttach: isFunction(directiveType.prototype.onAttach),
-			inputs: inputs,
-			outputs: outputs,
-			elements: elements,
-			events: events,
-			directives: map(flatten(annotation.directives), (directiveType: ClassType<any>): DirectiveDefinitionDirective => {
-				return {
-					directiveType: directiveType,
-					metadata: this.load(directiveType),
-				};
-			}),
-			childDirectives: childDirectives,
-			childrenDirectives: childrenDirectives,
-		};
 
-		if (annotation.override) {
-			definition.override = {
-				directiveType: annotation.override,
-				metadata: this.load(annotation.override),
-			};
-		}
+	private validate(metadata: DirectiveDefinition): void
+	{
+		forEach(metadata.events, (event: DirectiveDefinitionEvent) => {
+			if (event.hostElement) {
+				const hostElement = find(metadata.elements, (element: DirectiveDefinitionElement) => {
+					return element.property === event.hostElement;
+				});
 
-		if (annotation.exportAs) {
-			definition.exportAs = annotation.exportAs;
-		}
-
-		if (annotation instanceof ComponentAnnotationDefinition) {
-			definition.type = DirectiveDefinitionType.Component;
-			definition.template = annotation.template;
-			definition.styles = annotation.styles;
-			definition.encapsulation = annotation.encapsulation;
-
-			let filters = unique(merge(this.filters, annotation.filters));
-
-			definition.filters = map(filters, (filterType: ClassType<FilterInterface>) => {
-				let metadata = <FilterDefinition>findAnnotation(filterType, FilterDefinition);
-
-				if (!metadata) {
-					throw new Error(`Class "${stringify(filterType)}" is not a valid filter and can not be used in "${definition.name}" directive.`);
+				if (!hostElement) {
+					throw new Error(`Directive "${metadata.name}" has @HostEvent on "${event.method}" which points to @HostElement on "${event.hostElement}" which does not exists.`);
 				}
-
-				return {
-					filterType: filterType,
-					metadata: {
-						name: metadata.name,
-						id: this.getFilterId(stringify(filterType), metadata),
-					},
-				};
-			});
-		}
-
-		this.extensions.doUpdateDirectiveMetadata(directiveType, definition, annotation._options);
-
-		this.loaded.emit({
-			metadata: definition,
-			directiveType: directiveType,
+			}
 		});
-
-		return this.definitions[directiveId] = definition;
-	}
-
-
-	private getDirectiveId(name: string, annotation: DirectiveAnnotationDefinition): string
-	{
-		let parts = [
-			name,
-			annotation.selector,
-		];
-
-		if (exists(annotation.exportAs)) {
-			parts.push(annotation.exportAs);
-		}
-
-		if (exists(annotation.override)) {
-			parts.push(stringify(annotation.override));
-		}
-
-		if (annotation instanceof ComponentAnnotationDefinition) {
-			parts.push(annotation.encapsulation + '');
-			parts.push(map(annotation.directives, (directive: ClassType<any>) => stringify(directive)).join(''));
-			parts.push(map(annotation.filters, (filter: ClassType<FilterInterface>) => stringify(filter)).join(''));
-		}
-
-		return hash(parts.join('')) + '';
-	}
-
-
-	private getFilterId(name: string, annotation: FilterDefinition): string
-	{
-		let parts = [
-			name,
-			annotation.name,
-		];
-
-		return hash(parts.join('')) + '';
 	}
 
 }

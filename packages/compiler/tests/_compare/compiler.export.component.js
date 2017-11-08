@@ -1,7 +1,7 @@
-return function(template, el, component) {
+return function(template, el, component, directivesProvider) {
 	el.addElement("child-component", {}, function(el) {
-		template.root.createDirectivesStorageTemplate(template, el, function(template) {
-			template.addComponent("@directive_0", "1054190473", function(directive, template, outer) {
+		template.root.createDirectivesStorageTemplate(template, directivesProvider, el, function(template, directivesProvider) {
+			template.addComponent("@directive_0", directivesProvider.getDirectiveTypeByName("TestChildDirective"), function(directive, template, outer) {
 				outer.setParameter("child", directive);
 			});
 		});

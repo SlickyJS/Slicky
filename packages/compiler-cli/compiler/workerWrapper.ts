@@ -8,7 +8,6 @@ export declare interface WorkerDirective
 {
 	file: string,
 	type: DirectiveDefinitionType,
-	id: string,
 	name: string,
 	template?: string,
 }

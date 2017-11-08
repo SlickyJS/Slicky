@@ -5,14 +5,12 @@ import { Component, Directive } from "@slicky/core";
 class NoExportDirective {
 }
 @Directive({
-    id: "directive-a",
     selector: "test-directive-a",
 })
 export class TestDirectiveA {
 }
 @Directive({
-    id: "3996154245",
-    selector: "test-directive-b"
+    selector: "test-directive-b",
 })
 export class TestDirectiveB {
 }
@@ -23,15 +21,13 @@ export class TestDirectiveB {
 class NoExportComponent {
 }
 @Component({
-    id: "component-a",
     name: "test-component-a",
-    template: function (template, el, component) {
+    template: function (template, el, component, directivesProvider) {
     }
 })
 export class TestComponentA {
 }
 @Component({
-    id: "1824089172",
     name: "test-component-b",
     template: () => { }
 })

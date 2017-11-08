@@ -1,5 +1,5 @@
 import {AbstractPlugin} from '@slicky/templates-compiler';
-import {DirectiveDefinitionDirective, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionChildDirective} from '@slicky/core/metadata';
+import {DirectiveDefinitionInnerDirective, DirectiveDefinitionElement, DirectiveDefinitionEvent, DirectiveDefinitionChildDirective} from '@slicky/core/metadata';
 import {OnProcessElementArgument} from '@slicky/templates-compiler';
 import * as _ from '@slicky/html-parser';
 import {ElementProcessingDirective} from '../slickyEnginePlugin';
@@ -8,7 +8,7 @@ import {ElementProcessingDirective} from '../slickyEnginePlugin';
 export declare interface ProcessingDirective
 {
 	id: number;
-	directive: DirectiveDefinitionDirective;
+	directive: DirectiveDefinitionInnerDirective;
 	element: _.ASTHTMLNodeElement;
 	processedHostElements: Array<DirectiveDefinitionElement>;
 	processedHostEvents: Array<DirectiveDefinitionEvent>;

@@ -35,7 +35,7 @@ describe('#Compiler', () => {
 			})
 			class TestDirective {}
 
-			expect(compiler.compile(metadataLoader.load(TestDirective))).to.be.equal(undefined);
+			expect(compiler.compile(metadataLoader.loadDirective(TestDirective))).to.be.equal(undefined);
 		});
 
 		it('should compile simple component', () => {
@@ -45,7 +45,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.simple'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.simple'));
 		});
 
 		it('should compile component with directive', () => {
@@ -67,7 +67,7 @@ describe('#Compiler', () => {
 			})
 			class TestParentComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestParentComponent))).to.be.equal(compareWith('compiler.directive'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestParentComponent))).to.be.equal(compareWith('compiler.directive'));
 		});
 
 		it('should throw an error when required @HostElement inside of @Directive is missing', () => {
@@ -90,7 +90,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			const metadata = metadataLoader.load(TestComponent);
+			const metadata = metadataLoader.loadDirective(TestComponent);
 
 			expect(() => {
 				compiler.compile(metadata);
@@ -111,7 +111,7 @@ describe('#Compiler', () => {
 
 			}
 
-			const metadata = metadataLoader.load(TestComponent);
+			const metadata = metadataLoader.loadDirective(TestComponent);
 
 			expect(() => {
 				compiler.compile(metadata);
@@ -143,7 +143,7 @@ describe('#Compiler', () => {
 
 			}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.hostElements'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.hostElements'));
 		});
 
 		it('should throw an error when required input is missing', () => {
@@ -166,7 +166,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			let metadata = metadataLoader.load(TestComponent);
+			let metadata = metadataLoader.loadDirective(TestComponent);
 
 			expect(() => {
 				compiler.compile(metadata);
@@ -230,7 +230,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponentParent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponentParent))).to.be.equal(compareWith('compiler.inputs'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponentParent))).to.be.equal(compareWith('compiler.inputs'));
 		});
 
 		it('should not import undefined input', () => {
@@ -252,7 +252,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.inputs.undefined'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.inputs.undefined'));
 		});
 
 		it('should compile outputs', () => {
@@ -295,7 +295,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponentParent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponentParent))).to.be.equal(compareWith('compiler.outputs'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponentParent))).to.be.equal(compareWith('compiler.outputs'));
 		});
 
 		it('should not set @ChildDirective from <template>', () => {
@@ -317,7 +317,7 @@ describe('#Compiler', () => {
 
 			}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.childDirective.template'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.childDirective.template'));
 		});
 
 		it('should not set @ChildDirective from <template> for directive', () => {
@@ -344,7 +344,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.childDirective.directives.template'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.childDirective.directives.template'));
 		});
 
 		it('should throw an error when @ChildDirective is missing', () => {
@@ -367,7 +367,7 @@ describe('#Compiler', () => {
 
 			}
 
-			const metadata = metadataLoader.load(TestComponent);
+			const metadata = metadataLoader.loadDirective(TestComponent);
 
 			expect(() => {
 				compiler.compile(metadata);
@@ -399,7 +399,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			const metadata = metadataLoader.load(TestComponent);
+			const metadata = metadataLoader.loadDirective(TestComponent);
 
 			expect(() => {
 				compiler.compile(metadata);
@@ -425,7 +425,7 @@ describe('#Compiler', () => {
 
 			}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.childDirective'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.childDirective'));
 		});
 
 		it('should compile @ChildDirective for directives', () => {
@@ -452,7 +452,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.childDirective.directives'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.childDirective.directives'));
 		});
 
 		it('should compile @ChildDirective for component in directive', () => {
@@ -480,7 +480,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.childDirective.directives.component'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.childDirective.directives.component'));
 		});
 
 		it('should compile @ChildrenDirective', () => {
@@ -502,7 +502,7 @@ describe('#Compiler', () => {
 
 			}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.childrenDirective'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.childrenDirective'));
 		});
 
 		it('should compile directive with life cycle events', () => {
@@ -529,7 +529,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.lifeCycleEvents'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.lifeCycleEvents'));
 		});
 
 		it('should throw an error when element for @HostEvent in directive does not exists', () => {
@@ -551,7 +551,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			let metadata = metadataLoader.load(TestComponent);
+			let metadata = metadataLoader.loadDirective(TestComponent);
 
 			expect(() => {
 				compiler.compile(metadata);
@@ -577,7 +577,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.hostEvents'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.hostEvents'));
 		});
 
 		it('should include styles in template', () => {
@@ -591,7 +591,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.styles'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.styles'));
 		});
 
 		it('should export an element if directive is not exportable', () => {
@@ -607,7 +607,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.export.element'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.export.element'));
 		});
 
 		it('should export a default directive', () => {
@@ -630,7 +630,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.export.defaultDirective'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.export.defaultDirective'));
 		});
 
 		it('should export specific directives and element', () => {
@@ -665,7 +665,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.export.specific'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.export.specific'));
 		});
 
 		it('should export component', () => {
@@ -688,7 +688,7 @@ describe('#Compiler', () => {
 			})
 			class TestParentComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestParentComponent))).to.be.equal(compareWith('compiler.export.component'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestParentComponent))).to.be.equal(compareWith('compiler.export.component'));
 		});
 
 		it('should create new local variable inside of template', () => {
@@ -698,7 +698,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.localVariable'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.localVariable'));
 		});
 
 		it('should throw an error when multiple components are used on one element', () => {
@@ -729,7 +729,7 @@ describe('#Compiler', () => {
 			class TestParentComponent {}
 
 			expect(() => {
-				compiler.compile(metadataLoader.load(TestParentComponent));
+				compiler.compile(metadataLoader.loadDirective(TestParentComponent));
 			}).to.throw(Error, 'More than 1 component is attached to element <test-child-component></test-child-component>: TestChildComponentA, TestChildComponentC.');
 		});
 
@@ -768,7 +768,7 @@ describe('#Compiler', () => {
 			})
 			class TestParentComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestParentComponent))).to.be.equal(compareWith('compiler.init.order'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestParentComponent))).to.be.equal(compareWith('compiler.init.order'));
 		});
 
 		it('should call onTemplateInit event', () => {
@@ -806,7 +806,7 @@ describe('#Compiler', () => {
 
 			}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.templateInit'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.templateInit'));
 		});
 
 		it('should pass same property into 2 directives', () => {
@@ -844,7 +844,7 @@ describe('#Compiler', () => {
 
 			}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.inputs.sameProperties'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.inputs.sameProperties'));
 		});
 
 		it('should pass same attribute into 2 directives', () => {
@@ -877,7 +877,7 @@ describe('#Compiler', () => {
 			})
 			class TestComponent {}
 
-			expect(compiler.compile(metadataLoader.load(TestComponent))).to.be.equal(compareWith('compiler.inputs.sameAttributes'));
+			expect(compiler.compile(metadataLoader.loadDirective(TestComponent))).to.be.equal(compareWith('compiler.inputs.sameAttributes'));
 		});
 
 	});

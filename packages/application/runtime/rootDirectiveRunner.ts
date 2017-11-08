@@ -50,7 +50,7 @@ export class RootDirectiveRunner
 
 	public run<T>(directiveType: ClassType<T>): void
 	{
-		const metadata = this.metadataLoader.load(directiveType);
+		const metadata = this.metadataLoader.loadDirective(directiveType);
 		const els = this.el.querySelectorAll(metadata.selector);
 
 		forEach(els, (el: Element) => this.runDirective(directiveType, metadata, el));

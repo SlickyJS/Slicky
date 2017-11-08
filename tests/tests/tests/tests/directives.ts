@@ -402,7 +402,7 @@ describe('#Application.directives', () => {
 
 			public onInit(): void
 			{
-				const metadata = this.metadata.load(TestChildDirective);
+				const metadata = this.metadata.loadDirective(TestChildDirective);
 				const el = this.el.nativeElement.ownerDocument.querySelector('test-child-directive');
 
 				directive = this.runner.runDirective(TestChildDirective, metadata, el);

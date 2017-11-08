@@ -58,30 +58,6 @@ describe('#Parser', () => {
 			});
 		});
 
-		it('should parse directive without id', (done) => {
-			parse('directive.noId', (err, file, path, expected) => {
-				expect(file).to.be.eql({
-					file: path,
-					source: expected,
-					components: [],
-				});
-
-				done();
-			});
-		});
-
-		it('should parse directive with id', (done) => {
-			parse('directive.withId', (err, file, path, expected) => {
-				expect(file).to.be.eql({
-					file: path,
-					source: expected,
-					components: [],
-				});
-
-				done();
-			});
-		});
-
 		it('should parse component with functional template', (done) => {
 			parse('component.functionalTemplate', (err, file, path, expected) => {
 				expect(file).to.be.eql({
@@ -101,10 +77,9 @@ describe('#Parser', () => {
 					source: expected,
 					components: [
 						{
-							id: '1107849305',
 							name: 'TestComponent',
 							template:
-							'return function(template, el, component) {\n\n' +
+							'return function(template, el, component, directivesProvider) {\n\n' +
 							'}',
 						}
 					],
@@ -121,10 +96,9 @@ describe('#Parser', () => {
 					source: expected,
 					components: [
 						{
-							id: 'component-a',
 							name: 'TestComponentA',
 							template:
-							'return function(template, el, component) {\n\n' +
+							'return function(template, el, component, directivesProvider) {\n\n' +
 							'}',
 						}
 					],
@@ -137,7 +111,7 @@ describe('#Parser', () => {
 		it('should throw an error from metadata loader', (done) => {
 			parse('component.metadata.invalid', (err) => {
 				expect(err).to.be.an.instanceOf(Error);
-				expect(err.message).to.be.equal('Class "TestFilter" is not a valid filter and can not be used in "TestComponent" directive.');
+				expect(err.message).to.be.equal('Class "TestFilter" is not a valid filter.');
 
 				done();
 			});

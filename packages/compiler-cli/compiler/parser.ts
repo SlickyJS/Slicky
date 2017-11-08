@@ -8,7 +8,6 @@ import {WorkerWrapper, WorkerDirective} from './workerWrapper';
 
 export declare interface ParsedComponent
 {
-	id: string,
 	name: string,
 	template: string,
 }
@@ -107,10 +106,6 @@ export class Parser
 
 		const newArguments: Array<ts.PropertyAssignment> = [];
 
-		if (!this.findPropertyAssignmentExpressionInDecorator(directiveDecorator, 'id')) {
-			newArguments.push(<ts.PropertyAssignment>ts.createPropertyAssignment('id', ts.createLiteral(directive.id)));
-		}
-
 		this.eachPropertyAssignmentInDecorator(directiveDecorator, (name, property) => {
 			if (name === 'template' && directive.type === DirectiveDefinitionType.Component && directive.template) {
 				const templateSourceFile = this.getSourceFile(directive.template);
@@ -119,7 +114,6 @@ export class Parser
 				property.initializer = templateFunction;
 
 				components.push({
-					id: directive.id,
 					name: directive.name,
 					template: directive.template,
 				});
@@ -162,10 +156,6 @@ export class Parser
 			return true;
 		}
 
-		if (!this.findPropertyAssignmentExpressionInDecorator(directive, 'id')) {
-			return true;
-		}
-
 		return false;
 	}
 
@@ -179,20 +169,6 @@ export class Parser
 
 			iterator((<ts.Identifier>propertyAssignment.name).escapedText.toString(), propertyAssignment);
 		});
-	}
-
-
-	private findPropertyAssignmentExpressionInDecorator(decorator: ts.Decorator, name: string): ts.PropertyAssignment
-	{
-		let found: ts.PropertyAssignment;
-
-		this.eachPropertyAssignmentInDecorator(decorator, (decoratorName, initializer) => {
-			if (decoratorName === name) {
-				found = initializer;
-			}
-		});
-
-		return found;
 	}
 
 

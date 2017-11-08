@@ -8,7 +8,6 @@ class NoExportDirective {}
 
 
 @Directive({
-	id: 'directive-a',
 	selector: 'test-directive-a',
 })
 export class TestDirectiveA {}
@@ -28,7 +27,6 @@ class NoExportComponent {}
 
 
 @Component({
-	id: 'component-a',
 	name: 'test-component-a',
 	template: '',
 })
