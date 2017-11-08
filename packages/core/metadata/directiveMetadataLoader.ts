@@ -95,7 +95,7 @@ export declare interface DirectiveDefinition
 	id: string,
 	name: string,
 	selector: string,
-	exportAs?: string,
+	exportAs?: Array<string>,
 	onInit: boolean,
 	onDestroy: boolean,
 	onTemplateInit: boolean,

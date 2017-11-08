@@ -37,7 +37,7 @@ describe('#Metadata/DirectiveMetadataLoader.directives', () => {
 			class TestDirective {}
 
 			expect(loader.loadDirective(TestDirective)).to.be.eql(createDirectiveMetadata({
-				exportAs: 'dir',
+				exportAs: ['dir'],
 			}));
 		});
 

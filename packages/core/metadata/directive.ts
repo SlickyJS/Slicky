@@ -1,12 +1,12 @@
 import {makeClassDecorator} from '@slicky/reflection';
-import {exists} from '@slicky/utils';
+import {exists, isString} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 
 
 export declare interface DirectiveOptions
 {
 	selector: string,
-	exportAs?: string,
+	exportAs?: string|Array<string>,
 	directives?: Array<ClassType<any>>,
 	override?: ClassType<any>,
 	id?: string,
@@ -22,7 +22,7 @@ export class DirectiveAnnotationDefinition
 
 	public selector: string;
 
-	public exportAs: string;
+	public exportAs: Array<string>;
 
 	public override: ClassType<any>;
 
@@ -37,7 +37,7 @@ export class DirectiveAnnotationDefinition
 		this.selector = options.selector;
 
 		if (exists(options.exportAs)) {
-			this.exportAs = options.exportAs;
+			this.exportAs = isString(options.exportAs) ? [<string>options.exportAs] : <Array<string>>options.exportAs;
 		}
 
 		if (exists(options.directives)) {

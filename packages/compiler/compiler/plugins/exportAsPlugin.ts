@@ -14,7 +14,7 @@ export class ExportAsPlugin extends AbstractSlickyEnginePlugin
 	{
 		if (exists(directive.directive.metadata.exportAs)) {
 			const exportInto = find(element.exports, (elementExport: _.ASTHTMLNodeTextAttribute) => {
-				if (elementExport.value === '' || elementExport.value === directive.directive.metadata.exportAs) {
+				if (elementExport.value === '' || directive.directive.metadata.exportAs.indexOf(elementExport.value) >= 0) {
 					return true;
 				}
 			});
