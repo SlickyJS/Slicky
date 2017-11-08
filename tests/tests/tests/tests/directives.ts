@@ -484,4 +484,38 @@ describe('#Application.directives', () => {
 		expect(realm).to.be.an.instanceOf(RealmRef);
 	});
 
+	it('should refresh child component automatically from parent', () => {
+		let name = 'David';
+
+		@Component({
+			name: 'test-child-component',
+			template: '{{ name }}',
+		})
+		class TestChildComponent
+		{
+
+			get name(): string
+			{
+				return name;
+			}
+
+		}
+
+		@Component({
+			name: 'test-parent-component',
+			template: '<test-child-component></test-child-component>',
+			directives: [TestChildComponent],
+		})
+		class TestParentComponent {}
+
+		const component = Tester.runDirective('<test-parent-component></test-parent-component>', TestParentComponent);
+
+		expect(component.application.document.body.textContent).to.be.equal('David');
+
+		name = 'Clare';
+		component.template.refresh();
+
+		expect(component.application.document.body.textContent).to.be.equal('Clare');
+	});
+
 });

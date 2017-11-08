@@ -27,6 +27,8 @@ export class ComponentTemplate extends Template
 		this.container = container;
 		this.directiveFactory = directiveFactory;
 		this.metadataLoader = metadataLoader;
+
+		this.useRefreshFromParent = true;
 	}
 
 
