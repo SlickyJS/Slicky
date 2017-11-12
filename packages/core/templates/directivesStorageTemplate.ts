@@ -10,8 +10,7 @@ import {ClassType} from '@slicky/lang';
 import {ChangeDetector, ChangeDetectorRef, RealmRef} from '@slicky/core/directives';
 import {DirectiveDefinition} from '@slicky/core/metadata';
 import {ComponentTemplate} from './componentTemplate';
-import {DirectiveFactory} from './directiveFactory';
-import {DirectiveTypesProvider} from './directiveTypesProvider';
+import {DirectiveFactory, DirectiveTypesProvider} from '../runtime';
 
 
 export class DirectivesStorageTemplate extends RenderableTemplate
@@ -69,7 +68,7 @@ export class DirectivesStorageTemplate extends RenderableTemplate
 	}
 
 
-	public addDirective<T>(localParameterName: string, directiveType: ClassType<any>, setup?: (directive: T) => void): void
+	public addDirective(localParameterName: string, directiveType: ClassType<any>, setup?: (directive: any) => void): void
 	{
 		const metadata = this.metadataLoader.loadDirective(directiveType);
 

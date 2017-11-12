@@ -17,4 +17,5 @@ export class ChildrenDirectiveDefinition
 }
 
 
-export let ChildrenDirective = makePropertyDecorator(ChildrenDirectiveDefinition);
+export type ChildrenDirectiveDecoratorFactory = (directiveType: ClassType<any>) => any;
+export let ChildrenDirective: ChildrenDirectiveDecoratorFactory = makePropertyDecorator(ChildrenDirectiveDefinition);

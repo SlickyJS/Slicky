@@ -1,4 +1,4 @@
-import {ComponentTemplate} from '@slicky/application/runtime';
+import {ComponentTemplate} from '@slicky/core/templates';
 import {ApplicationRef} from './applicationRef';
 
 

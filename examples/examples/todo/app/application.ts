@@ -1,5 +1,5 @@
 import {Container} from '@slicky/di';
-import {Application} from '@slicky/application';
+import {Application} from '@slicky/core';
 import {TranslatorExtension} from '@slicky/extension-translator';
 
 

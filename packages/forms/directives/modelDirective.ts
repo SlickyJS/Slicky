@@ -12,7 +12,7 @@ export type HTMLFormInputElement = HTMLInputElement|HTMLSelectElement|HTMLTextAr
 	selector: '[s:model]',
 	exportAs: 'sModel',
 })
-export class ModelDirective<T, U extends Element> implements OnInit, OnTemplateInit, OnUpdate
+export class ModelDirective<T, U extends HTMLElement> implements OnInit, OnTemplateInit, OnUpdate
 {
 
 

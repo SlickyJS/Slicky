@@ -10,7 +10,7 @@ import {Renderer} from '../dom';
 import * as nodes from './nodes';
 
 
-export declare type RenderableTemplateFactory = (template: RenderableTemplate, el: nodes.TemplateElement) => void;
+export declare type RenderableTemplateFactory = (template: RenderableTemplate, el: nodes.TemplateElement, ...args: Array<any>) => void;
 export declare type RenderableEmbeddedTemplateFactory = (template: EmbeddedTemplate, el: nodes.TemplateElement) => void;
 export declare type RenderableEmbeddedTemplateBeforeRender = (innerTemplate: EmbeddedTemplate, outerTemplate: RenderableTemplate) => void;
 

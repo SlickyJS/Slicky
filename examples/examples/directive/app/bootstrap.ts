@@ -3,7 +3,7 @@ import 'reflect-metadata';
 
 import {PlatformBrowser} from '@slicky/platform-browser';
 import {Container} from '@slicky/di';
-import {Application} from '@slicky/application';
+import {Application} from '@slicky/core';
 import {CounterDirective} from './counter';
 
 

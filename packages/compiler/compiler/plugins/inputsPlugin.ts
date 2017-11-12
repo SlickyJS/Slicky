@@ -38,7 +38,7 @@ export class InputsPlugin extends AbstractSlickyEnginePlugin
 			;
 
 			if (!exists(property) && input.required) {
-				throw new Error(`${directive.directive.metadata.name}.${input.property}: required input is not set in <${element.name}> tag.`);
+				throw new Error(`${directive.directive.metadata.className}.${input.property}: required input is not set in <${element.name}> tag.`);
 			}
 
 			if (!exists(property)) {

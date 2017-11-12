@@ -2,11 +2,12 @@ import {BaseTemplate, ApplicationTemplate, Template, RenderableTemplate, Templat
 import {Renderer} from '@slicky/templates/dom';
 import {Container} from '@slicky/di';
 import {isFunction} from '@slicky/utils';
-import {} from '@slicky/lang';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
-import {DirectiveFactory} from './directiveFactory';
+import {DirectiveFactory, DirectiveTypesProvider} from '../runtime';
 import {DirectivesStorageTemplate} from './directivesStorageTemplate';
-import {DirectiveTypesProvider} from './directiveTypesProvider';
+
+
+export declare type ComponentTemplateRenderFactory = (template: ComponentTemplate, el: TemplateElement, ...args: Array<any>) => void;
 
 
 export class ComponentTemplate extends Template

@@ -7,7 +7,7 @@ export declare interface DirectiveOptions
 {
 	selector: string,
 	exportAs?: string|Array<string>,
-	directives?: Array<ClassType<any>>,
+	directives?: Array<any>,
 	override?: ClassType<any>,
 	id?: string,
 	[name: string]: any,
@@ -56,4 +56,5 @@ export class DirectiveAnnotationDefinition
 }
 
 
-export let Directive = makeClassDecorator(DirectiveAnnotationDefinition);
+export type DirectiveDecoratorFactory = (options: DirectiveOptions) => any;
+export const Directive: DirectiveDecoratorFactory = makeClassDecorator(DirectiveAnnotationDefinition);

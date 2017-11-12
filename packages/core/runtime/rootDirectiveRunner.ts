@@ -9,7 +9,7 @@ import {ApplicationTemplate} from '@slicky/templates/templates';
 import {Renderer} from '@slicky/templates/dom';
 import {PlatformInterface} from '../platform';
 import {DirectiveFactory} from './directiveFactory';
-import {ComponentTemplate} from './componentTemplate';
+import {ComponentTemplate} from '../templates';
 import {RootDirectiveRef} from './rootDirectiveRef';
 
 
@@ -53,11 +53,11 @@ export class RootDirectiveRunner
 		const metadata = this.metadataLoader.loadDirective(directiveType);
 		const els = this.el.querySelectorAll(metadata.selector);
 
-		forEach(els, (el: Element) => this.runDirective(directiveType, metadata, el));
+		forEach(els, (el: HTMLElement) => this.runDirective(directiveType, metadata, el));
 	}
 
 
-	public runDirective<T>(directiveType: ClassType<T>, metadata: DirectiveDefinition, el: Element, providers: Array<ProviderOptions> = [], setup?: (directive: T) => void): RootDirectiveRef<T>
+	public runDirective<T>(directiveType: ClassType<T>, metadata: DirectiveDefinition, el: HTMLElement, providers: Array<ProviderOptions> = [], setup?: (directive: T) => void): RootDirectiveRef<T>
 	{
 		if (this.isElementInRootComponent(el)) {
 			return;
@@ -96,17 +96,13 @@ export class RootDirectiveRunner
 		});
 
 		forEach(metadata.events, (event: DirectiveDefinitionEvent) => {
-			let eventEl = exists(event.hostElement) ?
-				directive[event.hostElement] :
-				(
-					exists(event.selector) ?
-						el.querySelector(event.selector) :
-						el
-				)
+			let eventEl: HTMLElement = exists(event.selector) ?
+				<HTMLElement>el.querySelector(event.selector) :
+				el
 			;
 
 			if (!eventEl) {
-				throw new Error(`${metadata.name}.${event.method}: @HostEvent for "${event.selector}" was not found.`);
+				throw new Error(`${metadata.className}.${event.method}: @HostEvent for "${event.selector}" was not found.`);
 			}
 
 			eventEl.addEventListener(event.event, (e) => directive[event.method](e, eventEl));
@@ -130,7 +126,7 @@ export class RootDirectiveRunner
 	}
 
 
-	private runComponentTemplate<T>(container: Container, metadata: DirectiveDefinition, component: T, el: Element, changeDetector: ChangeDetector, realm: RealmRef): ComponentTemplate
+	private runComponentTemplate<T>(container: Container, metadata: DirectiveDefinition, component: T, el: HTMLElement, changeDetector: ChangeDetector, realm: RealmRef): ComponentTemplate
 	{
 		this.extensions.doInitComponentContainer(container, metadata, component);
 

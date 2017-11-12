@@ -1,6 +1,6 @@
+import {Application, PlatformInterface} from '@slicky/core';
 import {DirectiveDefinition} from '@slicky/core/metadata';
 import {TemplateRenderFactory} from '@slicky/templates/templates';
-import {Application, PlatformInterface} from '@slicky/application';
 
 
 export class PlatformInline implements PlatformInterface
@@ -9,7 +9,7 @@ export class PlatformInline implements PlatformInterface
 
 	public compileComponentTemplate(metadata: DirectiveDefinition): TemplateRenderFactory
 	{
-		throw new Error(`@slicky/platform-inline can not compile component ${metadata.name}. Precompile your templates with @slicky/compiler-cli or @slicky/webpack-loader. Or you can use @slicky/platform-browser instead.`);
+		throw new Error(`@slicky/platform-inline can not compile component ${metadata.className}. Precompile your templates with @slicky/compiler-cli or @slicky/webpack-loader. Or you can use @slicky/platform-browser instead.`);
 	}
 
 

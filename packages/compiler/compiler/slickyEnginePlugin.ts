@@ -63,6 +63,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 	{
 		arg.render.args.push('component');
 		arg.render.args.push('directivesProvider');
+		arg.render.body.add('var root = template;');
 
 		this.hook('onBeforeCompile', arg);
 	}
@@ -136,7 +137,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 		});
 
 		arg.render.body.add(
-			`template.root.createDirectivesStorageTemplate(template, directivesProvider, el, ${directivesStorageSetup.render()});`
+			`root.createDirectivesStorageTemplate(template, directivesProvider, el, ${directivesStorageSetup.render()});`
 		);
 
 		forEach(processingDirectives, (processingDirective: ElementProcessingDirective) => {
@@ -216,7 +217,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 				result.push(directive);
 
 				if (directive.metadata.type === c.DirectiveDefinitionType.Component) {
-					componentNames.push(directive.metadata.name);
+					componentNames.push(directive.metadata.className);
 				}
 			}
 		});

@@ -79,7 +79,8 @@ describe('#Parser', () => {
 						{
 							name: 'TestComponent',
 							template:
-							'return function(template, el, component, directivesProvider) {\n\n' +
+							'return function(template, el, component, directivesProvider) {\n' +
+							'	var root = template;\n' +
 							'}',
 						}
 					],
@@ -98,7 +99,8 @@ describe('#Parser', () => {
 						{
 							name: 'TestComponentA',
 							template:
-							'return function(template, el, component, directivesProvider) {\n\n' +
+							'return function(template, el, component, directivesProvider) {\n' +
+							'	var root = template;\n' +
 							'}',
 						}
 					],

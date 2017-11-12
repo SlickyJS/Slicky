@@ -19,4 +19,5 @@ export class HostEventDefinition
 }
 
 
-export let HostEvent = makePropertyDecorator(HostEventDefinition);
+export type HostEventDecoratorFactory = (event: string, selector?: string) => any;
+export let HostEvent: HostEventDecoratorFactory = makePropertyDecorator(HostEventDefinition);

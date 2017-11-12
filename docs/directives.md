@@ -338,7 +338,7 @@ useful eg. for creating modal dialogs.
 ```typescript
 import {Directive, OnInit} from '@slicky/core';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
-import {RootDirectiveRunner} from '@slicky/application/runtime';
+import {RootDirectiveRunner} from '@slicky/core/runtime';
 
 @Directive({
 	selector: '[test-directive]',

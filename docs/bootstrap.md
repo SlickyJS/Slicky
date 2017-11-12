@@ -15,7 +15,7 @@ import 'zone.js';
 import 'reflect-metadata';
 
 import {Container} from '@slicky/di';
-import {Application} from '@slicky/application';
+import {Application} from '@slicky/core';
 import {PlatformBrowser} from '@slicky/platform-browser';
 
 const container = new Container;

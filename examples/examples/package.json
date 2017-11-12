@@ -15,7 +15,6 @@
 	"main": "./lib/index.js",
 	"types": "./lib/index.d.ts",
 	"dependencies": {
-		"@slicky/application": "^0.11.0",
 		"@slicky/core": "^0.10.1",
 		"@slicky/di": "^1.1.1",
 		"@slicky/event-emitter": "^1.0.2",

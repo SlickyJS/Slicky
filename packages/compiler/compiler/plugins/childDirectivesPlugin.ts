@@ -26,7 +26,7 @@ export class ChildDirectivesPlugin extends AbstractSlickyEnginePlugin
 	public onBeforeProcessDirective(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, arg: OnProcessElementArgument): void
 	{
 		forEach(this.metadata.childDirectives, (childDirective: DirectiveDefinitionChildDirective) => {
-			if (childDirective.directiveType === directive.directive.directiveType && !arg.progress.inTemplate) {
+			if (childDirective.directive.directiveType === directive.directive.directiveType && !arg.progress.inTemplate) {
 				this.processedChildDirectives.push(childDirective);
 				directive.setup.body.add(`component.${childDirective.property} = directive;`);
 			}
@@ -38,7 +38,7 @@ export class ChildDirectivesPlugin extends AbstractSlickyEnginePlugin
 	{
 		forEach(this.metadata.childDirectives, (childDirective: DirectiveDefinitionChildDirective) => {
 			if (this.processedChildDirectives.indexOf(childDirective) < 0 && childDirective.required) {
-				throw new Error(`${this.metadata.name}.${childDirective.property}: required @ChildDirective ${childDirective.metadata.name} was not found.`);
+				throw new Error(`${this.metadata.className}.${childDirective.property}: required @ChildDirective ${childDirective.directive.metadata.className} was not found.`);
 			}
 		});
 	}

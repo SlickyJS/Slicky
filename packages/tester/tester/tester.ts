@@ -1,12 +1,12 @@
 import {Container} from '@slicky/di';
-import {Application} from '@slicky/application';
-import {ApplicationOptions} from '@slicky/application/application';
-import {RootDirectiveRunner, ComponentTemplate, DirectivesStorageTemplate} from '@slicky/application/runtime';
 import {PlatformBrowser} from '@slicky/platform-browser';
 import {ClassType} from '@slicky/lang';
 import {isFunction} from '@slicky/utils';
-import {Component, ChildDirective, Required} from '@slicky/core';
+import {Application, Component, ChildDirective, Required} from '@slicky/core';
+import {ApplicationOptions} from '@slicky/core/application';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
+import {RootDirectiveRunner} from '@slicky/core/runtime';
+import {ComponentTemplate, DirectivesStorageTemplate} from '@slicky/core/templates';
 import {JSDOM} from 'jsdom';
 import {ApplicationRef} from './applicationRef';
 import {DirectiveRef} from './directiveRef';
@@ -52,7 +52,7 @@ export class Tester
 		const rootRunner = <RootDirectiveRunner>app.container.get(RootDirectiveRunner);
 
 		const elNode = app.document.body.childNodes[0];
-		const directive = rootRunner.runDirective(directiveType, metadataLoader.loadDirective(directiveType), <Element>elNode);
+		const directive = rootRunner.runDirective(directiveType, metadataLoader.loadDirective(directiveType), <HTMLElement>elNode);
 
 		return new DirectiveRef(app, directive.getDirective(), directive.getTemplate());
 	}

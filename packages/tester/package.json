@@ -14,7 +14,7 @@
 	"main": "./index.js",
 	"types": "./index.d.ts",
 	"dependencies": {
-		"@slicky/application": "^0.11.0",
+		"@slicky/core": "^0.10.1",
 		"@slicky/di": "^1.1.1",
 		"@slicky/lang": "^1.0.0",
 		"@slicky/platform-browser": "^0.1.26",

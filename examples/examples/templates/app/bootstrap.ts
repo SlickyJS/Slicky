@@ -2,7 +2,7 @@ import 'zone.js';
 import 'reflect-metadata';
 
 import {Container} from '@slicky/di';
-import {Application} from '@slicky/application';
+import {Application} from '@slicky/core';
 import {PlatformInline} from '@slicky/platform-inline';
 //import {PlatformBrowser} from '@slicky/platform-browser';
 import {TemplatesComponent} from './templatesComponent';

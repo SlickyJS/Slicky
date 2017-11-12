@@ -2,7 +2,7 @@ import '../bootstrap';
 
 import {Tester} from '@slicky/tester';
 import {Component, Directive, OnInit, DirectivesStorageRef, ChangeDetectorRef, ElementRef, RealmRef} from '@slicky/core';
-import {RootDirectiveRunner, RootDirectiveRef} from '@slicky/application/runtime';
+import {RootDirectiveRunner, RootDirectiveRef} from '@slicky/core/runtime';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {forEach} from '@slicky/utils';
 import {expect} from 'chai';
@@ -403,7 +403,7 @@ describe('#Application.directives', () => {
 			public onInit(): void
 			{
 				const metadata = this.metadata.loadDirective(TestChildDirective);
-				const el = this.el.nativeElement.ownerDocument.querySelector('test-child-directive');
+				const el = <HTMLElement>this.el.nativeElement.ownerDocument.querySelector('test-child-directive');
 
 				directive = this.runner.runDirective(TestChildDirective, metadata, el);
 			}

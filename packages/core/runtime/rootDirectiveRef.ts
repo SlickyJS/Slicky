@@ -1,6 +1,6 @@
 import {exists} from '@slicky/utils';
 import {DirectiveDefinition} from '@slicky/core/metadata';
-import {ComponentTemplate} from './componentTemplate';
+import {ComponentTemplate} from '../templates';
 
 
 export class RootDirectiveRef<T>

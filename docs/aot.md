@@ -28,7 +28,7 @@ compiled on server. Also all directives and components you want to precompile mu
 
 ```typescript
 import {Container} from '@slicky/di';
-import {Application} from '@slicky/application';
+import {Application} from '@slicky/core';
 import {PlatformServer} from '@slicky/platform-server';
 import {APP_TEMPLATES_FACTORY} from '../aot/app-templates-factory';
 
@@ -113,7 +113,7 @@ $ npm install @slicky/platform-inline
 
 ```typescript
 import {Container} from '@slicky/di';
-import {Application} from '@slicky/application';
+import {Application} from '@slicky/core';
 import {PlatformInline} from '@slicky/platform-inline';
 
 const container = new Container;

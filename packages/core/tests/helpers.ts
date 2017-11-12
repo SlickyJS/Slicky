@@ -7,7 +7,7 @@ export function createDirectiveMetadata(partialMetadata: any): DirectiveDefiniti
 {
 	partialMetadata.type = exists(partialMetadata.type) ? partialMetadata.type : DirectiveDefinitionType.Directive;
 	partialMetadata.id = exists(partialMetadata.id) ? partialMetadata.id : 'TestDirective';
-	partialMetadata.name = exists(partialMetadata.name) ? partialMetadata.name : 'TestDirective';
+	partialMetadata.className = exists(partialMetadata.className) ? partialMetadata.className : 'TestDirective';
 	partialMetadata.selector = exists(partialMetadata.selector) ? partialMetadata.selector : 'test-directive';
 
 	return createMetadata(partialMetadata);
@@ -18,7 +18,7 @@ export function createComponentMetadata(partialMetadata: any): DirectiveDefiniti
 {
 	partialMetadata.type = exists(partialMetadata.type) ? partialMetadata.type : DirectiveDefinitionType.Component;
 	partialMetadata.id = exists(partialMetadata.id) ? partialMetadata.id : 'TestComponent';
-	partialMetadata.name = exists(partialMetadata.name) ? partialMetadata.name : 'TestComponent';
+	partialMetadata.className = exists(partialMetadata.className) ? partialMetadata.className : 'TestComponent';
 	partialMetadata.selector = exists(partialMetadata.selector) ? partialMetadata.selector : 'test-component';
 	partialMetadata.template = exists(partialMetadata.template) ? partialMetadata.template : '';
 	partialMetadata.encapsulation = exists(partialMetadata.encapsulation) ? partialMetadata.encapsulation : TemplateEncapsulation.Emulated;
@@ -34,7 +34,7 @@ function createMetadata(partialMetadata: any): DirectiveDefinition
 	const metadata: DirectiveDefinition = {
 		type: partialMetadata.type,
 		id: partialMetadata.id,
-		name: partialMetadata.name,
+		className: partialMetadata.className,
 		selector: partialMetadata.selector,
 		onInit: exists(partialMetadata.onInit) ? partialMetadata.onInit : false,
 		onDestroy: exists(partialMetadata.onDestroy) ? partialMetadata.onDestroy : false,

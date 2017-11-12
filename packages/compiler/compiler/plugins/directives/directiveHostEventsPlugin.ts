@@ -65,7 +65,7 @@ export class DirectiveHostEventsPlugin extends AbstractDirectivePlugin
 			}
 
 			if (directive.processedHostEvents.indexOf(hostEvent) < 0) {
-				throw new Error(`${directive.directive.metadata.name}.${hostEvent.method}: @HostEvent for "${hostEvent.selector}" was not found.`);
+				throw new Error(`${directive.directive.metadata.className}.${hostEvent.method}: @HostEvent for "${hostEvent.selector}" was not found.`);
 			}
 		});
 	}

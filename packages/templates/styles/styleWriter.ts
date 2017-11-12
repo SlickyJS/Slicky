@@ -4,7 +4,7 @@ export class StyleWriter
 
 	private document: Document;
 
-	private parent: Element|ShadowRoot;
+	private parent: HTMLElement|ShadowRoot;
 
 	private style: HTMLStyleElement;
 
@@ -13,14 +13,14 @@ export class StyleWriter
 	private initialized: boolean = false;
 
 
-	constructor(document: Document, parent: Element|ShadowRoot)
+	constructor(document: Document, parent: HTMLElement|ShadowRoot)
 	{
 		this.document = document;
 		this.parent = parent;
 	}
 
 
-	public changeParent(parent: Element|ShadowRoot): void
+	public changeParent(parent: HTMLElement|ShadowRoot): void
 	{
 		if (this.initialized) {
 			throw new Error('StyleWriter: can not change parent when styleWriter is already initialized.');

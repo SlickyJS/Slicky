@@ -14,7 +14,7 @@ export class Renderer
 	}
 
 
-	public appendChild(parent: Element, node: Node): void
+	public appendChild(parent: HTMLElement, node: Node): void
 	{
 		parent.appendChild(node);
 	}
@@ -26,19 +26,19 @@ export class Renderer
 	}
 
 
-	public setAttribute(el: Element, name: string, value: string): void
+	public setAttribute(el: HTMLElement, name: string, value: string): void
 	{
 		el.setAttribute(name, value);
 	}
 
 
-	public addEventListener(el: Element, name: string, fn: EventListenerOrEventListenerObject): void
+	public addEventListener(el: HTMLElement, name: string, fn: EventListenerOrEventListenerObject): void
 	{
 		el.addEventListener(name, fn);
 	}
 
 
-	public containsClass(el: Element, className: string): boolean
+	public containsClass(el: HTMLElement, className: string): boolean
 	{
 		if (exists(el.classList)) {
 			return el.classList.contains(className);
@@ -48,7 +48,7 @@ export class Renderer
 	}
 
 
-	public addClass(el: Element, className: string): void
+	public addClass(el: HTMLElement, className: string): void
 	{
 		if (!this.containsClass(el, className)) {
 			if (exists(el.classList)) {
@@ -60,7 +60,7 @@ export class Renderer
 	}
 
 
-	public removeClass(el: Element, className: string): void
+	public removeClass(el: HTMLElement, className: string): void
 	{
 		if (this.containsClass(el, className)) {
 			if (exists(el.classList)) {
@@ -78,7 +78,7 @@ export class Renderer
 	}
 
 
-	public toggleClass(el: Element, className: string, force?: boolean): boolean
+	public toggleClass(el: HTMLElement, className: string, force?: boolean): boolean
 	{
 		if (exists(el.classList)) {
 			return el.classList.toggle(className, force);

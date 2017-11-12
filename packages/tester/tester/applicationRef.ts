@@ -1,4 +1,4 @@
-import {Application} from '@slicky/application';
+import {Application} from '@slicky/core';
 import {Container} from '@slicky/di';
 import {callDomEvent, callMouseEvent} from '@slicky/utils';
 

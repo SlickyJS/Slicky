@@ -66,7 +66,7 @@ forEach(directives, (directiveExport: string) => {
 		directive: {
 			file: file,
 			type: metadata.type,
-			name: metadata.name,
+			name: metadata.className,
 			template: template,
 		},
 	});

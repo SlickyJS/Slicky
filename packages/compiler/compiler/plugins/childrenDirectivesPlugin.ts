@@ -24,7 +24,7 @@ export class ChildrenDirectivesPlugin extends AbstractSlickyEnginePlugin
 	public onBeforeProcessDirective(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, arg: OnProcessElementArgument): void
 	{
 		forEach(this.metadata.childrenDirectives, (childrenDirectives: DirectiveDefinitionChildrenDirective) => {
-			if (childrenDirectives.directiveType === directive.directive.directiveType) {
+			if (childrenDirectives.directive.directiveType === directive.directive.directiveType) {
 				directive.setup.body.add(`component.${childrenDirectives.property}.add.emit(directive);`);
 
 				directive.setup.body.add(

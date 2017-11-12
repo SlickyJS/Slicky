@@ -16,4 +16,5 @@ export class InputDefinition
 }
 
 
-export let Input = makePropertyDecorator(InputDefinition);
+export type InputDecoratorFactory = (name?: string) => any;
+export let Input: InputDecoratorFactory = makePropertyDecorator(InputDefinition);

@@ -34,7 +34,7 @@ export class DirectiveHostElementsPlugin extends AbstractDirectivePlugin
 		if (directive.directive.metadata.type === DirectiveDefinitionType.Directive) {
 			forEach(directive.directive.metadata.elements, (hostElement: DirectiveDefinitionElement) => {
 				if (hostElement.required && directive.processedHostElements.indexOf(hostElement) < 0) {
-					throw new Error(`${directive.directive.metadata.name}.${hostElement.property}: required @HostElement was not found.`);
+					throw new Error(`${directive.directive.metadata.className}.${hostElement.property}: required @HostElement was not found.`);
 				}
 			});
 		}

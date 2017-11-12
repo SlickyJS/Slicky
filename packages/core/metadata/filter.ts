@@ -22,4 +22,5 @@ export class FilterDefinition
 }
 
 
-export let Filter = makeClassDecorator(FilterDefinition);
+export type FilterDecoratorFactory = (options: FilterOptions) => any;
+export let Filter: FilterDecoratorFactory = makeClassDecorator(FilterDefinition);

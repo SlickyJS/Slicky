@@ -53,25 +53,7 @@ export declare interface DirectiveDefinitionEvent
 {
 	method: string,
 	event: string,
-	hostElement?: string,
 	selector?: string,
-}
-
-
-export declare interface DirectiveDefinitionChildDirective
-{
-	property: string,
-	required: boolean,
-	directiveType: ClassType<any>,
-	metadata: DirectiveDefinition,
-}
-
-
-export declare interface DirectiveDefinitionChildrenDirective
-{
-	property: string,
-	directiveType: ClassType<any>,
-	metadata: DirectiveDefinition,
 }
 
 
@@ -79,6 +61,21 @@ export declare interface DirectiveDefinitionInnerDirective
 {
 	directiveType: ClassType<any>,
 	metadata: DirectiveDefinition,
+}
+
+
+export declare interface DirectiveDefinitionChildDirective
+{
+	property: string,
+	required: boolean,
+	directive: DirectiveDefinitionInnerDirective,
+}
+
+
+export declare interface DirectiveDefinitionChildrenDirective
+{
+	property: string,
+	directive: DirectiveDefinitionInnerDirective,
 }
 
 
@@ -93,7 +90,7 @@ export declare interface DirectiveDefinition
 {
 	type: DirectiveDefinitionType,
 	id: string,
-	name: string,
+	className: string,
 	selector: string,
 	exportAs?: Array<string>,
 	onInit: boolean,
@@ -169,7 +166,7 @@ export class DirectiveMetadataLoader
 		const metadata: DirectiveDefinition = {
 			type: type,
 			id: exists(annotation.id) ? annotation.id : name,
-			name: name,
+			className: name,
 			selector: annotation.selector,
 			onInit: isFunction(directiveType.prototype.onInit),
 			onDestroy: isFunction(directiveType.prototype.onDestroy),
@@ -276,10 +273,7 @@ export class DirectiveMetadataLoader
 						event: propertyMetadata.event,
 					};
 
-					if (propertyMetadata.selector && propertyMetadata.selector.charAt(0) === '@') {
-						event.hostElement = propertyMetadata.selector.substring(1);
-
-					} else if (propertyMetadata.selector) {
+					if (propertyMetadata.selector) {
 						event.selector = propertyMetadata.selector;
 					}
 
@@ -289,15 +283,19 @@ export class DirectiveMetadataLoader
 					childDirective = {
 						property: property,
 						required: false,
-						directiveType: propertyMetadata.directiveType,
-						metadata: this.loadDirective(propertyMetadata.directiveType),
+						directive: {
+							directiveType: propertyMetadata.directiveType,
+							metadata: this.loadDirective(propertyMetadata.directiveType),
+						},
 					};
 
 				} else if (propertyMetadata instanceof ChildrenDirectiveDefinition) {
 					metadata.childrenDirectives.push({
 						property: property,
-						directiveType: propertyMetadata.directiveType,
-						metadata: this.loadDirective(propertyMetadata.directiveType),
+						directive: {
+							directiveType: propertyMetadata.directiveType,
+							metadata: this.loadDirective(propertyMetadata.directiveType),
+						},
 					});
 				}
 			});
@@ -330,14 +328,17 @@ export class DirectiveMetadataLoader
 	private validate(metadata: DirectiveDefinition): void
 	{
 		forEach(metadata.events, (event: DirectiveDefinitionEvent) => {
-			if (event.hostElement) {
+			if (event.selector && event.selector.charAt(0) === '@') {
+				const hostElementName = event.selector.substr(1);
 				const hostElement = find(metadata.elements, (element: DirectiveDefinitionElement) => {
-					return element.property === event.hostElement;
+					return element.property === hostElementName;
 				});
 
 				if (!hostElement) {
-					throw new Error(`Directive "${metadata.name}" has @HostEvent on "${event.method}" which points to @HostElement on "${event.hostElement}" which does not exists.`);
+					throw new Error(`Directive "${metadata.className}" has @HostEvent on "${event.method}" which points to @HostElement on "${hostElementName}" which does not exists.`);
 				}
+
+				event.selector = hostElement.selector;
 			}
 		});
 	}

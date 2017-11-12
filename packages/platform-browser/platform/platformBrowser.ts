@@ -1,8 +1,8 @@
+import {Application, PlatformInterface} from '@slicky/core';
 import {DirectiveDefinition} from '@slicky/core/metadata';
 import {Compiler} from '@slicky/compiler';
 import {TemplateRenderFactory} from '@slicky/templates/templates';
 import {evalCode} from '@slicky/utils';
-import {Application, PlatformInterface} from '@slicky/application';
 
 
 export class PlatformBrowser implements PlatformInterface

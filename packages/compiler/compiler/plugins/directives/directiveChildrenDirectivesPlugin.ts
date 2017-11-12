@@ -13,7 +13,7 @@ export class DirectiveChildrenDirectivesPlugin extends AbstractDirectivePlugin
 	public onProcessDirectiveInParent(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, processingParentDirective: ProcessingDirective, arg: OnProcessElementArgument): void
 	{
 		forEach(processingParentDirective.directive.metadata.childrenDirectives, (childrenDirective: DirectiveDefinitionChildrenDirective) => {
-			if (directive.directive.directiveType === childrenDirective.directiveType) {
+			if (directive.directive.directiveType === childrenDirective.directive.directiveType) {
 				directive.setup.body.add(`template.getParameter("@directive_${processingParentDirective.id}").${childrenDirective.property}.add.emit(directive);`);
 
 				directive.setup.body.add(

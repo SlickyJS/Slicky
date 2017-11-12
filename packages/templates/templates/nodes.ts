@@ -23,7 +23,7 @@ export class TemplateElement extends TemplateNode
 
 	public _onRecursiveChildAdded: (parent: TemplateElement, child: TemplateNode) => void;
 
-	public _nativeNode: Element;
+	public _nativeNode: HTMLElement;
 
 	public _insertChildBefore: Node;
 
@@ -34,7 +34,7 @@ export class TemplateElement extends TemplateNode
 	private renderer: Renderer;
 
 
-	constructor(document: Document, name: string, attributes: {[name: string]: string} = {}, nativeNode?: Element)
+	constructor(document: Document, name: string, attributes: {[name: string]: string} = {}, nativeNode?: HTMLElement)
 	{
 		super();
 
@@ -119,7 +119,7 @@ export class TemplateElement extends TemplateNode
 	}
 
 
-	public addElement(name: string, attributes: {[name: string]: string} = {}, setup?: (el: TemplateElement, nativeEl: Element) => void): TemplateElement
+	public addElement(name: string, attributes: {[name: string]: string} = {}, setup?: (el: TemplateElement, nativeEl: HTMLElement) => void): TemplateElement
 	{
 		const el = new TemplateElement(this.document, name, attributes);
 

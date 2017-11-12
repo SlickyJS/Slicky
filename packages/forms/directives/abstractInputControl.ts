@@ -26,7 +26,7 @@ export const ControlStatusClasses = {
 };
 
 
-export abstract class AbstractInputControl<T, U extends Element> extends AbstractFormControl<T, U> implements OnInit, OnTemplateInit
+export abstract class AbstractInputControl<T, U extends HTMLElement> extends AbstractFormControl<T, U> implements OnInit, OnTemplateInit
 {
 
 

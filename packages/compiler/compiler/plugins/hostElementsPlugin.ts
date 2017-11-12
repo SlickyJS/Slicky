@@ -40,7 +40,7 @@ export class HostElementsPlugin extends AbstractSlickyEnginePlugin
 	{
 		forEach(this.metadata.elements, (hostElement: DirectiveDefinitionElement) => {
 			if (this.processedHostElements.indexOf(hostElement) < 0 && hostElement.required) {
-				throw new Error(`${this.metadata.name}.${hostElement.property}: required @HostElement was not found.`);
+				throw new Error(`${this.metadata.className}.${hostElement.property}: required @HostElement was not found.`);
 			}
 		});
 	}

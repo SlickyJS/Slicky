@@ -47,6 +47,7 @@ describe('#Metadata/FilterMetadataLoader', () => {
 			}
 
 			expect(loader.loadFilter(TestFilter)).to.be.eql({
+				className: 'TestFilter',
 				name: 'test',
 			});
 		});

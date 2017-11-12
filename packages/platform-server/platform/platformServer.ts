@@ -1,6 +1,6 @@
+import {Application, PlatformInterface} from '@slicky/core';
 import {DirectiveDefinition} from '@slicky/core/metadata';
 import {TemplateRenderFactory} from '@slicky/templates/templates';
-import {Application, PlatformInterface} from '@slicky/application';
 
 
 export class PlatformServer implements PlatformInterface

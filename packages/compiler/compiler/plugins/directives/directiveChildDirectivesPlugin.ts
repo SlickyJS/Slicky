@@ -17,7 +17,7 @@ export class DirectiveChildDirectivesPlugin extends AbstractDirectivePlugin
 				return;
 			}
 
-			if (directive.directive.directiveType === childDirective.directiveType) {
+			if (directive.directive.directiveType === childDirective.directive.directiveType) {
 				parentProcessingDirective.processedChildDirectives.push(childDirective);
 				directive.setup.body.add(`template.getParameter("@directive_${parentProcessingDirective.id}").${childDirective.property} = directive;`);
 			}
@@ -29,7 +29,7 @@ export class DirectiveChildDirectivesPlugin extends AbstractDirectivePlugin
 	{
 		forEach(directive.directive.metadata.childDirectives, (childDirective: DirectiveDefinitionChildDirective) => {
 			if (childDirective.required && directive.processedChildDirectives.indexOf(childDirective) < 0) {
-				throw new Error(`${directive.directive.metadata.name}.${childDirective.property}: required @ChildDirective ${childDirective.metadata.name} was not found.`);
+				throw new Error(`${directive.directive.metadata.className}.${childDirective.property}: required @ChildDirective ${childDirective.directive.metadata.className} was not found.`);
 			}
 		});
 	}

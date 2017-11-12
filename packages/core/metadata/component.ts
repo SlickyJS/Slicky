@@ -2,17 +2,17 @@ import {makeClassDecorator} from '@slicky/reflection';
 import {exists, merge} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {TemplateEncapsulation} from '@slicky/templates/templates';
-import {RenderableTemplateFactory} from '@slicky/templates/templates';
 import {DirectiveAnnotationDefinition} from './directive';
 import {FilterInterface} from '../filters';
+import {ComponentTemplateRenderFactory} from '../templates';
 
 
 export declare interface ComponentOptions
 {
 	name: string,
-	template?: string|RenderableTemplateFactory,
+	template?: string|ComponentTemplateRenderFactory,
 	exportAs?: string,
-	directives?: Array<ClassType<any>>,
+	directives?: Array<any>,
 	override?: ClassType<any>,
 	filters?: Array<ClassType<FilterInterface>>,
 	styles?: Array<string>,
@@ -26,7 +26,7 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 {
 
 
-	public template: string|RenderableTemplateFactory;
+	public template: string|ComponentTemplateRenderFactory;
 
 	public filters: Array<ClassType<FilterInterface>> = [];
 
@@ -67,4 +67,5 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 }
 
 
-export let Component = makeClassDecorator(ComponentAnnotationDefinition);
+export type ComponentDecoratorFactory = (options: ComponentOptions) => any;
+export let Component: ComponentDecoratorFactory = makeClassDecorator(ComponentAnnotationDefinition);

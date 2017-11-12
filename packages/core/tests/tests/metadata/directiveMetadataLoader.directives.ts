@@ -234,7 +234,7 @@ describe('#Metadata/DirectiveMetadataLoader.directives', () => {
 					{
 						method: 'eventWithHostElement',
 						event: 'click',
-						hostElement: 'el',
+						selector: 'button',
 					},
 				],
 			}));
@@ -268,7 +268,7 @@ describe('#Metadata/DirectiveMetadataLoader.directives', () => {
 						directiveType: TestChildDirectiveA,
 						metadata: createDirectiveMetadata({
 							id: 'TestChildDirectiveA',
-							name: 'TestChildDirectiveA',
+							className: 'TestChildDirectiveA',
 							selector: 'test-child-directive-a',
 						}),
 					},
@@ -276,7 +276,7 @@ describe('#Metadata/DirectiveMetadataLoader.directives', () => {
 						directiveType: TestChildDirectiveB,
 						metadata: createDirectiveMetadata({
 							id: 'TestChildDirectiveB',
-							name: 'TestChildDirectiveB',
+							className: 'TestChildDirectiveB',
 							selector: 'test-child-directive-b',
 						}),
 					},
@@ -284,7 +284,7 @@ describe('#Metadata/DirectiveMetadataLoader.directives', () => {
 						directiveType: TestChildDirectiveC,
 						metadata: createDirectiveMetadata({
 							id: 'TestChildDirectiveC',
-							name: 'TestChildDirectiveC',
+							className: 'TestChildDirectiveC',
 							selector: 'test-child-directive-c',
 						}),
 					},
@@ -318,22 +318,26 @@ describe('#Metadata/DirectiveMetadataLoader.directives', () => {
 					{
 						property: 'childDirective',
 						required: false,
-						directiveType: TestChildDirective,
-						metadata: createDirectiveMetadata({
-							id: 'TestChildDirective',
-							name: 'TestChildDirective',
-							selector: 'test-child-directive',
-						}),
+						directive: {
+							directiveType: TestChildDirective,
+							metadata: createDirectiveMetadata({
+								id: 'TestChildDirective',
+								className: 'TestChildDirective',
+								selector: 'test-child-directive',
+							}),
+						},
 					},
 					{
 						property: 'childDirectiveRequired',
 						required: true,
-						directiveType: TestChildDirective,
-						metadata: createDirectiveMetadata({
-							id: 'TestChildDirective',
-							name: 'TestChildDirective',
-							selector: 'test-child-directive',
-						}),
+						directive: {
+							directiveType: TestChildDirective,
+							metadata: createDirectiveMetadata({
+								id: 'TestChildDirective',
+								className: 'TestChildDirective',
+								selector: 'test-child-directive',
+							}),
+						},
 					},
 				],
 			}));
@@ -360,12 +364,14 @@ describe('#Metadata/DirectiveMetadataLoader.directives', () => {
 				childrenDirectives: [
 					{
 						property: 'childrenDirective',
-						directiveType: TestChildDirective,
-						metadata: createDirectiveMetadata({
-							id: 'TestChildDirective',
-							name: 'TestChildDirective',
-							selector: 'test-child-directive',
-						}),
+						directive: {
+							directiveType: TestChildDirective,
+							metadata: createDirectiveMetadata({
+								id: 'TestChildDirective',
+								className: 'TestChildDirective',
+								selector: 'test-child-directive',
+							}),
+						},
 					},
 				],
 			}));

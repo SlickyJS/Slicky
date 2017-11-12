@@ -88,6 +88,7 @@ describe('#Metadata/DirectiveMetadataLoader.components', () => {
 					{
 						filterType: TestFilter,
 						metadata: {
+							className: 'TestFilter',
 							name: 'test-filter',
 						},
 					},
@@ -122,6 +123,7 @@ describe('#Metadata/DirectiveMetadataLoader.components', () => {
 					{
 						filterType: TestFilter,
 						metadata: {
+							className: 'TestFilter',
 							name: 'test-filter',
 						},
 					},

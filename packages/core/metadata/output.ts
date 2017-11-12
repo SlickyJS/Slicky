@@ -16,4 +16,5 @@ export class OutputDefinition
 }
 
 
-export let Output = makePropertyDecorator(OutputDefinition);
+export type OutputDecoratorFactory = (name?: string) => any;
+export let Output: OutputDecoratorFactory = makePropertyDecorator(OutputDefinition);

@@ -10,6 +10,7 @@ const STATIC_FILTER_METADATA_STORAGE = '__slicky__filter__metadata__';
 
 export declare interface FilterMetadata
 {
+	className: string,
 	name: string,
 }
 
@@ -37,6 +38,7 @@ export class FilterMetadataLoader
 		}
 
 		return {
+			className: stringify(filterType),
 			name: metadata.name,
 		};
 	}

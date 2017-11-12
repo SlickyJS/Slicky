@@ -2,7 +2,7 @@ import '../bootstrap';
 
 import {Tester, ApplicationRef, DirectiveRef} from '../..';
 import {Directive, Component} from '@slicky/core';
-import {ComponentTemplate} from '@slicky/application/runtime';
+import {ComponentTemplate} from '@slicky/core/templates';
 import {expect} from 'chai';
 
 

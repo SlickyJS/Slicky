@@ -1,9 +1,10 @@
 return function(template, el, component, directivesProvider) {
+	var root = template;
 	template.run(function() {
 		component.onInit();
 	});
 	el.addElement("test-directive", {}, function(el) {
-		template.root.createDirectivesStorageTemplate(template, directivesProvider, el, function(template, directivesProvider) {
+		root.createDirectivesStorageTemplate(template, directivesProvider, el, function(template, directivesProvider) {
 			template.addDirective("@directive_0", directivesProvider.getDirectiveTypeByName("TestDirective"));
 		});
 		template.getParameter("@directive_0").onInit();

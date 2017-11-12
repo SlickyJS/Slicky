@@ -23,6 +23,7 @@ class NoExportComponent {
 @Component({
     name: "test-component-a",
     template: function (template, el, component, directivesProvider) {
+        var root = template;
     }
 })
 export class TestComponentA {

@@ -16,4 +16,5 @@ export class HostElementDefinition
 }
 
 
-export let HostElement = makePropertyDecorator(HostElementDefinition);
+export type HostElementDecoratorFactory = (selector: string) => any;
+export let HostElement: HostElementDecoratorFactory = makePropertyDecorator(HostElementDefinition);

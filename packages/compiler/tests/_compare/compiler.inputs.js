@@ -1,6 +1,7 @@
 return function(template, el, component, directivesProvider) {
+	var root = template;
 	el.addElement("directive-child", {"attribute-input": "attr", "attribute-custom": "custom", "attribute-watch": ""}, function(el) {
-		template.root.createDirectivesStorageTemplate(template, directivesProvider, el, function(template, directivesProvider) {
+		root.createDirectivesStorageTemplate(template, directivesProvider, el, function(template, directivesProvider) {
 			template.addDirective("@directive_0", directivesProvider.getDirectiveTypeByName("TestDirectiveChild"), function(directive) {
 				directive.attributeInput = "attr";
 				directive.attributeInputCustom = "custom";
@@ -26,7 +27,7 @@ return function(template, el, component, directivesProvider) {
 		});
 	});
 	el.addElement("component-child", {"attribute-input": "attr", "attribute-custom": "custom", "attribute-watch": ""}, function(el) {
-		template.root.createDirectivesStorageTemplate(template, directivesProvider, el, function(template, directivesProvider) {
+		root.createDirectivesStorageTemplate(template, directivesProvider, el, function(template, directivesProvider) {
 			template.addComponent("@directive_1", directivesProvider.getDirectiveTypeByName("TestComponentChild"), function(directive, template, outer) {
 				directive.attributeInput = "attr";
 				directive.attributeInputCustom = "custom";

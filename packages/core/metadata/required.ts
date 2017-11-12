@@ -7,4 +7,5 @@ export class RequiredDefinition
 }
 
 
-export let Required = makePropertyDecorator(RequiredDefinition);
+export type RequiredDecoratorFactory = () => any;
+export let Required: RequiredDecoratorFactory = makePropertyDecorator(RequiredDefinition);

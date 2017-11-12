@@ -8,7 +8,7 @@ import {forEach, isFunction, exists} from '@slicky/utils';
 import {Container, ProviderOptions} from '@slicky/di';
 import {ClassType} from '@slicky/lang';
 import {PlatformInterface} from '../platform';
-import {ComponentTemplate} from './componentTemplate';
+import {ComponentTemplate} from '../templates';
 import {DirectiveTypesProvider} from './directiveTypesProvider';
 
 
@@ -43,7 +43,7 @@ export class DirectiveFactory
 	}
 
 
-	public createDirective<T>(container: Container, directiveType: ClassType<T>, metadata: DirectiveDefinition, el: Element, providers: Array<ProviderOptions> = []): T
+	public createDirective<T>(container: Container, directiveType: ClassType<T>, metadata: DirectiveDefinition, el: HTMLElement, providers: Array<ProviderOptions> = []): T
 	{
 		let directives = this.getDirectivesStorage(el);
 
@@ -71,7 +71,7 @@ export class DirectiveFactory
 	}
 
 
-	public runComponent<T>(container: Container, component: T, metadata: DirectiveDefinition, parent: BaseTemplate, el: Element, changeDetector: ChangeDetector, realm: RealmRef, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): ComponentTemplate
+	public runComponent<T>(container: Container, component: T, metadata: DirectiveDefinition, parent: BaseTemplate, el: HTMLElement, changeDetector: ChangeDetector, realm: RealmRef, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): ComponentTemplate
 	{
 		let templateFactory: TemplateRenderFactory;
 

@@ -40,7 +40,7 @@ export class LoopPlugin extends EnginePlugin
 
 		const loopArguments = [
 			`{${loopOptions.join(', ')}}`,
-			`function(template, el) {\n` +
+			`function() {\n` +
 			`	${arg.engine._compileExpression(forLoop.forOf, arg.progress, true)};\n` +
 			`}`,
 			`"${arg.template.name}"`,

@@ -14,7 +14,7 @@ export declare interface TemplateRenderOptions
 }
 
 
-export declare type TemplateRenderFactory = (template: Template, el: nodes.TemplateElement) => void;
+export declare type TemplateRenderFactory = (template: Template, el: nodes.TemplateElement, ...args: Array<any>) => void;
 
 
 export class Template extends RenderableTemplate
@@ -39,7 +39,7 @@ export class Template extends RenderableTemplate
 	}
 
 
-	public render(el: Element, factoryOrOptions: TemplateRenderFactory|TemplateRenderOptions, factory?: TemplateRenderFactory, ...args: Array<any>): void
+	public render(el: HTMLElement, factoryOrOptions: TemplateRenderFactory|TemplateRenderOptions, factory?: TemplateRenderFactory, ...args: Array<any>): void
 	{
 		let options: TemplateRenderOptions;
 
