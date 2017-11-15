@@ -9,7 +9,7 @@ describe('#Application.exports', () => {
 
 	it('should export element when no directive registered', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<span #span></span>',
 		})
 		class TestComponent {}
@@ -27,7 +27,7 @@ describe('#Application.exports', () => {
 		class TestDirective {}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<span #dir></span>',
 			directives: [TestDirective],
 		})
@@ -52,7 +52,7 @@ describe('#Application.exports', () => {
 		class TestDirectiveB {}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<span #el="$this" #dir-a="dirA" #dir-b="dirB"></span>',
 			directives: [TestDirectiveA, TestDirectiveB],
 		})

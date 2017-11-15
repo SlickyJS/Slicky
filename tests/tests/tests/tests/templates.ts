@@ -9,7 +9,7 @@ describe('#Application.templates', () => {
 
 	it('should render template', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: (
 				`<template id="user" inject="name">` +
 					`{{ name }}` +

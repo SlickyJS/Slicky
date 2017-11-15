@@ -14,7 +14,7 @@ describe('#Application.childrenDirectives', () => {
 		class TestDirective {}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<test-directive></test-directive>',
 			directives: [TestDirective],
 		})
@@ -39,7 +39,7 @@ describe('#Application.childrenDirectives', () => {
 		class TestDirective {}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<test-directive *s:for="item in items"></test-directive>',
 			directives: [TestDirective],
 		})
@@ -86,7 +86,7 @@ describe('#Application.childrenDirectives', () => {
 		}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<test-parent-directive><test-child-directive></test-child-directive></test-parent-directive>',
 			directives: [TestParentDirective, TestChildDirective],
 		})
@@ -122,7 +122,7 @@ describe('#Application.childrenDirectives', () => {
 		}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<test-parent-directive><test-child-directive *s:for="item in items"></test-child-directive></test-parent-directive>',
 			directives: [TestParentDirective, TestChildDirective],
 		})

@@ -11,7 +11,7 @@ describe('#Application.forms.validators', () => {
 
 	it('should be valid when no validators are applied', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<input s:model type="text" #i="sModel">',
 			directives: [FORM_DIRECTIVES],
 		})
@@ -26,7 +26,7 @@ describe('#Application.forms.validators', () => {
 
 	it('should check required validator on input[type="text"]', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<input [(s:model)]="text" type="text" required #i="sModel">',
 			directives: [FORM_DIRECTIVES],
 		})
@@ -53,7 +53,7 @@ describe('#Application.forms.validators', () => {
 
 	it('should check required validator on input[type="checkbox"]', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<input [(s:model)]="checked" type="checkbox" required #i="sModel">',
 			directives: [FORM_DIRECTIVES],
 		})
@@ -80,7 +80,7 @@ describe('#Application.forms.validators', () => {
 
 	it('should check email validator on input[type="email"]', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<input [(s:model)]="email" type="email" #i="sModel">',
 			directives: [FORM_DIRECTIVES],
 		})
@@ -113,7 +113,7 @@ describe('#Application.forms.validators', () => {
 
 	it('should check minlength validator on input[type="text"]', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<input [(s:model)]="text" type="text" minlength="2" #i="sModel">',
 			directives: [FORM_DIRECTIVES],
 		})
@@ -140,7 +140,7 @@ describe('#Application.forms.validators', () => {
 
 	it('should check maxlength validator on input[type="text"]', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<input [(s:model)]="text" type="text" maxlength="2" #i="sModel">',
 			directives: [FORM_DIRECTIVES],
 		})
@@ -167,7 +167,7 @@ describe('#Application.forms.validators', () => {
 
 	it('should check pattern validator on input[type="text"]', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<input [(s:model)]="text" type="text" pattern="[a-z]+" #i="sModel">',
 			directives: [FORM_DIRECTIVES],
 		})
@@ -194,7 +194,7 @@ describe('#Application.forms.validators', () => {
 
 	it('should check min validator on input[type="number"]', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<input [(s:model)]="num" type="number" min="5" #i="sModel">',
 			directives: [FORM_DIRECTIVES],
 		})
@@ -221,7 +221,7 @@ describe('#Application.forms.validators', () => {
 
 	it('should check max validator on input[type="number"]', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<input [(s:model)]="num" type="number" max="5" #i="sModel">',
 			directives: [FORM_DIRECTIVES],
 		})
@@ -262,7 +262,7 @@ describe('#Application.forms.validators', () => {
 		}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<input s:model type="text" async-test #i="sModel">',
 			directives: [FORM_DIRECTIVES, TestAsyncValidator],
 		})
@@ -318,7 +318,7 @@ describe('#Application.forms.validators', () => {
 		}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<input type="text" s:model async-test #i="sModel">',
 			directives: [FORM_DIRECTIVES, TestAsyncValidator],
 		})

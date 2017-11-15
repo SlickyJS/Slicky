@@ -22,7 +22,7 @@ describe('#Application.filters', () => {
 		}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '{{ "hello world" | reverse }}',
 			filters: [TestFilter],
 		})
@@ -48,13 +48,13 @@ describe('#Application.filters', () => {
 		}
 
 		@Component({
-			name: 'test-child-component',
+			selector: 'test-child-component',
 			template: '{{ "Clare" | reverse }}',
 		})
 		class TestChildComponent {}
 
 		@Component({
-			name: 'test-parent-component',
+			selector: 'test-parent-component',
 			template: '{{ "David" | reverse }} + <test-child-component></test-child-component>',
 			directives: [TestChildComponent],
 		})

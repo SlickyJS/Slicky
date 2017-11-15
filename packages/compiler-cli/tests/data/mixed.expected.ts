@@ -15,13 +15,13 @@ export class TestDirectiveA {
 export class TestDirectiveB {
 }
 @Component({
-    name: "no-export-component",
+    selector: "no-export-component",
     template: "",
 })
 class NoExportComponent {
 }
 @Component({
-    name: "test-component-a",
+    selector: "test-component-a",
     template: function (template, el, component, directivesProvider) {
         var root = template;
     }
@@ -29,7 +29,7 @@ class NoExportComponent {
 export class TestComponentA {
 }
 @Component({
-    name: "test-component-b",
+    selector: "test-component-b",
     template: () => { }
 })
 export class TestComponentB {

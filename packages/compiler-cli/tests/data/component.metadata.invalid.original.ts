@@ -5,7 +5,7 @@ class TestFilter {}
 
 
 @Component({
-	name: 'test-component',
+	selector: 'test-component',
 	template: '',
 	filters: [TestFilter],
 })

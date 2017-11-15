@@ -11,7 +11,7 @@ const TEMPLATE = `
 
 
 @Component({
-	name: 'app-loop',
+	selector: 'app-loop',
 	template: TEMPLATE,
 	encapsulation: TemplateEncapsulation.Native,
 })

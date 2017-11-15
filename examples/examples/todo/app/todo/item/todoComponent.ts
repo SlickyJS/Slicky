@@ -5,7 +5,7 @@ import {IconDirective, TimeAgoInWordsComponent} from '../../helpers';
 
 
 @Component({
-	name: 'todo-item',
+	selector: 'todo-item',
 	template: require('./template.html'),
 	styles: [
 		require('./styles.css'),

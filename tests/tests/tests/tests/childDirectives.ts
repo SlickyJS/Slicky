@@ -14,7 +14,7 @@ describe('#Application.childDirectives', () => {
 		class TestDirective {}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<test-directive></test-directive>',
 			directives: [TestDirective],
 		})
@@ -49,7 +49,7 @@ describe('#Application.childDirectives', () => {
 		}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<test-parent-directive><test-child-directive></test-child-directive></test-parent-directive>',
 			directives: [TestParentDirective, TestChildDirective],
 		})

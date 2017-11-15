@@ -27,7 +27,7 @@ describe('#Application.directives', () => {
 		}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<test-directive></test-directive>',
 		})
 		class TestComponent {}
@@ -41,7 +41,7 @@ describe('#Application.directives', () => {
 
 	it('should provide child directives inside of component by another directive', () => {
 		@Component({
-			name: 'test-child-component',
+			selector: 'test-child-component',
 			template: 'yes',
 		})
 		class TestChildComponent {}
@@ -53,7 +53,7 @@ describe('#Application.directives', () => {
 		class TestParentDirective {}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: (
 				'<test-parent-directive>' +
 					'inside: <test-child-component></test-child-component>' +
@@ -150,7 +150,7 @@ describe('#Application.directives', () => {
 		}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<div test-directive-a test-directive-b test-directive-c></div>',
 			directives: [TestDirectiveA, TestDirectiveB, TestDirectiveC],
 		})
@@ -195,7 +195,7 @@ describe('#Application.directives', () => {
 		}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<div test-directive-a test-directive-b></div>',
 			directives: [[TestDirectiveA, TestDirectiveB]],
 		})
@@ -264,7 +264,7 @@ describe('#Application.directives', () => {
 		}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<test-directive></test-directive>',
 			directives: [TestMoreSpecificDirective, TestDirective, TestDefaultDirective, TestSpecificDirective],
 		})
@@ -306,7 +306,7 @@ describe('#Application.directives', () => {
 		}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<div dir-a></div>',
 			directives: [TestCorrectDirective, TestWrongDirective],
 		})
@@ -334,7 +334,7 @@ describe('#Application.directives', () => {
 		}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<test-directive></test-directive>',
 			directives: [TestDirective],
 		})
@@ -362,7 +362,7 @@ describe('#Application.directives', () => {
 		}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<test-directive></test-directive>',
 			directives: [TestDirective],
 		})
@@ -422,7 +422,7 @@ describe('#Application.directives', () => {
 		let called = 0;
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '',
 		})
 		class TestComponent implements OnInit
@@ -444,7 +444,7 @@ describe('#Application.directives', () => {
 		let realm: RealmRef = null;
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '',
 		})
 		class TestComponent
@@ -466,7 +466,7 @@ describe('#Application.directives', () => {
 		let realm: RealmRef = null;
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '',
 		})
 		class TestComponent
@@ -488,7 +488,7 @@ describe('#Application.directives', () => {
 		let name = 'David';
 
 		@Component({
-			name: 'test-child-component',
+			selector: 'test-child-component',
 			template: '{{ name }}',
 		})
 		class TestChildComponent
@@ -502,7 +502,7 @@ describe('#Application.directives', () => {
 		}
 
 		@Component({
-			name: 'test-parent-component',
+			selector: 'test-parent-component',
 			template: '<test-child-component></test-child-component>',
 			directives: [TestChildComponent],
 		})

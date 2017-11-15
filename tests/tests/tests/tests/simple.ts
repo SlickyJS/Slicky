@@ -9,7 +9,7 @@ describe('#Application.simple', () => {
 
 	it('should render text', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: 'hello world',
 		})
 		class TestComponent {}
@@ -23,7 +23,7 @@ describe('#Application.simple', () => {
 
 	it('should render expression', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '{{ "hello world" }}',
 		})
 		class TestComponent {}

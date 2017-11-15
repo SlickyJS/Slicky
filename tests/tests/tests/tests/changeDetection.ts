@@ -10,7 +10,7 @@ describe('#Application.changeDetection', () => {
 	it('should run function outside of realm and not refresh the template', (done) => {
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '{{ num }}',
 		})
 		class TestComponent implements OnInit

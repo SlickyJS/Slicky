@@ -9,7 +9,7 @@ describe('#Application.conditions', () => {
 
 	it('should render when true', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<template [s:if]="visible">hello world</template>',
 		})
 		class TestComponent
@@ -37,7 +37,7 @@ describe('#Application.conditions', () => {
 
 	it('should render inline condition when true', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<span *s:if="visible">hello world</span>',
 		})
 		class TestComponent
@@ -65,7 +65,7 @@ describe('#Application.conditions', () => {
 
 	it('should render when true with local variable', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '{{ let visible = true }}<template [s:if]="visible">hello world</template>',
 		})
 		class TestComponent {}

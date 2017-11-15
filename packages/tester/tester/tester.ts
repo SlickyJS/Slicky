@@ -61,7 +61,7 @@ export class Tester
 	public static runDirective<T>(el: string, directiveType: ClassType<T>): DirectiveRef<T>
 	{
 		@Component({
-			name: 'root-application',
+			selector: 'root-application',
 			template: el,
 			directives: [directiveType],
 		})

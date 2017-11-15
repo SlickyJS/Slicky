@@ -22,16 +22,16 @@ describe('#Metadata/DirectiveMetadataLoader.components', () => {
 		it('should throw an error when using invalid component name', () => {
 			expect(() => {
 				@Component({
-					name: 'button',
+					selector: 'button',
 				})
 				class TestComponent {}
-			}).to.throw(Error, 'Component element name "button" is not valid. Name must contain a dash and be all lowercased.');
+			}).to.throw(Error, 'Component selector "button" is not valid. Selector must contain a dash and be all lowercased.');
 		});
 
 		it('should throw an error when template and render is missing', () => {
 			expect(() => {
 				@Component({
-					name: 'my-component',
+					selector: 'my-component',
 				})
 				class TestComponent {}
 			}).to.throw(Error, 'Component "my-component": missing template.');
@@ -39,7 +39,7 @@ describe('#Metadata/DirectiveMetadataLoader.components', () => {
 
 		it('should load component with template', () => {
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: 'hello world',
 			})
 			class TestComponent {}
@@ -51,7 +51,7 @@ describe('#Metadata/DirectiveMetadataLoader.components', () => {
 
 		it('should load component with different template encapsulation', () => {
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '',
 				encapsulation: TemplateEncapsulation.Native,
 			})
@@ -77,7 +77,7 @@ describe('#Metadata/DirectiveMetadataLoader.components', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '',
 				filters: [TestFilter, TestFilter],
 			})
@@ -111,7 +111,7 @@ describe('#Metadata/DirectiveMetadataLoader.components', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '',
 			})
 			class TestComponent {}
@@ -133,7 +133,7 @@ describe('#Metadata/DirectiveMetadataLoader.components', () => {
 
 		it('should load styles', () => {
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '',
 				styles: [
 					'body {color: red;}',

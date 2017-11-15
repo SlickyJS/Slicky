@@ -3,7 +3,7 @@ import {TimeAgoInWords} from '../filters';
 
 
 @Component({
-	name: 'time-ago-in-words',
+	selector: 'time-ago-in-words',
 	template: '{{ date | timeAgoInWords }}',
 	filters: [TimeAgoInWords],
 	encapsulation: TemplateEncapsulation.Native,

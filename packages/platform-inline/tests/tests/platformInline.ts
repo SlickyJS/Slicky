@@ -22,7 +22,7 @@ describe('#PlatformInline', () => {
 
 		it('should throw an error', () => {
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '',
 			})
 			class TestComponent {}

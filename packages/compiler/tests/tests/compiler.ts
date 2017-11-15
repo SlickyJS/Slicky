@@ -40,7 +40,7 @@ describe('#Compiler', () => {
 
 		it('should compile simple component', () => {
 			@Component({
-				name: 'my-component',
+				selector: 'my-component',
 				template: '',
 			})
 			class TestComponent {}
@@ -55,13 +55,13 @@ describe('#Compiler', () => {
 			class TestChildDirective {}
 
 			@Component({
-				name: 'my-child',
+				selector: 'my-child',
 				template: '',
 			})
 			class TestChildComponent {}
 
 			@Component({
-				name: 'my-component',
+				selector: 'my-component',
 				template: '<directive></directive><my-child></my-child>',
 				directives: [TestChildDirective, TestChildComponent],
 			})
@@ -84,7 +84,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'my-component',
+				selector: 'my-component',
 				template: '<directive></directive>',
 				directives: [TestDirective],
 			})
@@ -99,7 +99,7 @@ describe('#Compiler', () => {
 
 		it('should throw an error when required @HostElement is missing', () => {
 			@Component({
-				name: 'my-component',
+				selector: 'my-component',
 				template: '',
 			})
 			class TestComponent
@@ -131,7 +131,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<test-directive><span></span></test-directive><i></i>',
 				directives: [TestDirective],
 			})
@@ -160,7 +160,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<directive></directive>',
 				directives: [TestDirective],
 			})
@@ -197,7 +197,7 @@ describe('#Compiler', () => {
 
 			}
 			@Component({
-				name: 'component-child',
+				selector: 'component-child',
 				template: '',
 			})
 			class TestComponentChild
@@ -221,7 +221,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: [
 					'<directive-child attribute-input="attr" attribute-custom="custom" attribute-watch="{{ null }}" [property-input]="true" [property-custom]="false"></directive-child>',
 					'<component-child attribute-input="attr" attribute-custom="custom" attribute-watch="{{ null }}" [property-input]="true" [property-custom]="false"></component-child>',
@@ -246,7 +246,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<test-directive></test-directive>',
 				directives: [TestDirective],
 			})
@@ -271,7 +271,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'component-child',
+				selector: 'component-child',
 				template: '',
 			})
 			class TestComponentChild
@@ -286,7 +286,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: [
 					'<directive-child (output)="do()" (output-custom)="doOther()"></directive-child>',
 					'<component-child (output)="do()" (output-custom)="doOther()"></component-child>',
@@ -305,7 +305,7 @@ describe('#Compiler', () => {
 			class TestDirective {}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<template><directive></directive></template>',
 				directives: [TestDirective],
 			})
@@ -338,7 +338,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<template><parent-directive></parent-directive></template>',
 				directives: [TestChildDirective, TestParentDirective],
 			})
@@ -354,7 +354,7 @@ describe('#Compiler', () => {
 			class TestDirective {}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '',
 				directives: [TestDirective],
 			})
@@ -393,7 +393,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<parent-directive></parent-directive>',
 				directives: [TestChildDirective, TestParentDirective],
 			})
@@ -413,7 +413,7 @@ describe('#Compiler', () => {
 			class TestDirective {}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<directive></directive>',
 				directives: [TestDirective],
 			})
@@ -446,7 +446,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<parent-directive><child-directive></child-directive></parent-directive>',
 				directives: [TestChildDirective, TestParentDirective],
 			})
@@ -457,7 +457,7 @@ describe('#Compiler', () => {
 
 		it('should compile @ChildDirective for component in directive', () => {
 			@Component({
-				name: 'child-component',
+				selector: 'child-component',
 				template: '',
 			})
 			class TestChildComponent {}
@@ -474,7 +474,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<parent-directive><child-component></child-component></parent-directive>',
 				directives: [TestChildComponent, TestParentDirective],
 			})
@@ -490,7 +490,7 @@ describe('#Compiler', () => {
 			class TestDirective {}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<directive></directive>',
 				directives: [TestDirective],
 			})
@@ -523,7 +523,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<directive></directive>',
 				directives: [TestDirective],
 			})
@@ -545,7 +545,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<directive></directive>',
 				directives: [TestDirective],
 			})
@@ -571,7 +571,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<directive><button></button></directive>',
 				directives: [TestDirective],
 			})
@@ -582,7 +582,7 @@ describe('#Compiler', () => {
 
 		it('should include styles in template', () => {
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<style>.parent-template {color: red;}</style><div class="parent-template parent-override"></div>',
 				styles: [
 					'.parent-override {color: green;}',
@@ -601,7 +601,7 @@ describe('#Compiler', () => {
 			class TestDirective {}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<div #el></div>{{ el.innerText }}',
 				directives: [TestDirective],
 			})
@@ -624,7 +624,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<div #dir></div>{{ dir.text }}',
 				directives: [TestDirective],
 			})
@@ -659,7 +659,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<div #el="$this" #dir-a="dirA" #dir-b="dirB"></div>{{ el.innerText }} {{ dirA.name }} {{ dirB.name }}',
 				directives: [TestDirectiveA, TestDirectiveB],
 			})
@@ -670,7 +670,7 @@ describe('#Compiler', () => {
 
 		it('should export component', () => {
 			@Component({
-				name: 'child-component',
+				selector: 'child-component',
 				exportAs: 'cmp',
 				template: '',
 			})
@@ -682,7 +682,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<child-component #child></child-component>{{ child.innerText }}',
 				directives: [TestChildDirective],
 			})
@@ -693,7 +693,7 @@ describe('#Compiler', () => {
 
 		it('should create new local variable inside of template', () => {
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '{{ let greeting = "hello world" }} {{ greeting }}',
 			})
 			class TestComponent {}
@@ -703,26 +703,26 @@ describe('#Compiler', () => {
 
 		it('should throw an error when multiple components are used on one element', () => {
 			@Component({
-				name: 'test-child-component',
+				selector: 'test-child-component',
 				template: '',
 			})
 			class TestChildComponentA {}
 
 			@Component({
-				name: 'test-child-component',
+				selector: 'test-child-component',
 				template: '',
 			})
 			class TestChildComponentB {}
 
 			@Component({
-				name: 'test-child-component',
+				selector: 'test-child-component',
 				template: '',
 				override: TestChildComponentB,
 			})
 			class TestChildComponentC {}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<test-child-component></test-child-component>',
 				directives: [TestChildComponentA, TestChildComponentB, TestChildComponentC],
 			})
@@ -747,7 +747,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-child-component',
+				selector: 'test-child-component',
 				template: '<span></span>',
 			})
 			class TestChildComponent implements OnInit
@@ -760,7 +760,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template:
 					'<test-child-directive><div></div></test-child-directive>' +
 					'<test-child-component></test-child-component>',
@@ -789,7 +789,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<test-directive><div></div></test-directive>',
 				directives: [TestDirective],
 			})
@@ -833,7 +833,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<test-directive [name]="name"></test-directive>',
 				directives: [TestDirective1, TestDirective2],
 			})
@@ -871,7 +871,7 @@ describe('#Compiler', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<test-directive name="David"></test-directive>',
 				directives: [TestDirective1, TestDirective2],
 			})

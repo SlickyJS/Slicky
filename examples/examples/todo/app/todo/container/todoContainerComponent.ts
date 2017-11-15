@@ -17,7 +17,7 @@ declare interface FormValues
 
 
 @Component({
-	name: 'todo-container',
+	selector: 'todo-container',
 	template: require('./template.html'),
 	styles: [
 		require('./style.css'),

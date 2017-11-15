@@ -12,7 +12,7 @@ describe('#Tester', () => {
 
 		it('should run testing application', () => {
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '{{ message }}',
 			})
 			class TestComponent
@@ -77,7 +77,7 @@ describe('#Tester', () => {
 
 		it('should run component', () => {
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '',
 			})
 			class TestComponent {}

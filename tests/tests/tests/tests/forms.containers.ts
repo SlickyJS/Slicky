@@ -10,7 +10,7 @@ describe('#Application.containers', () => {
 
 	it('should get values from form container', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<form-container #container="sFormContainer"><input s:model name="text" value="hello world"></form-container>',
 			directives: [FORM_DIRECTIVES],
 		})
@@ -26,7 +26,7 @@ describe('#Application.containers', () => {
 
 	it('should get values from form with container', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template:
 				'<form #form="sForm">' +
 					'<input s:model name="text" value="hello world">' +

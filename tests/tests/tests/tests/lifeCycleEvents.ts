@@ -11,7 +11,7 @@ describe('#Application.lifeCycleEvents', () => {
 
 		it('should call onInit event and update template asynchronously', (done) => {
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '{{ count }}',
 			})
 			class TestComponent implements OnInit
@@ -48,7 +48,7 @@ describe('#Application.lifeCycleEvents', () => {
 			let called = false;
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '',
 			})
 			class TestComponent implements OnDestroy
@@ -78,7 +78,7 @@ describe('#Application.lifeCycleEvents', () => {
 			const updates = [];
 
 			@Component({
-				name: 'child-component',
+				selector: 'child-component',
 				template: '{{ name }} {{ count }}',
 			})
 			class TestChildComponent implements OnUpdate
@@ -101,7 +101,7 @@ describe('#Application.lifeCycleEvents', () => {
 			}
 
 			@Component({
-				name: 'test-component',
+				selector: 'test-component',
 				template: '<child-component [name]="childName"></child-component>',
 				directives: [TestChildComponent],
 			})
@@ -172,7 +172,7 @@ describe('#Application.lifeCycleEvents', () => {
 			}
 
 			@Component({
-				name: 'test-child-component',
+				selector: 'test-child-component',
 				template: ''
 			})
 			class TestChildComponent
@@ -186,7 +186,7 @@ describe('#Application.lifeCycleEvents', () => {
 			}
 
 			@Component({
-				name: 'test-parent-component',
+				selector: 'test-parent-component',
 				template: (
 					'<test-parent-directive>' +
 						'<test-child-directive>' +

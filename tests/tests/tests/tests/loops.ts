@@ -9,7 +9,7 @@ describe('#Application.loops', () => {
 
 	it('should render loop', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<template [s:for]="letter in letters">{{ letter }}</template>',
 		})
 		class TestComponent

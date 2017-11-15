@@ -10,7 +10,7 @@ describe('#Application.syntax', () => {
 
 	it('should create new local variable inside of template', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '{{ let greeting = "hello world" }} {{ greeting }}',
 		})
 		class TestComponent {}
@@ -23,7 +23,7 @@ describe('#Application.syntax', () => {
 
 	it('should dynamically refresh locally created variable', () => {
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '{{ let localName = name }} {{ localName }}',
 		})
 		class TestComponent
@@ -49,7 +49,7 @@ describe('#Application.syntax', () => {
 		const TIMEOUT = 10;
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<div *s:if="isVisible()">hello world</div>',
 		})
 		class TestComponent

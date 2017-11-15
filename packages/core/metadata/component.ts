@@ -1,24 +1,18 @@
 import {makeClassDecorator} from '@slicky/reflection';
-import {exists, merge} from '@slicky/utils';
+import {exists} from '@slicky/utils';
 import {ClassType} from '@slicky/lang';
 import {TemplateEncapsulation} from '@slicky/templates/templates';
-import {DirectiveAnnotationDefinition} from './directive';
+import {DirectiveOptions, DirectiveAnnotationDefinition} from './directive';
 import {FilterInterface} from '../filters';
 import {ComponentTemplateRenderFactory} from '../templates';
 
 
-export declare interface ComponentOptions
+export declare interface ComponentOptions extends DirectiveOptions
 {
-	name: string,
 	template?: string|ComponentTemplateRenderFactory,
-	exportAs?: string,
-	directives?: Array<any>,
-	override?: ClassType<any>,
 	filters?: Array<ClassType<FilterInterface>>,
 	styles?: Array<string>,
 	encapsulation?: TemplateEncapsulation,
-	id?: string,
-	[name: string]: any,
 }
 
 
@@ -37,14 +31,14 @@ export class ComponentAnnotationDefinition extends DirectiveAnnotationDefinition
 
 	constructor(options: ComponentOptions)
 	{
-		super(merge(options, {selector: options.name}));
+		super(options);
 
-		if (!/^[a-z][a-z0-9-]*[a-z0-9]$/.test(options.name) || options.name.indexOf('-') < 0) {
-			throw new Error(`Component element name "${options.name}" is not valid. Name must contain a dash and be all lowercased.`);
+		if (!/^[a-z][a-z0-9-]*[a-z0-9]$/.test(this.selector) || this.selector.indexOf('-') < 0) {
+			throw new Error(`Component selector "${options.selector}" is not valid. Selector must contain a dash and be all lowercased.`);
 		}
 
 		if (!exists(options.template) && !exists(options.render)) {
-			throw new Error(`Component "${options.name}": missing template.`);
+			throw new Error(`Component "${options.selector}": missing template.`);
 		}
 
 		if (exists(options.template)) {

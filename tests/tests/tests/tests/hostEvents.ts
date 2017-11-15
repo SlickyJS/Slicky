@@ -26,7 +26,7 @@ describe('#Application.hostEvents', () => {
 		}
 
 		@Component({
-			name: 'test-component',
+			selector: 'test-component',
 			template: '<button></button>',
 			directives: [TestDirective],
 		})
