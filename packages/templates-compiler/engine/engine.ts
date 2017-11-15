@@ -12,7 +12,7 @@ import {EngineProgress} from './engineProgress';
 import * as b from '../builder';
 
 
-export class EngineCompileOptions
+export declare interface EngineCompileOptions
 {
 	name?: string;
 	encapsulation?: TemplateEncapsulation;
