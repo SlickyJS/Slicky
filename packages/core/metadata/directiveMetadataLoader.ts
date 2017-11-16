@@ -17,6 +17,8 @@ import {FilterMetadata, FilterMetadataLoader} from './filterMetadataLoader';
 
 
 const STATIC_DIRECTIVE_METADATA_STORAGE = '__slicky__directive__metadata__';
+const STATIC_INNER_DIRECTIVES_STORAGE = '__slicky__inner_directives__';
+const STATIC_FILTERS_STORAGE = '__slicky__filters__';
 
 
 export enum DirectiveDefinitionType
@@ -59,8 +61,8 @@ export declare interface DirectiveDefinitionEvent
 
 export declare interface DirectiveDefinitionInnerDirective
 {
-	directiveType: ClassType<any>,
 	metadata: DirectiveDefinition,
+	directiveType?: ClassType<any>,
 }
 
 
@@ -81,8 +83,8 @@ export declare interface DirectiveDefinitionChildrenDirective
 
 export declare interface DirectiveDefinitionFilterMetadata
 {
-	filterType: ClassType<FilterInterface>,
 	metadata: FilterMetadata,
+	filterType?: ClassType<FilterInterface>,
 }
 
 
@@ -148,6 +150,26 @@ export class DirectiveMetadataLoader
 	}
 
 
+	public loadInnerDirectives(directiveType: ClassType<any>): {[id: string]: ClassType<any>}
+	{
+		if (!exists(directiveType[STATIC_INNER_DIRECTIVES_STORAGE])) {
+			this.loadDirective(directiveType);
+		}
+
+		return directiveType[STATIC_INNER_DIRECTIVES_STORAGE];
+	}
+
+
+	public loadFilters(directiveType: ClassType<any>): {[name: string]: ClassType<FilterInterface>}
+	{
+		if (!exists(directiveType[STATIC_FILTERS_STORAGE])) {
+			this.loadDirective(directiveType);
+		}
+
+		return directiveType[STATIC_FILTERS_STORAGE];
+	}
+
+
 	private _loadMetadata(directiveType: ClassType<any>): DirectiveDefinition
 	{
 		let annotation: DirectiveAnnotationDefinition;
@@ -173,7 +195,7 @@ export class DirectiveMetadataLoader
 			onTemplateInit: isFunction(directiveType.prototype.onTemplateInit),
 			onUpdate: isFunction(directiveType.prototype.onUpdate),
 			onAttach: isFunction(directiveType.prototype.onAttach),
-			directives: this.loadDirectivesMetadata(annotation),
+			directives: this.loadDirectivesMetadata(directiveType, annotation),
 			inputs: [],
 			outputs: [],
 			elements: [],
@@ -199,7 +221,7 @@ export class DirectiveMetadataLoader
 			metadata.encapsulation = annotation.encapsulation;
 			metadata.template = annotation.template;
 			metadata.styles = annotation.styles;
-			metadata.filters = this.loadFiltersMetadata(annotation);
+			metadata.filters = this.loadFiltersMetadata(directiveType, annotation);
 		}
 
 		this.validate(metadata);
@@ -210,27 +232,24 @@ export class DirectiveMetadataLoader
 	}
 
 
-	private loadDirectivesMetadata(annotation: DirectiveAnnotationDefinition): Array<DirectiveDefinitionInnerDirective>
+	private loadDirectivesMetadata(directiveType: ClassType<any>, annotation: DirectiveAnnotationDefinition): Array<DirectiveDefinitionInnerDirective>
 	{
-		return map(unique(flatten(annotation.directives)), (directiveType: ClassType<any>): DirectiveDefinitionInnerDirective => {
+		const attachedDirectives = {};
+
+		const directives = map(unique(flatten(annotation.directives)), (innerDirectiveType: ClassType<any>): DirectiveDefinitionInnerDirective => {
+			const metadata = this.loadDirective(innerDirectiveType);
+
+			attachedDirectives[metadata.id] = innerDirectiveType;
+
 			return {
-				directiveType: directiveType,
-				metadata: this.loadDirective(directiveType),
+				directiveType: innerDirectiveType,
+				metadata: metadata,
 			};
 		});
-	}
 
+		directiveType[STATIC_INNER_DIRECTIVES_STORAGE] = attachedDirectives;
 
-	private loadFiltersMetadata(annotation: ComponentAnnotationDefinition): Array<DirectiveDefinitionFilterMetadata>
-	{
-		const filters = merge(this.globalFilters, annotation.filters);
-
-		return map(unique(filters), (filterType: ClassType<FilterInterface>): DirectiveDefinitionFilterMetadata => {
-			return {
-				filterType: filterType,
-				metadata: this.filterMetadataLoader.loadFilter(filterType),
-			};
-		});
+		return directives;
 	}
 
 
@@ -322,6 +341,28 @@ export class DirectiveMetadataLoader
 				metadata.elements.push(element);
 			}
 		});
+	}
+
+
+	private loadFiltersMetadata(directiveType: ClassType<any>, annotation: ComponentAnnotationDefinition): Array<DirectiveDefinitionFilterMetadata>
+	{
+		const filters = merge(this.globalFilters, annotation.filters);
+		const attachedFilters = {};
+
+		const result = map(unique(filters), (filterType: ClassType<FilterInterface>): DirectiveDefinitionFilterMetadata => {
+			const metadata = this.filterMetadataLoader.loadFilter(filterType);
+
+			attachedFilters[metadata.name] = filterType;
+
+			return {
+				filterType: filterType,
+				metadata: metadata,
+			};
+		});
+
+		directiveType[STATIC_FILTERS_STORAGE] = attachedFilters;
+
+		return result;
 	}
 
 

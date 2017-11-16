@@ -94,6 +94,10 @@ describe('#Metadata/DirectiveMetadataLoader.components', () => {
 					},
 				],
 			}));
+
+			expect(loader.loadFilters(TestComponent)).to.be.eql({
+				'test-filter': TestFilter,
+			});
 		});
 
 		it('should load global filters', () => {

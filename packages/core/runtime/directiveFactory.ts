@@ -71,7 +71,7 @@ export class DirectiveFactory
 	}
 
 
-	public runComponent<T>(container: Container, component: T, metadata: DirectiveDefinition, parent: BaseTemplate, el: HTMLElement, changeDetector: ChangeDetector, realm: RealmRef, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): ComponentTemplate
+	public runComponent<T>(container: Container, componentType: ClassType<any>, component: T, metadata: DirectiveDefinition, parent: BaseTemplate, el: HTMLElement, changeDetector: ChangeDetector, realm: RealmRef, setup?: (component: any, template: ComponentTemplate, outerTemplate: BaseTemplate) => void): ComponentTemplate
 	{
 		let templateFactory: TemplateRenderFactory;
 
@@ -86,15 +86,15 @@ export class DirectiveFactory
 		changeDetector.setTemplate(template);
 		realm._initialize(template.realm);
 
-		forEach(metadata.filters, (filterData: DirectiveDefinitionFilterMetadata) => {
-			const filter = <FilterInterface>container.create(filterData.filterType);
+		forEach(this.metadataLoader.loadFilters(componentType), (filterType: ClassType<FilterInterface>, filterName: string) => {
+			const filter = <FilterInterface>container.create(filterType);
 
-			template.addFilter(filterData.metadata.name, (modify: any, ...args: Array<any>) => {
+			template.addFilter(filterName, (modify: any, ...args: Array<any>) => {
 				return filter.transform(modify, ...args);
 			});
 		});
 
-		const directivesProvider = new DirectiveTypesProvider(metadata.directives);
+		const directivesProvider = new DirectiveTypesProvider(this.metadataLoader.loadInnerDirectives(componentType));
 
 		if (isFunction(setup)) {
 			setup(component, template, parent);

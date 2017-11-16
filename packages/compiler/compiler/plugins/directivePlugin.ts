@@ -5,6 +5,7 @@ import {AbstractSlickyEnginePlugin} from '../abstractSlickyEnginePlugin';
 import {ElementProcessingDirective} from '../slickyEnginePlugin';
 import {AbstractDirectivePlugin, ProcessingDirective} from './abstractDirectivePlugin';
 import * as plugins from './directives';
+import {IsDirectiveInstanceOfFunction} from '../compiler';
 
 
 export class DirectivePlugin extends AbstractSlickyEnginePlugin
@@ -14,14 +15,14 @@ export class DirectivePlugin extends AbstractSlickyEnginePlugin
 	private processingDirectives: Array<ProcessingDirective> = [];
 
 
-	constructor()
+	constructor(isDirectiveInstanceOf: IsDirectiveInstanceOfFunction)
 	{
 		super();
 
 		this.register(new plugins.DirectiveHostElementsPlugin);
 		this.register(new plugins.DirectiveHostEventsPlugin);
-		this.register(new plugins.DirectiveChildDirectivesPlugin);
-		this.register(new plugins.DirectiveChildrenDirectivesPlugin);
+		this.register(new plugins.DirectiveChildDirectivesPlugin(isDirectiveInstanceOf));
+		this.register(new plugins.DirectiveChildrenDirectivesPlugin(isDirectiveInstanceOf));
 	}
 
 

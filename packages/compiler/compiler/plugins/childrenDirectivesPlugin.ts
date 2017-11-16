@@ -4,19 +4,23 @@ import {forEach} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import {AbstractSlickyEnginePlugin} from '../abstractSlickyEnginePlugin';
 import {ElementProcessingDirective} from '../slickyEnginePlugin';
+import {IsDirectiveInstanceOfFunction} from '../compiler';
 
 
 export class ChildrenDirectivesPlugin extends AbstractSlickyEnginePlugin
 {
 
 
+	private isDirectiveInstanceOf: IsDirectiveInstanceOfFunction;
+
 	private metadata: DirectiveDefinition;
 
 
-	constructor(metadata: DirectiveDefinition)
+	constructor(isDirectiveInstanceOf: IsDirectiveInstanceOfFunction, metadata: DirectiveDefinition)
 	{
 		super();
 
+		this.isDirectiveInstanceOf = isDirectiveInstanceOf;
 		this.metadata = metadata;
 	}
 
@@ -24,7 +28,7 @@ export class ChildrenDirectivesPlugin extends AbstractSlickyEnginePlugin
 	public onBeforeProcessDirective(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, arg: OnProcessElementArgument): void
 	{
 		forEach(this.metadata.childrenDirectives, (childrenDirectives: DirectiveDefinitionChildrenDirective) => {
-			if (childrenDirectives.directive.directiveType === directive.directive.directiveType) {
+			if (this.isDirectiveInstanceOf(childrenDirectives.directive, directive.directive)) {
 				directive.setup.body.add(`component.${childrenDirectives.property}.add.emit(directive);`);
 
 				directive.setup.body.add(

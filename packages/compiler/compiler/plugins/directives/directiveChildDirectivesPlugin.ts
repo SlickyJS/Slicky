@@ -4,10 +4,22 @@ import {forEach} from '@slicky/utils';
 import * as _ from '@slicky/html-parser';
 import {AbstractDirectivePlugin, ProcessingDirective} from '../abstractDirectivePlugin';
 import {ElementProcessingDirective} from '../../slickyEnginePlugin';
+import {IsDirectiveInstanceOfFunction} from '../../compiler';
 
 
 export class DirectiveChildDirectivesPlugin extends AbstractDirectivePlugin
 {
+
+
+	private isDirectiveInstanceOf: IsDirectiveInstanceOfFunction;
+
+
+	constructor(isDirectiveInstanceOf: IsDirectiveInstanceOfFunction)
+	{
+		super();
+
+		this.isDirectiveInstanceOf = isDirectiveInstanceOf;
+	}
 
 
 	public onProcessDirectiveInParent(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, parentProcessingDirective: ProcessingDirective, arg: OnProcessElementArgument): void
@@ -17,7 +29,7 @@ export class DirectiveChildDirectivesPlugin extends AbstractDirectivePlugin
 				return;
 			}
 
-			if (directive.directive.directiveType === childDirective.directive.directiveType) {
+			if (this.isDirectiveInstanceOf(directive.directive, childDirective.directive)) {
 				parentProcessingDirective.processedChildDirectives.push(childDirective);
 				directive.setup.body.add(`template.getParameter("@directive_${parentProcessingDirective.id}").${childDirective.property} = directive;`);
 			}

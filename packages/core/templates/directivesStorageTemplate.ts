@@ -72,7 +72,7 @@ export class DirectivesStorageTemplate extends RenderableTemplate
 	{
 		const metadata = this.metadataLoader.loadDirective(directiveType);
 
-		this.parentDirectivesProvider.registerInnerDirectives(metadata.directives);
+		this.parentDirectivesProvider.registerInnerDirectives(this.metadataLoader.loadInnerDirectives(directiveType));
 
 		this._createDirective(localParameterName, this.container, directiveType, metadata, [], setup);
 	}
@@ -96,7 +96,7 @@ export class DirectivesStorageTemplate extends RenderableTemplate
 
 		const component = this._createDirective(localParameterName, container, componentType, metadata);
 
-		this.directiveFactory.runComponent(container, component, metadata, this, this.el._nativeNode, changeDetector, realm, setup);
+		this.directiveFactory.runComponent(container, componentType, component, metadata, this, this.el._nativeNode, changeDetector, realm, setup);
 	}
 
 

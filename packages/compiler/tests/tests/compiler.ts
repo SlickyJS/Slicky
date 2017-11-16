@@ -24,7 +24,7 @@ describe('#Compiler', () => {
 
 	beforeEach(() => {
 		metadataLoader = new DirectiveMetadataLoader(new ExtensionsManager);
-		compiler = new Compiler;
+		compiler = Compiler.createAotCompiler();
 	});
 
 	describe('compile()', () => {

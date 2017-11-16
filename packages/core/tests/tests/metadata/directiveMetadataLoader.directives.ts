@@ -290,6 +290,12 @@ describe('#Metadata/DirectiveMetadataLoader.directives', () => {
 					},
 				],
 			}));
+
+			expect(loader.loadInnerDirectives(TestDirective)).to.be.eql({
+				TestChildDirectiveA: TestChildDirectiveA,
+				TestChildDirectiveB: TestChildDirectiveB,
+				TestChildDirectiveC: TestChildDirectiveC,
+			});
 		});
 
 		it('should load child directives', () => {

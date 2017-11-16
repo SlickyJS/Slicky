@@ -111,7 +111,7 @@ export class RootDirectiveRunner
 		let template: ComponentTemplate = null;
 
 		if (metadata.type === DirectiveDefinitionType.Component) {
-			template = this.runComponentTemplate(container, metadata, directive, el, changeDetector, realm);
+			template = this.runComponentTemplate(container, metadata, directiveType, directive, el, changeDetector, realm);
 		}
 
 		if (isFunction(setup)) {
@@ -126,11 +126,11 @@ export class RootDirectiveRunner
 	}
 
 
-	private runComponentTemplate<T>(container: Container, metadata: DirectiveDefinition, component: T, el: HTMLElement, changeDetector: ChangeDetector, realm: RealmRef): ComponentTemplate
+	private runComponentTemplate<T>(container: Container, metadata: DirectiveDefinition, componentType: ClassType<any>, component: T, el: HTMLElement, changeDetector: ChangeDetector, realm: RealmRef): ComponentTemplate
 	{
 		this.extensions.doInitComponentContainer(container, metadata, component);
 
-		return this.directiveFactory.runComponent(container, component, metadata, this.template, el, changeDetector, realm);
+		return this.directiveFactory.runComponent(container, componentType, component, metadata, this.template, el, changeDetector, realm);
 	}
 
 

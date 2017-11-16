@@ -7,6 +7,7 @@ import * as tjs from '@slicky/tiny-js';
 import {createFunction, BuilderFunction} from '@slicky/templates-compiler/builder';
 import {Matcher} from '@slicky/query-selector';
 import {AbstractSlickyEnginePlugin} from './abstractSlickyEnginePlugin';
+import {IsDirectiveInstanceOfFunction} from './compiler';
 import * as plugins from './plugins';
 
 
@@ -29,6 +30,8 @@ export class SlickyEnginePlugin extends EnginePlugin
 {
 
 
+	private isDirectiveInstanceOf: IsDirectiveInstanceOfFunction;
+
 	private metadata: c.DirectiveDefinition;
 
 	private processedDirectivesCount: number = 0;
@@ -36,19 +39,20 @@ export class SlickyEnginePlugin extends EnginePlugin
 	private elementsInnerDirectives: Array<ElementInnerDirectives> = [];
 
 
-	constructor(metadata: c.DirectiveDefinition)
+	constructor(isDirectiveInstanceOf: IsDirectiveInstanceOfFunction, metadata: c.DirectiveDefinition)
 	{
 		super();
 
+		this.isDirectiveInstanceOf = isDirectiveInstanceOf;
 		this.metadata = metadata;
 
-		this.register(new plugins.DirectivePlugin);
+		this.register(new plugins.DirectivePlugin(this.isDirectiveInstanceOf));
 		this.register(new plugins.ExportAsPlugin);
 		this.register(new plugins.InputsPlugin);
 		this.register(new plugins.OutputsPlugin);
 		this.register(new plugins.HostElementsPlugin(this.metadata));
-		this.register(new plugins.ChildDirectivesPlugin(this.metadata));
-		this.register(new plugins.ChildrenDirectivesPlugin(this.metadata));
+		this.register(new plugins.ChildDirectivesPlugin(this.isDirectiveInstanceOf, this.metadata));
+		this.register(new plugins.ChildrenDirectivesPlugin(this.isDirectiveInstanceOf, this.metadata));
 		this.register(new plugins.LifeCycleEventsPlugin(this.metadata));
 	}
 
@@ -202,13 +206,7 @@ export class SlickyEnginePlugin extends EnginePlugin
 
 		forEach(directives, (directive: c.DirectiveDefinitionInnerDirective) => {
 			const dependencyFor: c.DirectiveDefinitionInnerDirective = find(directives, (dependencyFor: c.DirectiveDefinitionInnerDirective) => {
-				if (
-					dependencyFor.metadata.override &&
-					(
-						dependencyFor.metadata.override.directiveType === directive.directiveType ||
-						directive.directiveType.prototype instanceof dependencyFor.metadata.override.directiveType
-					)
-				) {
+				if (dependencyFor.metadata.override && this.isDirectiveInstanceOf(directive, dependencyFor.metadata.override)) {
 					return true;
 				}
 			});

@@ -14,7 +14,7 @@ export class PlatformBrowser implements PlatformInterface
 
 	constructor()
 	{
-		this.compiler = new Compiler;
+		this.compiler = Compiler.createAotCompiler();
 	}
 
 

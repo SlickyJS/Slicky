@@ -35,7 +35,7 @@ require.extensions['.css'] = (module, filename) => {
 };
 
 
-const compiler = new Compiler;
+const compiler = Compiler.createAotCompiler();
 const metadataLoader = new DirectiveMetadataLoader(new ExtensionsManager);
 
 const fileExports = require(file);

@@ -1,5 +1,4 @@
 import {ClassType} from '@slicky/lang';
-import {DirectiveDefinitionInnerDirective} from '@slicky/core/metadata';
 import {exists, forEach} from '@slicky/utils';
 
 
@@ -12,17 +11,17 @@ export class DirectiveTypesProvider
 	private storage: {[id: string]: ClassType<any>} = {};
 
 
-	constructor(directives: Array<DirectiveDefinitionInnerDirective> = [], parent?: DirectiveTypesProvider)
+	constructor(directives: {[id: string]: ClassType<any>} = {}, parent?: DirectiveTypesProvider)
 	{
 		this.parent = parent;
 		this.registerInnerDirectives(directives);
 	}
 
 
-	public registerInnerDirectives(directives: Array<DirectiveDefinitionInnerDirective>): void
+	public registerInnerDirectives(directives: {[id: string]: ClassType<any>}): void
 	{
-		forEach(directives, (directive: DirectiveDefinitionInnerDirective) => {
-			this.storage[directive.metadata.id] = directive.directiveType;
+		forEach(directives, (directiveType: ClassType<any>, id: string) => {
+			this.storage[id] = directiveType;
 		});
 	}
 
@@ -49,7 +48,7 @@ export class DirectiveTypesProvider
 
 	public fork(): DirectiveTypesProvider
 	{
-		return new DirectiveTypesProvider([], this);
+		return new DirectiveTypesProvider({}, this);
 	}
 
 }
