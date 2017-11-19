@@ -7,7 +7,7 @@ import {DirectiveFactory, DirectiveTypesProvider} from '../runtime';
 import {DirectivesStorageTemplate} from './directivesStorageTemplate';
 
 
-export declare type ComponentTemplateRenderFactory = (template: ComponentTemplate, el: TemplateElement, ...args: Array<any>) => void;
+export declare type ComponentTemplateRenderFactory = (template: ComponentTemplate, el: TemplateElement, component: any, directivesProvider: DirectiveTypesProvider) => void;
 
 
 export class ComponentTemplate extends Template

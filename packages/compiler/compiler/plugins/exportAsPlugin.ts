@@ -12,7 +12,7 @@ export class ExportAsPlugin extends AbstractSlickyEnginePlugin
 
 	public onBeforeProcessDirective(element: _.ASTHTMLNodeElement, directive: ElementProcessingDirective, arg: OnProcessElementArgument): void
 	{
-		if (exists(directive.directive.metadata.exportAs)) {
+		if (directive.directive.metadata.exportAs.length) {
 			const exportInto = find(element.exports, (elementExport: _.ASTHTMLNodeTextAttribute) => {
 				if (elementExport.value === '' || directive.directive.metadata.exportAs.indexOf(elementExport.value) >= 0) {
 					return true;

@@ -6,13 +6,13 @@ import * as path from 'path';
 
 function parse(name: string, done: (err: Error, file: ParsedFile, path: string, expected: string) => void): void
 {
-	const originalPath = path.resolve(`${__dirname}/../data/${name}.original.ts`);
+	const originalPath = path.resolve(`${__dirname}/../data/_old/${name}.original.ts`);
 
 	(new Parser(originalPath)).parse((err, file) => {
 		if (err) {
 			done(err, undefined, undefined, undefined);
 		} else {
-			done(undefined, file, originalPath, <string>readFileSync(`${__dirname}/../data/${name}.expected.ts`, {encoding: 'utf8'}));
+			done(undefined, file, originalPath, <string>readFileSync(`${__dirname}/../data/_old/${name}.expected.ts`, {encoding: 'utf8'}));
 		}
 	});
 }

@@ -5,7 +5,7 @@ import {FilterDefinition} from './filter';
 import {FilterInterface} from '../filters';
 
 
-const STATIC_FILTER_METADATA_STORAGE = '__slicky__filter__metadata__';
+export const STATIC_FILTER_METADATA_STORAGE = '__SLICKY__FILTER__METADATA__';
 
 
 export declare interface FilterMetadata
