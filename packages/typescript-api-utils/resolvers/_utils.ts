@@ -11,6 +11,10 @@ export function _checkAndExtractNodeName(name: string, node: ts.Node): ts.Node|f
 		return checkAndExtractClassDeclaration(name, <ts.ClassDeclaration>node);
 	}
 
+	if (ts.isIdentifier(node)) {
+		return checkAndExtractIdentifier(name, <ts.Identifier>node);
+	}
+
 	return false;
 }
 
@@ -37,6 +41,16 @@ function checkAndExtractClassDeclaration(name: string, classDeclaration: ts.Clas
 {
 	if ((<ts.Identifier>classDeclaration.name).text === name) {
 		return classDeclaration;
+	}
+
+	return false;
+}
+
+
+function checkAndExtractIdentifier(name: string, identifier: ts.Identifier): ts.Identifier|false
+{
+	if (identifier.text === name) {
+		return identifier;
 	}
 
 	return false;
