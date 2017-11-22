@@ -36,6 +36,8 @@ export function resolveIdentifierAsFlatNodesList<T extends ts.Node>(identifier: 
 						dependencies: [],
 						node: <any>element,
 						originalName: resolvedIdentifier.originalName,
+						imported: resolvedIdentifier.imported,
+						sourceFile: resolvedIdentifier.sourceFile,
 					})
 				}
 			});

@@ -30,11 +30,13 @@ describe('#resolvers/identifierResolver', () => {
 			// a
 			const identifier = <ts.Identifier>(<ts.CallExpression>(<ts.ExpressionStatement>sourceFile.statements[1]).expression).arguments[0];
 
-			expect(resolveIdentifier(identifier, {}, mockModuleResolutionHost())).to.be.eql({
-				dependencies: [],
-				node: initializer,
-				originalName: 'a',
-			});
+			const resolved = resolveIdentifier(identifier, {}, mockModuleResolutionHost());
+
+			expect(resolved.dependencies).to.be.eql([]);
+			expect(resolved.node).to.be.equal(initializer);
+			expect(resolved.imported).to.be.equal(false);
+			expect(resolved.originalName).to.be.equal('a');
+			expect(resolved.sourceFile).to.be.equal(sourceFile);
 		});
 
 		it('should resolve identifier from same file as class declaration', () => {
@@ -54,11 +56,13 @@ describe('#resolvers/identifierResolver', () => {
 			// A
 			const identifier = <ts.Identifier>(<ts.CallExpression>(<ts.ExpressionStatement>sourceFile.statements[1]).expression).arguments[0];
 
-			expect(resolveIdentifier(identifier, {}, mockModuleResolutionHost())).to.be.eql({
-				dependencies: [],
-				node: initializer,
-				originalName: 'A',
-			});
+			const resolved = resolveIdentifier(identifier, {}, mockModuleResolutionHost());
+
+			expect(resolved.dependencies).to.be.eql([]);
+			expect(resolved.node).to.be.equal(initializer);
+			expect(resolved.imported).to.be.equal(false);
+			expect(resolved.originalName).to.be.equal('A');
+			expect(resolved.sourceFile).to.be.equal(sourceFile);
 		});
 
 		it('should resolve identifier from imported file', () => {
@@ -82,6 +86,7 @@ describe('#resolvers/identifierResolver', () => {
 			const resolved = resolveIdentifier(identifier, {}, moduleResolutionHost);
 
 			expect(resolved.originalName).to.be.equal('a');
+			expect(resolved.imported).to.be.equal(true);
 			expect(resolved.sourceFile.fileName).to.be.equal('/a.ts');
 			expect(resolved.node.kind).to.be.equal(ts.SyntaxKind.StringLiteral);
 			expect((<ts.StringLiteral>resolved.node).text).to.be.equal('hello world');
@@ -113,6 +118,7 @@ describe('#resolvers/identifierResolver', () => {
 			const resolved = resolveIdentifier(identifier, {}, moduleResolutionHost);
 
 			expect(resolved.originalName).to.be.equal('a');
+			expect(resolved.imported).to.be.equal(true);
 			expect(resolved.sourceFile.fileName).to.be.equal('/a3.ts');
 			expect(resolved.node.kind).to.be.equal(ts.SyntaxKind.StringLiteral);
 			expect((<ts.StringLiteral>resolved.node).text).to.be.equal('hello world');
@@ -144,6 +150,7 @@ describe('#resolvers/identifierResolver', () => {
 			const resolved = resolveIdentifier(identifier, {}, moduleResolutionHost);
 
 			expect(resolved.originalName).to.be.equal('a');
+			expect(resolved.imported).to.be.equal(true);
 			expect(resolved.sourceFile.fileName).to.be.equal('/a.ts');
 			expect(resolved.node.kind).to.be.equal(ts.SyntaxKind.StringLiteral);
 			expect((<ts.StringLiteral>resolved.node).text).to.be.equal('hello world');

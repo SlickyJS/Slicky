@@ -43,6 +43,8 @@ describe('#resolvers/nodesListResolver', () => {
 						dependencies: [],
 						node: initializer,
 						originalName: 'a',
+						imported: false,
+						sourceFile: sourceFile,
 					},
 				],
 			});

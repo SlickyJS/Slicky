@@ -9,13 +9,14 @@ export declare interface ResolvedExport<T extends ts.Node>
 	dependencies: Array<string>,
 	node: T,
 	originalName: string,
-	sourceFile?: ts.SourceFile,
+	imported: boolean,
+	sourceFile: ts.SourceFile,
 }
 
 
 export function resolveExport<T extends ts.Node>(name: string, source: ts.SourceFile, compilerOptions: ts.CompilerOptions, moduleResolutionHost: ts.ModuleResolutionHost): ResolvedExport<T>|undefined
 {
-	const result = _resolveExport<T>(name, source, compilerOptions, moduleResolutionHost, false);
+	const result = _resolveExport<T>(name, source, compilerOptions, moduleResolutionHost);
 
 	if (result) {
 		result.dependencies.reverse();
@@ -25,7 +26,7 @@ export function resolveExport<T extends ts.Node>(name: string, source: ts.Source
 }
 
 
-function _resolveExport<T extends ts.Node>(name: string, source: ts.SourceFile, compilerOptions: ts.CompilerOptions, moduleResolutionHost: ts.ModuleResolutionHost, includeSourceFile: boolean): ResolvedExport<T>|undefined
+function _resolveExport<T extends ts.Node>(name: string, source: ts.SourceFile, compilerOptions: ts.CompilerOptions, moduleResolutionHost: ts.ModuleResolutionHost): ResolvedExport<T>|undefined
 {
 	let foundNode: ResolvedExport<T> = undefined;
 
@@ -64,10 +65,11 @@ function _resolveExport<T extends ts.Node>(name: string, source: ts.SourceFile, 
 
 			const exportFile = resolveRequire(source.fileName, (<ts.StringLiteral>exportDeclaration.moduleSpecifier).text, compilerOptions, moduleResolutionHost);
 			const exportSource = <ts.SourceFile>ts.createSourceFile(exportFile.path, exportFile.source, source.languageVersion, true);
-			const innerFoundNode = _resolveExport<T>(innerName, exportSource, compilerOptions, moduleResolutionHost, true);
+			const innerFoundNode = _resolveExport<T>(innerName, exportSource, compilerOptions, moduleResolutionHost);
 
 			if (innerFoundNode) {
 				foundNode = innerFoundNode;
+				foundNode.imported = true;
 
 				if (foundNode.dependencies.indexOf(exportFile.path) < 0) {
 					foundNode.dependencies.push(exportFile.path);
@@ -96,11 +98,9 @@ function _resolveExport<T extends ts.Node>(name: string, source: ts.SourceFile, 
 				dependencies: [],
 				node: <T>tryNode,
 				originalName: name,
+				imported: false,
+				sourceFile: source,
 			};
-
-			if (includeSourceFile) {
-				foundNode.sourceFile = source;
-			}
 		}
 	});
 

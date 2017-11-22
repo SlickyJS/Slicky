@@ -25,11 +25,13 @@ describe('#resolvers/exportResolver', () => {
 			// "hello world"
 			const initializer = <ts.StringLiteral>(<ts.VariableStatement>sourceFile.statements[0]).declarationList.declarations[0].initializer;
 
-			expect(resolveExport('a', sourceFile, {}, mockModuleResolutionHost())).to.be.eql({
-				dependencies: [],
-				node: initializer,
-				originalName: 'a',
-			});
+			const resolved = resolveExport('a', sourceFile, {}, mockModuleResolutionHost());
+
+			expect(resolved.dependencies).to.be.eql([]);
+			expect(resolved.node).to.be.equal(initializer);
+			expect(resolved.originalName).to.be.equal('a');
+			expect(resolved.imported).to.be.equal(false);
+			expect(resolved.sourceFile).to.be.equal(sourceFile);
 		});
 
 		it('should resolve exported variable declaration from imported file', () => {
@@ -41,6 +43,7 @@ describe('#resolvers/exportResolver', () => {
 			const resolvedExport = resolveExport('a', sourceFile, {}, moduleResolutionHost);
 
 			expect(resolvedExport.originalName).to.be.equal('a');
+			expect(resolvedExport.imported).to.be.equal(true);
 			expect(resolvedExport.sourceFile.fileName).to.be.equal('/a.ts');
 			expect(resolvedExport.node.kind).to.be.equal(ts.SyntaxKind.StringLiteral);
 			expect((<ts.StringLiteral>resolvedExport.node).text).to.be.equal('hello world');
@@ -60,6 +63,7 @@ describe('#resolvers/exportResolver', () => {
 			const resolvedExport = resolveExport('a', sourceFile, {}, moduleResolutionHost);
 
 			expect(resolvedExport.originalName).to.be.equal('a');
+			expect(resolvedExport.imported).to.be.equal(true);
 			expect(resolvedExport.sourceFile.fileName).to.be.equal('/a3.ts');
 			expect(resolvedExport.node.kind).to.be.equal(ts.SyntaxKind.StringLiteral);
 			expect((<ts.StringLiteral>resolvedExport.node).text).to.be.equal('hello world');
@@ -81,6 +85,7 @@ describe('#resolvers/exportResolver', () => {
 			const resolvedExport = resolveExport('a3', sourceFile, {}, moduleResolutionHost);
 
 			expect(resolvedExport.originalName).to.be.equal('a');
+			expect(resolvedExport.imported).to.be.equal(true);
 			expect(resolvedExport.sourceFile.fileName).to.be.equal('/a3.ts');
 			expect(resolvedExport.node.kind).to.be.equal(ts.SyntaxKind.StringLiteral);
 			expect((<ts.StringLiteral>resolvedExport.node).text).to.be.equal('hello world');
@@ -102,6 +107,7 @@ describe('#resolvers/exportResolver', () => {
 			const resolvedExport = resolveExport('a', sourceFile, {}, moduleResolutionHost);
 
 			expect(resolvedExport.originalName).to.be.equal('a');
+			expect(resolvedExport.imported).to.be.equal(true);
 			expect(resolvedExport.sourceFile.fileName).to.be.equal('/a3.ts');
 			expect(resolvedExport.node.kind).to.be.equal(ts.SyntaxKind.StringLiteral);
 			expect((<ts.StringLiteral>resolvedExport.node).text).to.be.equal('hello world');

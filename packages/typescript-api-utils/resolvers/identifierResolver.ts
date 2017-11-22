@@ -1,6 +1,7 @@
 import {exists, merge} from '@slicky/utils';
 import {resolveRequire} from './requireResolver';
 import {resolveExport} from './exportResolver';
+import {lookupSourceFile} from '../sourceFiles';
 import {_checkAndExtractNodeName} from './_utils';
 import * as ts from 'typescript';
 
@@ -10,7 +11,8 @@ export declare interface ResolvedIdentifier<T extends ts.Node>
 	dependencies: Array<string>,
 	node: T,
 	originalName: string,
-	sourceFile?: ts.SourceFile,
+	imported: boolean,
+	sourceFile: ts.SourceFile,
 }
 
 
@@ -21,8 +23,8 @@ export function resolveIdentifier<T extends ts.Node>(identifier: ts.Identifier, 
 	}
 
 	const name = identifier.text;
+	const sourceFile = lookupSourceFile(identifier);
 
-	let sourceFile: ts.SourceFile;
 	let parent: ts.Node = identifier.parent;
 	let resolvedIdentifier: ResolvedIdentifier<T> = undefined;
 
@@ -47,13 +49,11 @@ export function resolveIdentifier<T extends ts.Node>(identifier: ts.Identifier, 
 					dependencies: [],
 					node: <T>tryNode,
 					originalName: name,
+					imported: false,
+					sourceFile: sourceFile,
 				};
 			}
 		});
-
-		if (ts.isSourceFile(parent)) {
-			sourceFile = <ts.SourceFile>parent;
-		}
 
 		parent = parent.parent;
 	}
@@ -86,7 +86,8 @@ export function resolveIdentifier<T extends ts.Node>(identifier: ts.Identifier, 
 					dependencies: merge([importFile.path], resolvedExport.dependencies),
 					node: resolvedExport.node,
 					originalName: resolvedExport.originalName,
-					sourceFile: exists(resolvedExport.sourceFile) ? resolvedExport.sourceFile : importSourceFile,
+					imported: true,
+					sourceFile: resolvedExport.sourceFile,
 				};
 			}
 		});
