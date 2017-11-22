@@ -136,7 +136,6 @@ describe('#resolvers/nodesListResolver', () => {
 
 			const resolvedList = resolveIdentifierAsFlatNodesList(identifier, {}, moduleResolutionHost);
 
-			expect(resolvedList.dependencies).to.have.length(0);
 			expect(resolvedList.nodes).to.have.length(3);
 			expect(resolvedList.nodes[0].originalName).to.be.equal('a1');
 			expect(resolvedList.nodes[1].originalName).to.be.equal('a2');
@@ -150,6 +149,11 @@ describe('#resolvers/nodesListResolver', () => {
 			expect((<ts.StringLiteral>resolvedList.nodes[0].node).text).to.be.equal('a');
 			expect((<ts.StringLiteral>resolvedList.nodes[1].node).text).to.be.equal('b');
 			expect((<ts.StringLiteral>resolvedList.nodes[2].node).text).to.be.equal('c');
+			expect(resolvedList.dependencies).to.be.eql([
+				'/a1.ts',
+				'/a2.ts',
+				'/a3.ts',
+			]);
 		});
 
 		it('should return array with resolved inner nodes from multidimensional array', () => {

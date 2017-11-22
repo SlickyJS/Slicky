@@ -20,6 +20,8 @@ export function resolveIdentifierAsFlatNodesList<T extends ts.Node>(identifier: 
 	const resolvedIdentifier = resolveIdentifier<T>(identifier, compilerOptions, moduleResolutionHost);
 
 	if (resolvedIdentifier) {
+		result.dependencies = merge(result.dependencies, resolvedIdentifier.dependencies);
+
 		if (ts.isArrayLiteralExpression(resolvedIdentifier.node)) {
 			ts.forEachChild(<ts.ArrayLiteralExpression>resolvedIdentifier.node, (element: ts.Expression) => {
 				if (ts.isIdentifier(element)) {
@@ -32,9 +34,10 @@ export function resolveIdentifierAsFlatNodesList<T extends ts.Node>(identifier: 
 					});
 
 				} else {
+					result.dependencies = merge(result.dependencies, resolvedIdentifier.dependencies);
 					result.nodes.push({
-						dependencies: [],
 						node: <any>element,
+						dependencies: resolvedIdentifier.dependencies,
 						originalName: resolvedIdentifier.originalName,
 						imported: resolvedIdentifier.imported,
 						sourceFile: resolvedIdentifier.sourceFile,
@@ -42,11 +45,11 @@ export function resolveIdentifierAsFlatNodesList<T extends ts.Node>(identifier: 
 				}
 			});
 
-			result.dependencies = unique(result.dependencies);
-
 		} else {
 			result.nodes.push(resolvedIdentifier);
 		}
+
+		result.dependencies = unique(result.dependencies);
 	}
 
 	return result;
