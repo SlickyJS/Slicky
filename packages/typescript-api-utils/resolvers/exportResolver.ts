@@ -63,7 +63,7 @@ function _resolveExport<T extends ts.Node>(name: string, source: ts.SourceFile, 
 			}
 
 			const exportFile = resolveRequire(source.fileName, (<ts.StringLiteral>exportDeclaration.moduleSpecifier).text, compilerOptions, moduleResolutionHost);
-			const exportSource = <ts.SourceFile>ts.createSourceFile(exportFile.path, exportFile.source, source.languageVersion);
+			const exportSource = <ts.SourceFile>ts.createSourceFile(exportFile.path, exportFile.source, source.languageVersion, true);
 			const innerFoundNode = _resolveExport<T>(innerName, exportSource, compilerOptions, moduleResolutionHost, true);
 
 			if (innerFoundNode) {

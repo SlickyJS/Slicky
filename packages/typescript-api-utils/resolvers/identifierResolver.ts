@@ -78,7 +78,7 @@ export function resolveIdentifier<T extends ts.Node>(identifier: ts.Identifier, 
 
 			const importPath = (<ts.StringLiteral>importDeclaration.moduleSpecifier).text;
 			const importFile = resolveRequire(sourceFile.fileName, importPath, compilerOptions, moduleResolutionHost);
-			const importSourceFile = <ts.SourceFile>ts.createSourceFile(importFile.path, importFile.source, sourceFile.languageVersion);
+			const importSourceFile = <ts.SourceFile>ts.createSourceFile(importFile.path, importFile.source, sourceFile.languageVersion, true);
 			const resolvedExport = resolveExport<T>(resolveInImport, importSourceFile, compilerOptions, moduleResolutionHost);
 
 			if (resolvedExport) {
