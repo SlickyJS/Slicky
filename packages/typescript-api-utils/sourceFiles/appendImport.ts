@@ -6,7 +6,7 @@ import * as ts from 'typescript';
 export function appendImport(moduleSpecifier: string, propertyName: string|undefined, name: string, sourceFile: ts.SourceFile): string
 {
 	const imports = findNodesByType<ts.ImportDeclaration>(ts.SyntaxKind.ImportDeclaration, sourceFile);
-	const pos = imports.length ? (sourceFile.statements.indexOf(imports[imports.length - 1]) || 0) : 0;
+	const pos = imports.length ? (sourceFile.statements.indexOf(imports[imports.length - 1]) + 1 || 0) : 0;
 
 	const existingImport: ts.ImportDeclaration = find(imports, (existingImport: ts.ImportDeclaration) => {
 		return (

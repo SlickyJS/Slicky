@@ -106,6 +106,14 @@ describe('#sourceFiles/appendImport', () => {
 			compareSourceFile('valid_8.updated', sourceFile);
 		});
 
+		it('should add import after the last one', () => {
+			const sourceFile = getFileSource('valid_9.original');
+			const imported = appendImport('/import_2', undefined, 'B', sourceFile);
+
+			expect(imported).to.be.equal('B');
+			compareSourceFile('valid_9.updated', sourceFile);
+		});
+
 	});
 
 });
