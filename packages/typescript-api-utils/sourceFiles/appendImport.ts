@@ -3,7 +3,7 @@ import {findNodesByType} from './findNodesByType';
 import * as ts from 'typescript';
 
 
-export function appendImport(moduleSpecifier: string, propertyName: string|undefined, name: string, sourceFile: ts.SourceFile): string
+export function appendImport(moduleSpecifier: string, propertyName: string|undefined, name: string, sourceFile: ts.SourceFile, noImportReuseOnDifferentNames: boolean = false): string
 {
 	const imports = findNodesByType<ts.ImportDeclaration>(ts.SyntaxKind.ImportDeclaration, sourceFile);
 	const pos = imports.length ? (sourceFile.statements.indexOf(imports[imports.length - 1]) + 1 || 0) : 0;
@@ -22,7 +22,7 @@ export function appendImport(moduleSpecifier: string, propertyName: string|undef
 		const namedBindings = <ts.NamedImports>existingImport.importClause.namedBindings;
 		const elements = clone(namedBindings.elements);
 
-		const existingElement: ts.ImportSpecifier = find(elements, (existingElement: ts.ImportSpecifier) => {
+		let existingElement: ts.ImportSpecifier = find(elements, (existingElement: ts.ImportSpecifier) => {
 			return (
 				(<ts.Identifier>existingElement.name).text === name ||
 				(
@@ -41,6 +41,10 @@ export function appendImport(moduleSpecifier: string, propertyName: string|undef
 				)
 			);
 		});
+
+		if (noImportReuseOnDifferentNames && (<ts.Identifier>existingElement.name).text !== name) {
+			existingElement = undefined;
+		}
 
 		if (existingElement) {
 			if (exists(propertyName) && exists(existingElement.propertyName) && propertyName !== (<ts.Identifier>existingElement.propertyName).text) {

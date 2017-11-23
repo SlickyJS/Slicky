@@ -114,6 +114,14 @@ describe('#sourceFiles/appendImport', () => {
 			compareSourceFile('valid_9.updated', sourceFile);
 		});
 
+		it('should not reuse import with different names', () => {
+			const sourceFile = getFileSource('valid_10.original');
+			const imported = appendImport('/import', undefined, 'A', sourceFile, true);
+
+			expect(imported).to.be.equal('A');
+			compareSourceFile('valid_10.updated', sourceFile);
+		});
+
 	});
 
 });
