@@ -42,7 +42,7 @@ export function appendImport(moduleSpecifier: string, propertyName: string|undef
 			);
 		});
 
-		if (noImportReuseOnDifferentNames && (<ts.Identifier>existingElement.name).text !== name) {
+		if (noImportReuseOnDifferentNames && existingElement && (<ts.Identifier>existingElement.name).text !== name) {
 			existingElement = undefined;
 		}
 
