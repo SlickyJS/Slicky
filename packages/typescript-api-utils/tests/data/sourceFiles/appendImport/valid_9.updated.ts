@@ -1,2 +1,2 @@
-import { A } from "/import_1";
-import { B } from "/import_2";
+import { A } from "./valid_9.import_1";
+import { B } from "./valid_9.import_2";

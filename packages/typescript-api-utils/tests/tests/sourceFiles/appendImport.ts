@@ -1,4 +1,4 @@
-import {appendImport} from '../../../';
+import {appendImport as _appendImport, fsModuleResolutionHost} from '../../../';
 import {expect} from 'chai';
 import * as ts from 'typescript';
 import * as path from 'path';
@@ -27,6 +27,12 @@ function compareSourceFile(name: string, sourceFile: ts.SourceFile): void
 	});
 
 	expect(printer.printNode(ts.EmitHint.SourceFile, sourceFile, sourceFile)).to.be.equal(file);
+}
+
+
+function appendImport(moduleSpecifier: string, propertyName: string|undefined, name: string, sourceFile: ts.SourceFile, noImportReuseOnDifferentNames: boolean = false): string
+{
+	return _appendImport(moduleSpecifier, propertyName, name, sourceFile, {}, fsModuleResolutionHost(), noImportReuseOnDifferentNames);
 }
 
 
@@ -108,7 +114,7 @@ describe('#sourceFiles/appendImport', () => {
 
 		it('should add import after the last one', () => {
 			const sourceFile = getFileSource('valid_9.original');
-			const imported = appendImport('/import_2', undefined, 'B', sourceFile);
+			const imported = appendImport('./valid_9.import_2', undefined, 'B', sourceFile);
 
 			expect(imported).to.be.equal('B');
 			compareSourceFile('valid_9.updated', sourceFile);
@@ -120,6 +126,22 @@ describe('#sourceFiles/appendImport', () => {
 
 			expect(imported).to.be.equal('A');
 			compareSourceFile('valid_10.updated', sourceFile);
+		});
+
+		it('should add relative path import', () => {
+			const sourceFile = getFileSource('valid_11.original');
+			const imported = appendImport('./import', undefined, 'A', sourceFile);
+
+			expect(imported).to.be.equal('A');
+			compareSourceFile('valid_11.updated', sourceFile);
+		});
+
+		it('should reuse different form of relative path import', () => {
+			const sourceFile = getFileSource('valid_12.original');
+			const imported = appendImport('./a/../valid_12.import', undefined, 'A', sourceFile);
+
+			expect(imported).to.be.equal('A');
+			compareSourceFile('valid_12.updated', sourceFile);
 		});
 
 	});

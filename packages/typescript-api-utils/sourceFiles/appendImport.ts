@@ -1,9 +1,11 @@
 import {clone, exists, find} from '@slicky/utils';
 import {findNodesByType} from './findNodesByType';
+import {resolveRequirePath} from '../resolvers';
 import * as ts from 'typescript';
+import * as path from 'path';
 
 
-export function appendImport(moduleSpecifier: string, propertyName: string|undefined, name: string, sourceFile: ts.SourceFile, noImportReuseOnDifferentNames: boolean = false): string
+export function appendImport(moduleSpecifier: string, propertyName: string|undefined, name: string, sourceFile: ts.SourceFile, compilerOptions: ts.CompilerOptions, moduleResolutionHost: ts.ModuleResolutionHost, noImportReuseOnDifferentNames: boolean = false): string
 {
 	const imports = findNodesByType<ts.ImportDeclaration>(ts.SyntaxKind.ImportDeclaration, sourceFile);
 	const pos = imports.length ? (sourceFile.statements.indexOf(imports[imports.length - 1]) + 1 || 0) : 0;
@@ -14,7 +16,7 @@ export function appendImport(moduleSpecifier: string, propertyName: string|undef
 			exists(existingImport.importClause.namedBindings) &&
 			ts.isNamedImports(existingImport.importClause.namedBindings) &&
 			ts.isStringLiteral(existingImport.moduleSpecifier) &&
-			(<ts.StringLiteral>existingImport.moduleSpecifier).text === moduleSpecifier
+			compareModuleSpecifiers(sourceFile.fileName, (<ts.StringLiteral>existingImport.moduleSpecifier).text, moduleSpecifier, compilerOptions, moduleResolutionHost)
 		);
 	});
 
@@ -66,6 +68,19 @@ export function appendImport(moduleSpecifier: string, propertyName: string|undef
 	}
 
 	return name;
+}
+
+
+function compareModuleSpecifiers(file: string, a: string, b: string, compilerOptions: ts.CompilerOptions, moduleResolutionHost: ts.ModuleResolutionHost): boolean
+{
+	if (a === b) {
+		return true;
+	}
+
+	a = resolveRequirePath(file, a, compilerOptions, moduleResolutionHost);
+	b = resolveRequirePath(file, b, compilerOptions, moduleResolutionHost);
+
+	return a === b;
 }
 
 

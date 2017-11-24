@@ -28,10 +28,10 @@ export class AppendImportsBuffer
 	}
 
 
-	public applyImports(sourceFile: ts.SourceFile): void
+	public applyImports(sourceFile: ts.SourceFile, compilerOptions: ts.CompilerOptions, moduleResolutionHost: ts.ModuleResolutionHost): void
 	{
 		forEach(this.imports, (newImport: ImportItem) => {
-			appendImport(newImport.moduleSpecifier, newImport.propertyName, newImport.name, sourceFile, true);
+			appendImport(newImport.moduleSpecifier, newImport.propertyName, newImport.name, sourceFile, compilerOptions, moduleResolutionHost, true);
 		});
 	}
 

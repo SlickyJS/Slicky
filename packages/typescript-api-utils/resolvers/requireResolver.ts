@@ -36,7 +36,7 @@ export function resolveRawRequire(fromFile: string, file: string, moduleResoluti
 }
 
 
-export function resolveRequire(fromFile: string, file: string, compilerOptions: ts.CompilerOptions, moduleResolutionHost: ts.ModuleResolutionHost): RequiredFile|undefined
+export function resolveRequirePath(fromFile: string, file: string, compilerOptions: ts.CompilerOptions, moduleResolutionHost: ts.ModuleResolutionHost): string|undefined
 {
 	const module = <ts.ResolvedModuleWithFailedLookupLocations>ts.resolveModuleName(file, fromFile, compilerOptions, moduleResolutionHost);
 
@@ -44,8 +44,20 @@ export function resolveRequire(fromFile: string, file: string, compilerOptions: 
 		return;
 	}
 
+	return module.resolvedModule.resolvedFileName;
+}
+
+
+export function resolveRequire(fromFile: string, file: string, compilerOptions: ts.CompilerOptions, moduleResolutionHost: ts.ModuleResolutionHost): RequiredFile|undefined
+{
+	const resolvedPath = resolveRequirePath(fromFile, file, compilerOptions, moduleResolutionHost);
+
+	if (!resolvedPath) {
+		return;
+	}
+
 	return {
-		path: module.resolvedModule.resolvedFileName,
-		source: moduleResolutionHost.readFile(module.resolvedModule.resolvedFileName),
+		path: resolvedPath,
+		source: moduleResolutionHost.readFile(resolvedPath),
 	};
 }
