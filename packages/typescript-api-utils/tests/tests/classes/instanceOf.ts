@@ -61,6 +61,13 @@ describe('#classes/instanceOf', () => {
 			expect(isClassInstanceOf(classB, classA)).to.be.equal(true);
 		});
 
+		it('should return true when test class is same as testing class', () => {
+			const sourceFile = getSourceFile('valid_5');
+			const classA = findNode<ts.ClassDeclaration>(ts.SyntaxKind.ClassDeclaration, 'A', sourceFile);
+
+			expect(isClassInstanceOf(classA, classA)).to.be.equal(true);
+		});
+
 	});
 
 });

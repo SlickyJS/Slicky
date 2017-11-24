@@ -7,6 +7,10 @@ import * as ts from 'typescript';
 
 export function isClassInstanceOf(classDeclaration: ts.ClassDeclaration, parentClass: ts.ClassDeclaration, compilerOptions: ts.CompilerOptions, moduleResolutionHost: ts.ModuleResolutionHost): boolean
 {
+	if (classDeclaration === parentClass) {
+		return true;
+	}
+
 	let parentClassSourceFile: ts.SourceFile = undefined;
 	function getParentClassSourceFile(): ts.SourceFile
 	{
