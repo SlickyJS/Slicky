@@ -1,4 +1,4 @@
-import {findNode, isClassInstanceOf as _isClassInstanceOf, fsModuleResolutionHost} from '../../../';
+import {findNode, isClassInstanceOf as _isClassInstanceOf, fsModuleResolutionHost, resolveIdentifier} from '../../../';
 import {expect} from 'chai';
 import * as ts from 'typescript';
 import * as path from 'path';
@@ -66,6 +66,16 @@ describe('#classes/instanceOf', () => {
 			const classA = findNode<ts.ClassDeclaration>(ts.SyntaxKind.ClassDeclaration, 'A', sourceFile);
 
 			expect(isClassInstanceOf(classA, classA)).to.be.equal(true);
+		});
+
+		it('should return true when test class is same as testing class used from imported file', () => {
+			const sourceFile = getSourceFile('valid_6');
+			const sourceFileA = getSourceFile('valid_6.classA');
+			const nodeA = findNode<ts.Identifier>(ts.SyntaxKind.Identifier, 'A', sourceFile);
+			const classA = findNode<ts.ClassDeclaration>(ts.SyntaxKind.ClassDeclaration, 'A', sourceFileA);
+			const resolvedNodeA = resolveIdentifier<ts.ClassDeclaration>(nodeA, {}, fsModuleResolutionHost());
+
+			expect(isClassInstanceOf(resolvedNodeA.node, classA)).to.be.equal(true);
 		});
 
 	});

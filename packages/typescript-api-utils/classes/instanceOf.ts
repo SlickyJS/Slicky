@@ -11,10 +11,16 @@ export function isClassInstanceOf(classDeclaration: ts.ClassDeclaration, parentC
 		return true;
 	}
 
-	let parentClassSourceFile: ts.SourceFile = undefined;
-	function getParentClassSourceFile(): ts.SourceFile
-	{
-		return exists(parentClassSourceFile) ? parentClassSourceFile : parentClassSourceFile = lookupSourceFile(parentClass);
+	const classDeclarationSourceFile = lookupSourceFile(classDeclaration);
+	const parentClassSourceFile = lookupSourceFile(parentClass);
+
+	if (
+		classDeclarationSourceFile.fileName === parentClassSourceFile.fileName &&
+		exists(classDeclaration.name) &&
+		exists(parentClass.name) &&
+		(<ts.Identifier>classDeclaration.name).text === (<ts.Identifier>parentClass.name).text
+	) {
+		return true;
 	}
 
 	const parents = lookupDeepParentClasses(classDeclaration, compilerOptions, moduleResolutionHost);
@@ -36,9 +42,7 @@ export function isClassInstanceOf(classDeclaration: ts.ClassDeclaration, parentC
 			return false;
 		}
 
-		const parentSourceFile = getParentClassSourceFile();
-
-		if (parentSourceFile.fileName !== parent.sourceFile.fileName) {
+		if (parentClassSourceFile.fileName !== parent.sourceFile.fileName) {
 			return false;
 		}
 
