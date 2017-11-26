@@ -1,9 +1,24 @@
 import {Compiler} from '@slicky/compiler-cli';
+import {FilterAnalyzer, DirectiveAnalyzer, FileAnalyzer} from '@slicky/compiler-cli/analyzers';
+import {fsModuleResolutionHost} from '@slicky/typescript-api-utils';
+import * as ts from 'typescript';
 
 
-export default function(source: string, sourcemap): void
+const compilerOptions = {} || ts.getDefaultCompilerOptions();
+const moduleResolutionHost = fsModuleResolutionHost();
+
+const filterAnalyzer = new FilterAnalyzer;
+const directiveAnalyzer = new DirectiveAnalyzer(filterAnalyzer, compilerOptions, moduleResolutionHost);
+const fileAnalyzer = new FileAnalyzer(directiveAnalyzer, filterAnalyzer);
+
+const compiler = new Compiler(fileAnalyzer, compilerOptions, moduleResolutionHost);
+
+
+export default function(source: string): string
 {
-	const callback = this.async();
+	return compiler.compileFile(this.resourcePath, source).sourceText;
+
+	/*const callback = this.async();
 	const compiler = new Compiler;
 
 	compiler.compileFile(this.resourcePath, (err, file) => {
@@ -12,5 +27,5 @@ export default function(source: string, sourcemap): void
 		} else {
 			callback(null, file.source, sourcemap);
 		}
-	});
+	});*/
 }

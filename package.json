@@ -21,8 +21,10 @@
 	],
 	"devDependencies": {
 		"@slicky/webpack-loader": "^0.1.9",
+		"@types/chai": "^4.0.5",
 		"@types/gulp": "^4.0.4",
 		"@types/merge2": "^1.1.1",
+		"@types/node": "^8.0.53",
 		"gulp": "github:gulpjs/gulp#4.0",
 		"gulp-concat": "^2.6.1",
 		"gulp-sass": "^3.1.0",

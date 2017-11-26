@@ -23,7 +23,7 @@ export class DirectiveAnnotationDefinition
 
 	public selector: string;
 
-	public exportAs: Array<string>;
+	public exportAs: Array<string> = [];
 
 	public override: ClassType<any>;
 

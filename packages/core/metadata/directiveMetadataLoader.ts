@@ -1,7 +1,7 @@
 import {ClassType} from '@slicky/lang';
 import {stringify, isFunction, forEach, exists, camelCaseToHyphens, map, unique, merge, find, clone} from '@slicky/utils';
 import {findAnnotation, getPropertiesMetadata} from '@slicky/reflection';
-import {RenderableTemplateFactory, TemplateEncapsulation} from '@slicky/templates/templates';
+import {TemplateEncapsulation} from '@slicky/templates/templates';
 import {DirectiveAnnotationDefinition} from './directive';
 import {ComponentAnnotationDefinition} from './component';
 import {InputDefinition} from './input';
@@ -13,13 +13,14 @@ import {ChildDirectiveDefinition} from './childDirective';
 import {ChildrenDirectiveDefinition} from './childrenDirective';
 import {FilterInterface} from '../filters';
 import {ExtensionsManager} from '../extensions';
+import {ComponentTemplateRenderFactory} from '../templates';
 import {FilterMetadata, FilterMetadataLoader} from './filterMetadataLoader';
 import {ModuleMetadataLoader, ModuleMetadata} from './moduleMetadataLoader';
 
 
-const STATIC_DIRECTIVE_METADATA_STORAGE = '__slicky__directive__metadata__';
-const STATIC_INNER_DIRECTIVES_STORAGE = '__slicky__inner_directives__';
-const STATIC_FILTERS_STORAGE = '__slicky__filters__';
+export const STATIC_DIRECTIVE_METADATA_STORAGE = '__SLICKY__DIRECTIVE__METADATA__';
+export const STATIC_INNER_DIRECTIVES_STORAGE = '__SLICKY__INNER__DIRECTIVES__';
+export const STATIC_FILTERS_STORAGE = '__SLICKY__FILTERS__';
 
 
 export enum DirectiveDefinitionType
@@ -64,6 +65,11 @@ export declare interface DirectiveDefinitionInnerDirective
 {
 	metadata: DirectiveDefinition,
 	directiveType?: ClassType<any>,
+	localName?: string,
+	originalName?: string,
+	imported?: boolean,
+	path?: string,
+	node?: any,       // ts.ClassDeclaration
 }
 
 
@@ -86,6 +92,10 @@ export declare interface DirectiveDefinitionFilterMetadata
 {
 	metadata: FilterMetadata,
 	filterType?: ClassType<FilterInterface>,
+	localName?: string,
+	originalName?: string,
+	imported?: boolean,
+	path?: string,
 }
 
 
@@ -95,7 +105,7 @@ export declare interface DirectiveDefinition
 	id: string,
 	className: string,
 	selector: string,
-	exportAs?: Array<string>,
+	exportAs: Array<string>,
 	onInit: boolean,
 	onDestroy: boolean,
 	onTemplateInit: boolean,
@@ -109,11 +119,26 @@ export declare interface DirectiveDefinition
 	override?: DirectiveDefinitionInnerDirective,
 	childDirectives: Array<DirectiveDefinitionChildDirective>,
 	childrenDirectives: Array<DirectiveDefinitionChildrenDirective>,
-	template?: string|RenderableTemplateFactory,
+	template?: string|ComponentTemplateRenderFactory,
 	filters?: Array<DirectiveDefinitionFilterMetadata>,
 	styles?: Array<string>,
 	encapsulation?: TemplateEncapsulation,
 	[name: string]: any,
+}
+
+
+export declare interface PartialDirectiveDefinition
+{
+	id: string,
+	className: string,
+	selector: string,
+	[name: string]: any,
+}
+
+
+export declare interface PartialComponentDefinition extends PartialDirectiveDefinition
+{
+	template: string,
 }
 
 
@@ -193,30 +218,21 @@ export class DirectiveMetadataLoader
 
 		const name = stringify(directiveType);
 
-		const metadata: DirectiveDefinition = {
+		const metadata = createDirectiveMetadata({
 			type: type,
 			id: exists(annotation.id) ? annotation.id : name,
 			className: name,
 			selector: annotation.selector,
+			exportAs: annotation.exportAs,
 			onInit: isFunction(directiveType.prototype.onInit),
 			onDestroy: isFunction(directiveType.prototype.onDestroy),
 			onTemplateInit: isFunction(directiveType.prototype.onTemplateInit),
 			onUpdate: isFunction(directiveType.prototype.onUpdate),
 			onAttach: isFunction(directiveType.prototype.onAttach),
 			directives: this.loadDirectivesMetadata(directiveType, annotation, modules),
-			inputs: [],
-			outputs: [],
-			elements: [],
-			events: [],
-			childDirectives: [],
-			childrenDirectives: [],
-		};
+		});
 
 		this.loadPropertiesMetadata(metadata, directiveType);
-
-		if (annotation.exportAs) {
-			metadata.exportAs = annotation.exportAs;
-		}
 
 		if (annotation.override) {
 			metadata.override = {
@@ -400,4 +416,70 @@ export class DirectiveMetadataLoader
 		});
 	}
 
+}
+
+
+export function createDirectiveMetadata(partialMetadata: PartialDirectiveDefinition): DirectiveDefinition
+{
+	partialMetadata.type = exists(partialMetadata.type) ? partialMetadata.type : DirectiveDefinitionType.Directive;
+	partialMetadata.exportAs = exists(partialMetadata.exportAs) ? partialMetadata.exportAs : [];
+
+	return createMetadata(partialMetadata);
+}
+
+
+export function createComponentMetadata(partialMetadata: PartialComponentDefinition): DirectiveDefinition
+{
+	partialMetadata.type = exists(partialMetadata.type) ? partialMetadata.type : DirectiveDefinitionType.Component;
+	partialMetadata.encapsulation = exists(partialMetadata.encapsulation) ? partialMetadata.encapsulation : TemplateEncapsulation.Emulated;
+	partialMetadata.filters = exists(partialMetadata.filters) ? partialMetadata.filters : [];
+	partialMetadata.styles = exists(partialMetadata.styles) ? partialMetadata.styles : [];
+
+	return createDirectiveMetadata(partialMetadata);
+}
+
+
+function createMetadata(partialMetadata: any): DirectiveDefinition
+{
+	const metadata: DirectiveDefinition = {
+		type: partialMetadata.type,
+		id: partialMetadata.id,
+		className: partialMetadata.className,
+		selector: partialMetadata.selector,
+		exportAs: partialMetadata.exportAs,
+		onInit: exists(partialMetadata.onInit) ? partialMetadata.onInit : false,
+		onDestroy: exists(partialMetadata.onDestroy) ? partialMetadata.onDestroy : false,
+		onTemplateInit: exists(partialMetadata.onTemplateInit) ? partialMetadata.onTemplateInit : false,
+		onUpdate: exists(partialMetadata.onUpdate) ? partialMetadata.onUpdate : false,
+		onAttach: exists(partialMetadata.onAttach) ? partialMetadata.onAttach : false,
+		inputs: exists(partialMetadata.inputs) ? partialMetadata.inputs : [],
+		outputs: exists(partialMetadata.outputs) ? partialMetadata.outputs : [],
+		elements: exists(partialMetadata.elements) ? partialMetadata.elements : [],
+		events: exists(partialMetadata.events) ? partialMetadata.events : [],
+		directives: exists(partialMetadata.directives) ? partialMetadata.directives : [],
+		childDirectives: exists(partialMetadata.childDirectives) ? partialMetadata.childDirectives : [],
+		childrenDirectives: exists(partialMetadata.childrenDirectives) ? partialMetadata.childrenDirectives : [],
+	};
+
+	if (exists(partialMetadata.template)) {
+		metadata.template = partialMetadata.template;
+	}
+
+	if (exists(partialMetadata.encapsulation)) {
+		metadata.encapsulation = partialMetadata.encapsulation;
+	}
+
+	if (exists(partialMetadata.filters)) {
+		metadata.filters = partialMetadata.filters;
+	}
+
+	if (exists(partialMetadata.styles)) {
+		metadata.styles = partialMetadata.styles;
+	}
+
+	if (exists(partialMetadata.override)) {
+		metadata.override = partialMetadata.override;
+	}
+
+	return metadata;
 }
