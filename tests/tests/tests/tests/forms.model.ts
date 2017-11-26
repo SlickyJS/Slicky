@@ -2,7 +2,7 @@ import '../bootstrap';
 
 import {Tester} from '@slicky/tester';
 import {Component} from '@slicky/core';
-import {FORM_DIRECTIVES} from '@slicky/forms';
+import {FormModule} from '@slicky/forms';
 import {ModelDirective} from '@slicky/forms/directives';
 import {expect} from 'chai';
 
@@ -13,7 +13,7 @@ describe('#Application.forms.model', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<div s:model></div>',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent {}
 
@@ -26,7 +26,7 @@ describe('#Application.forms.model', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<textarea [(s:model)]="text" #i="sModel"></textarea>',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -59,7 +59,7 @@ describe('#Application.forms.model', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input [(s:model)]="name" type="text" #i="sModel">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -92,7 +92,7 @@ describe('#Application.forms.model', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input [(s:model)]="checked" type="checkbox" #i="sModel">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -125,7 +125,7 @@ describe('#Application.forms.model', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input [(s:model)]="num" type="number" #i="sModel">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -158,7 +158,7 @@ describe('#Application.forms.model', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input [(s:model)]="num" type="range" #i="sModel">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -191,7 +191,7 @@ describe('#Application.forms.model', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<select [(s:model)]="letter" #i="sModel"><option value="a"></option><option value="b"></option></select>',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -224,7 +224,7 @@ describe('#Application.forms.model', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<select [(s:model)]="letters" multiple #i="sModel"><option value="a"></option><option value="b"></option><option value="c"></option></select>',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -263,7 +263,7 @@ describe('#Application.forms.model', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input [(s:model)]="option" name="a" value="a" type="radio" #i-a="sModel"><input [(s:model)]="option" name="a" value="b" type="radio" #i-b="sModel">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -302,7 +302,7 @@ describe('#Application.forms.model', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input type="text" s:model #i="sModel" value="hello world">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent {}
 

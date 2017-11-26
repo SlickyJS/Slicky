@@ -1,5 +1,5 @@
 import {Component, OnTemplateInit, ChildDirective} from '@slicky/core';
-import {FORM_DIRECTIVES, FormDirective} from '@slicky/forms';
+import {FormModule, FormDirective} from '@slicky/forms';
 import {AbstractInputControl} from '@slicky/forms/directives';
 import {List} from 'immutable';
 import {Todo, DEFAULT_TODO_COLOR} from '../todo';
@@ -22,7 +22,8 @@ declare interface FormValues
 	styles: [
 		require('./style.css'),
 	],
-	directives: [FORM_DIRECTIVES, TodoComponent, IconDirective],
+	modules: [FormModule],
+	directives: [TodoComponent, IconDirective],
 	filters: [JsonFilter],
 	translations: TODOS_CONTAINER_TRANSLATIONS,
 })

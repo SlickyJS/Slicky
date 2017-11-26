@@ -1,7 +1,7 @@
 import '../bootstrap';
 
 import {Tester} from '@slicky/tester';
-import {Component, Directive, OnInit, DirectivesStorageRef, ChangeDetectorRef, ElementRef, RealmRef} from '@slicky/core';
+import {Component, Directive, OnInit, DirectivesStorageRef, ChangeDetectorRef, ElementRef, RealmRef, Module} from '@slicky/core';
 import {RootDirectiveRunner, RootDirectiveRef} from '@slicky/core/runtime';
 import {DirectiveMetadataLoader} from '@slicky/core/metadata';
 import {forEach} from '@slicky/utils';
@@ -165,7 +165,7 @@ describe('#Application.directives', () => {
 		});
 	});
 
-	it('should provide directives for component from array', () => {
+	it('should provide directives for component from module', () => {
 		const initialized = [];
 
 		@Directive({
@@ -194,10 +194,15 @@ describe('#Application.directives', () => {
 
 		}
 
+		@Module({
+			directives: [TestDirectiveA, TestDirectiveB],
+		})
+		class TestModule {}
+
 		@Component({
 			selector: 'test-component',
 			template: '<div test-directive-a test-directive-b></div>',
-			directives: [[TestDirectiveA, TestDirectiveB]],
+			modules: [TestModule],
 		})
 		class TestComponent {}
 

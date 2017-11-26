@@ -2,7 +2,7 @@ import '../bootstrap';
 
 import {Tester} from '@slicky/tester';
 import {Component} from '@slicky/core';
-import {FORM_DIRECTIVES, FormDirective} from '@slicky/forms';
+import {FormModule, FormDirective} from '@slicky/forms';
 import {expect} from 'chai';
 
 
@@ -12,7 +12,7 @@ describe('#Application.containers', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<form-container #container="sFormContainer"><input s:model name="text" value="hello world"></form-container>',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent {}
 
@@ -34,7 +34,7 @@ describe('#Application.containers', () => {
 						'<input s:model name="text" value="lorem ipsum">' +
 					'</form-container>' +
 				'</form>',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent {}
 

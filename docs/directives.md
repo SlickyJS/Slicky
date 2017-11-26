@@ -219,7 +219,7 @@ templates.
 import {Component} from '@slicky/core';
 
 @Component({
-	name: 'media-player',
+	selector: 'media-player',
 	exportAs: 'media-player',
 	template: '...',
 })
@@ -363,7 +363,7 @@ class ParentDirective implements OnInit
 	{
 		const el = document.querySelector('#dynamic-directive');
 		
-		const metadata = this.metadataLoader.load(DynamicDirective);
+		const metadata = this.metadataLoader.loadDirective(DynamicDirective);
 		const directiveRef = this.directiveRunner.runDirective(DynamicDirective, metadata, el);
 		
 		console.log(directiveRef.getDirective());   // instance of DynamicDirective

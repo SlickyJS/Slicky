@@ -12,12 +12,12 @@ By using the `s:model` directive you can let slicky to set and get all form inpu
 
 ```typescript
 import {Component} from '@slicky/core';
-import {FORM_DIRECTIVES} from '@slicky/forms';
+import {FormModule} from '@slicky/forms';
 
 @Component({
-	name: 'my-form',
+	selector: 'my-form',
 	template: '<input type="text" [(s:model)]="name">',
-	directives: [FORM_DIRECTIVES],
+	modules: [FormModule],
 })
 class FormComponent
 {
@@ -35,17 +35,17 @@ You can read more about two-way binding [here](./directives.md).
 
 ```typescript
 import {Component} from '@slicky/core';
-import {FORM_DIRECTIVES} from '@slicky/forms';
+import {FormModule} from '@slicky/forms';
 
 @Component({
-	name: 'my-form',
+	selector: 'my-form',
 	template: 
 		'<input type="text" [(s:model)]="name" #input="sModel">' +
 		'<ul *s:if="!input.valid">' +
 			'<li *s:if="input.errors.required">Please, fill the input.</li>' +
 		'</ul>'
 	,
-	directives: [FORM_DIRECTIVES],
+	modules: [FormModule],
 })
 class FormComponent
 {
@@ -69,7 +69,7 @@ class FormComponent
 
 ```typescript
 import {Component} from '@slicky/core';
-import {FORM_DIRECTIVES, FormDirective} from '@slicky/forms';
+import {FormModule, FormDirective} from '@slicky/forms';
 
 declare interface MyFormValues
 {
@@ -77,13 +77,13 @@ declare interface MyFormValues
 }
 
 @Component({
-	name: 'my-form',
+	selector: 'my-form',
 	template:
 	 	'<form (s:submit)="saveForm($event)" novalidate>' +
 			'<input name="text" type="text" s:model>' +
 		'</form>'
 	,
-	directives: [FORM_DIRECTIVES],
+	modules: [FormModule],
 })
 class FormComponent
 {

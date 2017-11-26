@@ -12,7 +12,7 @@ option for your custom tag name (in example below `<my-component></my-component>
 import {Component} from '@slicky/core';
 
 @Component({
-	name: 'my-component',
+	selector: 'my-component',
 	template: '{{ text }}',
 	styles: [
 		'button {color: red;}',
@@ -143,7 +143,7 @@ Encapsulation mode can be set for each component independently. Default mode is 
 import {Component, TemplateEncapsulation} from '@slicky/core';
 
 @Component({
-	name: 'my-component',
+	selector: 'my-component',
 	template: '<a class="btn btn-danger">Click</a>',
 	styles: [
 		'.btn .btn-danger {border: 1px solid red}',

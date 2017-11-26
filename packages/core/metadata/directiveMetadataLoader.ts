@@ -1,5 +1,5 @@
 import {ClassType} from '@slicky/lang';
-import {stringify, isFunction, forEach, exists, camelCaseToHyphens, flatten, map, unique, merge, find} from '@slicky/utils';
+import {stringify, isFunction, forEach, exists, camelCaseToHyphens, map, unique, merge, find, clone} from '@slicky/utils';
 import {findAnnotation, getPropertiesMetadata} from '@slicky/reflection';
 import {RenderableTemplateFactory, TemplateEncapsulation} from '@slicky/templates/templates';
 import {DirectiveAnnotationDefinition} from './directive';
@@ -14,6 +14,7 @@ import {ChildrenDirectiveDefinition} from './childrenDirective';
 import {FilterInterface} from '../filters';
 import {ExtensionsManager} from '../extensions';
 import {FilterMetadata, FilterMetadataLoader} from './filterMetadataLoader';
+import {ModuleMetadataLoader, ModuleMetadata} from './moduleMetadataLoader';
 
 
 const STATIC_DIRECTIVE_METADATA_STORAGE = '__slicky__directive__metadata__';
@@ -124,6 +125,8 @@ export class DirectiveMetadataLoader
 
 	private filterMetadataLoader: FilterMetadataLoader;
 
+	private moduleMetadataLoader: ModuleMetadataLoader;
+
 	private globalFilters: Array<ClassType<FilterInterface>> = [];
 
 
@@ -131,6 +134,7 @@ export class DirectiveMetadataLoader
 	{
 		this.extensions = extensions;
 		this.filterMetadataLoader = new FilterMetadataLoader;
+		this.moduleMetadataLoader = new ModuleMetadataLoader;
 	}
 
 
@@ -183,6 +187,10 @@ export class DirectiveMetadataLoader
 			type = DirectiveDefinitionType.Component;
 		}
 
+		const modules = map(annotation.modules, (moduleType: ClassType<any>) => {
+			return this.moduleMetadataLoader.loadModule(moduleType);
+		});
+
 		const name = stringify(directiveType);
 
 		const metadata: DirectiveDefinition = {
@@ -195,7 +203,7 @@ export class DirectiveMetadataLoader
 			onTemplateInit: isFunction(directiveType.prototype.onTemplateInit),
 			onUpdate: isFunction(directiveType.prototype.onUpdate),
 			onAttach: isFunction(directiveType.prototype.onAttach),
-			directives: this.loadDirectivesMetadata(directiveType, annotation),
+			directives: this.loadDirectivesMetadata(directiveType, annotation, modules),
 			inputs: [],
 			outputs: [],
 			elements: [],
@@ -232,11 +240,19 @@ export class DirectiveMetadataLoader
 	}
 
 
-	private loadDirectivesMetadata(directiveType: ClassType<any>, annotation: DirectiveAnnotationDefinition): Array<DirectiveDefinitionInnerDirective>
+	private loadDirectivesMetadata(directiveType: ClassType<any>, annotation: DirectiveAnnotationDefinition, modules: Array<ModuleMetadata>): Array<DirectiveDefinitionInnerDirective>
 	{
 		const attachedDirectives = {};
 
-		const directives = map(unique(flatten(annotation.directives)), (innerDirectiveType: ClassType<any>): DirectiveDefinitionInnerDirective => {
+		let allDirectives: Array<ClassType<any>> = clone(annotation.directives);
+
+		forEach(modules, (module: ModuleMetadata) => {
+			allDirectives = merge(allDirectives, module.directives);
+		});
+
+		allDirectives = unique(allDirectives);
+
+		const directives = map(allDirectives, (innerDirectiveType: ClassType<any>): DirectiveDefinitionInnerDirective => {
 			const metadata = this.loadDirective(innerDirectiveType);
 
 			attachedDirectives[metadata.id] = innerDirectiveType;

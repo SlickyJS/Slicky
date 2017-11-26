@@ -2,7 +2,7 @@ import '../bootstrap';
 
 import {Tester} from '@slicky/tester';
 import {Component} from '@slicky/core';
-import {FORM_DIRECTIVES, FormDirective} from '@slicky/forms';
+import {FormModule, FormDirective} from '@slicky/forms';
 import {expect} from 'chai';
 
 
@@ -12,7 +12,7 @@ describe('#Application.forms', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<form><input s:model></form>',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent {}
 
@@ -25,7 +25,7 @@ describe('#Application.forms', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<form #form="sForm"><input s:model name="text" value="hello world"></form>',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent {}
 
@@ -47,7 +47,7 @@ describe('#Application.forms', () => {
 						'<div *s:if="form.errors.text.required">Text is required.</div>' +
 					'</div>' +
 				'</form>',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent {}
 
@@ -76,7 +76,7 @@ describe('#Application.forms', () => {
 			'<form (s:submit)="submit($event)">' +
 				'<input s:model name="text" required>' +
 			'</form>',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{

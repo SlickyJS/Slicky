@@ -2,7 +2,7 @@ import '../bootstrap';
 
 import {Tester} from '@slicky/tester';
 import {Component, Directive} from '@slicky/core';
-import {FORM_DIRECTIVES, AbstractValidator} from '@slicky/forms';
+import {FormModule, AbstractValidator} from '@slicky/forms';
 import {ModelDirective} from '@slicky/forms/directives';
 import {expect} from 'chai';
 
@@ -13,7 +13,7 @@ describe('#Application.forms.validators', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input s:model type="text" #i="sModel">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent {}
 
@@ -28,7 +28,7 @@ describe('#Application.forms.validators', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input [(s:model)]="text" type="text" required #i="sModel">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -55,7 +55,7 @@ describe('#Application.forms.validators', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input [(s:model)]="checked" type="checkbox" required #i="sModel">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -82,7 +82,7 @@ describe('#Application.forms.validators', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input [(s:model)]="email" type="email" #i="sModel">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -115,7 +115,7 @@ describe('#Application.forms.validators', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input [(s:model)]="text" type="text" minlength="2" #i="sModel">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -142,7 +142,7 @@ describe('#Application.forms.validators', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input [(s:model)]="text" type="text" maxlength="2" #i="sModel">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -169,7 +169,7 @@ describe('#Application.forms.validators', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input [(s:model)]="text" type="text" pattern="[a-z]+" #i="sModel">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -196,7 +196,7 @@ describe('#Application.forms.validators', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input [(s:model)]="num" type="number" min="5" #i="sModel">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -223,7 +223,7 @@ describe('#Application.forms.validators', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input [(s:model)]="num" type="number" max="5" #i="sModel">',
-			directives: [FORM_DIRECTIVES],
+			modules: [FormModule],
 		})
 		class TestComponent
 		{
@@ -264,7 +264,8 @@ describe('#Application.forms.validators', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input s:model type="text" async-test #i="sModel">',
-			directives: [FORM_DIRECTIVES, TestAsyncValidator],
+			directives: [TestAsyncValidator],
+			modules: [FormModule],
 		})
 		class TestComponent {}
 
@@ -320,7 +321,8 @@ describe('#Application.forms.validators', () => {
 		@Component({
 			selector: 'test-component',
 			template: '<input type="text" s:model async-test #i="sModel">',
-			directives: [FORM_DIRECTIVES, TestAsyncValidator],
+			directives: [TestAsyncValidator],
+			modules: [FormModule],
 		})
 		class TestComponent {}
 

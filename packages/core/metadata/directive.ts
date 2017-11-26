@@ -7,7 +7,8 @@ export declare interface DirectiveOptions
 {
 	selector: string,
 	exportAs?: string|Array<string>,
-	directives?: Array<any>,
+	modules?: Array<ClassType<any>>,
+	directives?: Array<ClassType<any>>,
 	override?: ClassType<any>,
 	id?: string,
 	[name: string]: any,
@@ -28,6 +29,8 @@ export class DirectiveAnnotationDefinition
 
 	public directives: Array<ClassType<any>> = [];
 
+	public modules: Array<ClassType<any>> = [];
+
 	public id: string;
 
 
@@ -42,6 +45,10 @@ export class DirectiveAnnotationDefinition
 
 		if (exists(options.directives)) {
 			this.directives = options.directives;
+		}
+
+		if (exists(options.modules)) {
+			this.modules = options.modules;
 		}
 
 		if (exists(options.override)) {

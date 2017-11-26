@@ -2,7 +2,7 @@ import '../../bootstrap';
 
 import {
 	DirectiveMetadataLoader, Directive, Input, Required, Output, HostElement, HostEvent, ChildDirective,
-	ChildrenDirective
+	ChildrenDirective, Module
 } from '../../../metadata';
 import {createDirectiveMetadata} from '../../helpers';
 import {ExtensionsManager} from '../../../extensions';
@@ -258,7 +258,7 @@ describe('#Metadata/DirectiveMetadataLoader.directives', () => {
 
 			@Directive({
 				selector: 'test-directive',
-				directives: [TestChildDirectiveA, [TestChildDirectiveB, TestChildDirectiveC], TestChildDirectiveC],
+				directives: [TestChildDirectiveA, TestChildDirectiveB, TestChildDirectiveC, TestChildDirectiveC],
 			})
 			class TestDirective {}
 
@@ -295,6 +295,41 @@ describe('#Metadata/DirectiveMetadataLoader.directives', () => {
 				TestChildDirectiveA: TestChildDirectiveA,
 				TestChildDirectiveB: TestChildDirectiveB,
 				TestChildDirectiveC: TestChildDirectiveC,
+			});
+		});
+
+		it('should load inner directives from module', () => {
+			@Directive({
+				selector: 'test-child-directive',
+			})
+			class TestChildDirective {}
+
+			@Module({
+				directives: [TestChildDirective],
+			})
+			class TestModule {}
+
+			@Directive({
+				selector: 'test-directive',
+				modules: [TestModule],
+			})
+			class TestDirective {}
+
+			expect(loader.loadDirective(TestDirective)).to.be.eql(createDirectiveMetadata({
+				directives: [
+					{
+						directiveType: TestChildDirective,
+						metadata: createDirectiveMetadata({
+							id: 'TestChildDirective',
+							className: 'TestChildDirective',
+							selector: 'test-child-directive',
+						}),
+					},
+				],
+			}));
+
+			expect(loader.loadInnerDirectives(TestDirective)).to.be.eql({
+				TestChildDirective: TestChildDirective,
 			});
 		});
 
